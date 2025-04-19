@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PAIRAGRAMS</title>
+  <style>
+    .flash {
+      background-color: #ffeaa7 !important;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #ffffff;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    #status-bar {
+      font-size: 20px;
+      margin: 10px 0;
+      color: #333;
+    }
+    #rows-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 6px;
+    }
+    .word-box {
+      padding: 4px 8px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      font-size: 20px;
+      width: 80px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .word-box.selected {
+      background-color: #ffeaa7;
+    }
+    .word-box.locked {
+      cursor: default;
+    }
+    .word-box.strike {
+      text-decoration: line-through;
+      color: #b71540;
+    }
+    .bonus-word-box {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      color: #333;
+      padding: 6px 14px;
+      border-radius: 10px;
+      margin: 5px auto;
+      width: fit-content;
+      display: inline-block;
+      text-align: center;
+      background-color: #ddd;
+    }
+    #bonus-words {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    #encouragement-message {
+      font-size: 22px;
+      color: #2ecc71;
+      font-weight: bold;
+      margin-top: 20px;
+      animation: flash 1s infinite alternate;
+    }
+    @keyframes flash {
+      0% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <h1>PAIRAGRAMS</h1>
+  <div id="status-bar">
+    Level: <span id="level-number">1</span> |
+    Score: <span id="score-value">0</span> |
+    Time Left: <span id="timer">300s</span>
+  </div>
+  <div id="rows-container"></div>
+
+  <h3>Bonus Words</h3>
+  <div id="bonus-words"></div>
+
+  <button id="restart" style="display:none;" onclick="goToNextLevel()">Next Level</button>
+
+  <script>
+    function goToNextLevel() {
+      let currentLevel = parseInt(localStorage.getItem('level')) || 1;
+      let currentGame = parseInt(localStorage.getItem('gameCount')) || 1;
+
+      currentLevel += 1;
+      if (currentLevel > 65) {
+        alert("You’ve reached the final level!");
+        return;
+      }
+
+      localStorage.setItem('level', currentLevel);
+      localStorage.setItem('gameCount', currentGame);
+      localStorage.setItem('wordFile', 'master_words_file_with_parts.json');
+      window.location.reload();
+    }
+  </script>
+  <script src="game_logic.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PAIRAGRAMS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-image: url('Pairagrams mockup2.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    h1 {
+      font-size: 48px;
+      margin-top: 60px;
+      margin-bottom: 40px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+    .box {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      padding: 30px;
+      display: inline-block;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    input, select, button {
+      font-size: 18px;
+      margin: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .start-btn {
+      margin-top: 20px;
+      background-color: #3498db;
+      color: white;
+      font-size: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>PAIRAGRAMS</h1>
+  <div class="box">
+    <div>
+      <label for="playerName">Your Name:</label>
+      <input type="text" id="playerName" placeholder="Enter your name">
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="5+ digit password">
+    </div>
+    <div>
+      <label for="level">Select Level:</label>
+      <select id="level">
+        <option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option><option value="6">Level 6</option><option value="7">Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option><option value="10">Level 10</option><option value="11">Level 11</option><option value="12">Level 12</option><option value="13">Level 13</option><option value="14">Level 14</option><option value="15">Level 15</option><option value="16">Level 16</option><option value="17">Level 17</option><option value="18">Level 18</option><option value="19">Level 19</option><option value="20">Level 20</option><option value="21">Level 21</option><option value="22">Level 22</option><option value="23">Level 23</option><option value="24">Level 24</option><option value="25">Level 25</option><option value="26">Level 26</option><option value="27">Level 27</option><option value="28">Level 28</option><option value="29">Level 29</option><option value="30">Level 30</option><option value="31">Level 31</option><option value="32">Level 32</option><option value="33">Level 33</option><option value="34">Level 34</option><option value="35">Level 35</option><option value="36">Level 36</option><option value="37">Level 37</option><option value="38">Level 38</option><option value="39">Level 39</option><option value="40">Level 40</option><option value="41">Level 41</option><option value="42">Level 42</option><option value="43">Level 43</option><option value="44">Level 44</option><option value="45">Level 45</option><option value="46">Level 46</option><option value="47">Level 47</option><option value="48">Level 48</option><option value="49">Level 49</option><option value="50">Level 50</option><option value="51">Level 51</option><option value="52">Level 52</option><option value="53">Level 53</option><option value="54">Level 54</option><option value="55">Level 55</option><option value="56">Level 56</option><option value="57">Level 57</option><option value="58">Level 58</option><option value="59">Level 59</option><option value="60">Level 60</option><option value="61">Level 61</option><option value="62">Level 62</option><option value="63">Level 63</option><option value="64">Level 64</option><option value="65">Level 65</option>
+      </select>
+    </div>
+    <div>
+      <button class="start-btn" onclick="startGame()">Start</button>
+    </div>
+    <h3>Top Scores</h3>
+    <ul id="top-scores"></ul>
+  </div>
+
+  <script>
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function startGame() {
+      const name = document.getElementById('playerName').value.trim();
+      const password = document.getElementById('password').value;
+      if (name === "" || password.length < 5) {
+        alert("Please enter a name and a 5+ digit password.");
+        return;
+      }
+
+      const hash = await hashPassword(password);
+      const users = JSON.parse(localStorage.getItem('users') || "{}");
+      if (users[name] && users[name] !== hash) {
+        alert("Incorrect password.");
+        return;
+      }
+
+      users[name] = hash;
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // Reset score for new game
+      localStorage.setItem('totalScore', "0");
+
+      const level = parseInt(document.getElementById('level').value);
+      localStorage.setItem('playerName', name);
+      localStorage.setItem('level', level);
+      localStorage.setItem('wordFile', 'master_words_file_with_parts.json');
+      window.location.href = 'games.html';
+    }
+
+    function displayTopScores() {
+      const list = document.getElementById("top-scores");
+      const scores = JSON.parse(localStorage.getItem("highScores") || "[]");
+      scores.sort((a, b) => b.score - a.score);
+      list.innerHTML = scores.slice(0, 10)
+      .map(s => `<li>${s.name}: ${s.score}</li>`)
+      .join("");
+    }
+    window.onload = displayTopScores;
+  </script>
+</body>
+</html>
