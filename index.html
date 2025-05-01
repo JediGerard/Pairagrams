@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PAIRAGRAMS</title>
   <style>
     body {
@@ -14,106 +16,273 @@
     }
     h1 {
       font-size: 48px;
-      margin-top: 60px;
-      margin-bottom: 40px;
+      margin: 0;
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+    h3 {
+      font-size: 24px;
+      margin: 0;
+      color: blue;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+
+    }
+    .title-box {
+      background: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      margin-top: 30px;
+    }
+    .center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 20px;
     }
     .box {
       background: rgba(255, 255, 255, 0.85);
       border-radius: 12px;
-      padding: 30px;
-      display: inline-block;
+      padding: 15px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
     }
-    input, select, button {
+    input, button {
       font-size: 18px;
-      margin: 10px;
+      margin: 10px 0;
       padding: 8px 12px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
     }
     .start-btn {
-      margin-top: 20px;
       background-color: #3498db;
       color: white;
       font-size: 20px;
-      padding: 10px 20px;
+      padding: 10px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
+    #top-scores {
+      list-style: none;
+      padding: 0;
+    }
+    #continue-btn {
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>PAIRAGRAMS</h1>
-  <div class="box">
-    <div>
-      <label for="playerName">Your Name:</label>
-      <input type="text" id="playerName" placeholder="Enter your name">
+  <div class="center-container">
+
+    <div class="title-box">
+      <h1 id="pairagrams-title" style="display:flex;gap:0;">
+        <span style="color:#e74c3c">P</span>
+        <span style="color:#f1c40f">A</span>
+        <span style="color:#2ecc71">I</span>
+        <span style="color:#f39c12">R</span>
+        <span style="color:#1abc9c">A</span>
+        <span style="color:#3498db">G</span>
+        <span style="color:#9b59b6">R</span>
+        <span style="color:#34495e">A</span>
+        <span style="color:#e67e22">M</span>
+        <span style="color:#e84393">S</span>
+      </h1>
     </div>
-    <div>
-      <label for="password">Password:</label>
-      <input type="password" id="password" placeholder="5+ digit password">
+
+    <!-- LOGIN FORM -->
+    <div id="login-form" class="box">
+      <div>
+        <label for="playerName">Your Name:</label>
+        <input type="text" id="playerName" placeholder="Your name">
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter/Make password">
+      </div>
+      <button class="start-btn" onclick="startGame()">START</button>
     </div>
-    <div>
-      <label for="level">Select Level:</label>
-      <select id="level">
-        <option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option><option value="6">Level 6</option><option value="7">Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option><option value="10">Level 10</option><option value="11">Level 11</option><option value="12">Level 12</option><option value="13">Level 13</option><option value="14">Level 14</option><option value="15">Level 15</option><option value="16">Level 16</option><option value="17">Level 17</option><option value="18">Level 18</option><option value="19">Level 19</option><option value="20">Level 20</option><option value="21">Level 21</option><option value="22">Level 22</option><option value="23">Level 23</option><option value="24">Level 24</option><option value="25">Level 25</option><option value="26">Level 26</option><option value="27">Level 27</option><option value="28">Level 28</option><option value="29">Level 29</option><option value="30">Level 30</option><option value="31">Level 31</option><option value="32">Level 32</option><option value="33">Level 33</option><option value="34">Level 34</option><option value="35">Level 35</option><option value="36">Level 36</option><option value="37">Level 37</option><option value="38">Level 38</option><option value="39">Level 39</option><option value="40">Level 40</option><option value="41">Level 41</option><option value="42">Level 42</option><option value="43">Level 43</option><option value="44">Level 44</option><option value="45">Level 45</option><option value="46">Level 46</option><option value="47">Level 47</option><option value="48">Level 48</option><option value="49">Level 49</option><option value="50">Level 50</option><option value="51">Level 51</option><option value="52">Level 52</option><option value="53">Level 53</option><option value="54">Level 54</option><option value="55">Level 55</option><option value="56">Level 56</option><option value="57">Level 57</option><option value="58">Level 58</option><option value="59">Level 59</option><option value="60">Level 60</option><option value="61">Level 61</option><option value="62">Level 62</option><option value="63">Level 63</option><option value="64">Level 64</option><option value="65">Level 65</option>
-      </select>
+
+    <!-- ALREADY-LOGGED-IN STATUS -->
+    <div id="status-screen" class="box" style="display:none">
+      <h2 id="greeting"></h2>
+      <p>You are at level <strong id="level-number"></strong>.</p>
+      <button class="start-btn" id="continue-btn">CONTINUE</button>
+      <button class="start-btn" id="logout-btn" style="margin-top: 10px;">LOG OUT</button>
     </div>
-    <div>
-      <button class="start-btn" onclick="startGame()">Start</button>
+
+    <div class="box">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin-bottom: 5px;">Top Scores</h3>
+        <a href="halloffame.html">
+          <button style="
+            font-size: 14px;
+            padding: 6px 10px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+          ">
+            🏆 Hall of Fame
+          </button>
+        </a>
+      </div>
+      <ul id="top-scores" style="margin-top: 10px;"></ul>
     </div>
-    <h3>Top Scores</h3>
-    <ul id="top-scores"></ul>
   </div>
 
-  <script>
+  <div style="position:fixed; bottom:20px; width:100%; text-align:center;">
+    <a href="aboutme.html">
+      <button style="
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        background: #2ecc71;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: auto;
+        min-width: 120px;
+        display: inline-block;
+      ">
+        About
+      </button>
+    </a>
+  </div>
+
+  <script type="module">
+    document.addEventListener("DOMContentLoaded", () => {
+      const name = localStorage.getItem("playerName");
+      if (name) {
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("status-screen").style.display = "block";
+        document.getElementById("greeting").textContent = `Welcome back, ${name}!`;
+        const lvl = parseInt(localStorage.getItem("level") || "1");
+        document.getElementById("level-number").textContent = lvl;
+        const percent = ((lvl / 500) * 100).toFixed(1);
+        const phrase = `You are at level ${lvl} and you are ${percent}% complete.`;
+        const utterance = new SpeechSynthesisUtterance(phrase);
+              window.speechSynthesis.speak(utterance);
+        document.getElementById("continue-btn").onclick = () => {
+          window.location.href = "games.html";
+        };
+
+        document.getElementById("logout-btn").onclick = () => {
+          localStorage.removeItem("playerName");
+          localStorage.removeItem("level");
+          localStorage.removeItem("lives");
+          localStorage.removeItem("totalScore");
+          localStorage.removeItem("wordCount");
+          localStorage.removeItem("bonusWords");
+          localStorage.removeItem("newGame");
+
+          // Return to login screen
+          document.getElementById("login-form").style.display = "block";
+          document.getElementById("status-screen").style.display = "none";
+        };
+      }
+    });
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc,
+      getDocs, query, orderBy, limit
+    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyADcjbU1jM9Pqq4ZDrInVGSN7SdUb6O5nA",
+      authDomain: "pairagrams.firebaseapp.com",
+      projectId: "pairagrams",
+      storageBucket: "pairagrams.firebasestorage.app",
+      messagingSenderId: "958505224302",
+      appId: "1:958505224302:web:81bae163e8a526467afe7f"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    window.db = db;
+
     async function hashPassword(password) {
       const encoder = new TextEncoder();
       const data = encoder.encode(password);
       const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     async function startGame() {
       const name = document.getElementById('playerName').value.trim();
-      const password = document.getElementById('password').value;
-      if (name === "" || password.length < 5) {
-        alert("Please enter a name and a 5+ digit password.");
+      const pw = document.getElementById('password').value;
+      if (!name || pw.length < 5) {
+        alert("Please enter a name and a 5+ character password.");
         return;
       }
-
-      const hash = await hashPassword(password);
-      const users = JSON.parse(localStorage.getItem('users') || "{}");
+      const hash = await hashPassword(pw);
+      const users = JSON.parse(localStorage.getItem('users')||'{}');
       if (users[name] && users[name] !== hash) {
         alert("Incorrect password.");
         return;
       }
-
       users[name] = hash;
       localStorage.setItem('users', JSON.stringify(users));
-
-      // Reset score for new game
-      localStorage.setItem('totalScore', "0");
-
-      const level = parseInt(document.getElementById('level').value);
       localStorage.setItem('playerName', name);
-      localStorage.setItem('level', level);
-      localStorage.setItem('wordFile', 'master_words_file_with_parts.json');
-      window.location.href = 'games.html';
+
+      try {
+        const q = query(collection(db, "progress"), orderBy("timestamp","desc"), limit(1));
+        const snapshot = await getDocs(q);
+        let userLevel = 1;
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          if (d.name === name && d.level) userLevel = d.level;
+        });
+        localStorage.setItem('level', userLevel);
+        localStorage.setItem('lives', "5");
+        localStorage.setItem('gameCount', "1");
+        localStorage.setItem('totalTimeSpent', "0");
+        localStorage.setItem('totalScore', "0");
+        localStorage.setItem('newGame', "true");
+
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("status-screen").style.display = "block";
+        document.getElementById("greeting").textContent = `Welcome, ${name}!`;
+        document.getElementById("level-number").textContent = userLevel;
+      } catch (e) {
+        console.error("Error loading saved level:", e);
+        localStorage.setItem('level','1');
+        window.location.href = 'games.html';
+      }
     }
 
-    function displayTopScores() {
+    async function displayTopScores() {
       const list = document.getElementById("top-scores");
-      const scores = JSON.parse(localStorage.getItem("highScores") || "[]");
-      scores.sort((a, b) => b.score - a.score);
-      list.innerHTML = scores.slice(0, 10)
-      .map(s => `<li>${s.name}: ${s.score}</li>`)
-      .join("");
+      list.innerHTML = "<li>Loading…</li>";
+      try {
+        const q = query(collection(db, "scores"), orderBy("score","desc"), limit(10));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(doc => {
+          const d = doc.data();
+          items.push(`<li>${d.name}: ${d.score}</li>`);
+        });
+        list.innerHTML = items.join("");
+      } catch {
+        list.innerHTML = "<li>Error loading scores</li>";
+      }
     }
-    window.onload = displayTopScores;
+
+    window.onload = () => {
+      displayTopScores();
+      const saved = localStorage.getItem('playerName');
+      if (saved) document.getElementById('playerName').value = saved;
+    };
+
+    window.startGame = startGame;
   </script>
 </body>
 </html>
