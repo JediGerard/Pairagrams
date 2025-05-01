@@ -46,7 +46,6 @@ if (localStorage.getItem("newGame") === "true") {
 
 
 // UI Display
-document.getElementById("level-number").textContent = level;
 document.getElementById("score-value").textContent = totalScore;
 document.getElementById("timer").textContent = `${timer}s`;
 
@@ -87,6 +86,11 @@ async function loadGameData() {
   }
 }
 window.onload = loadGameData;
+
+function updateLevelDisplay() {
+  const levelEl = document.getElementById("level-number");
+  if (levelEl) levelEl.textContent = level;
+}
 
 // ==================== Game Setup ====================
 function setupGame() {
@@ -146,6 +150,7 @@ function setupGame() {
   correctPairs = selected;
   redrawColumns();
   startTimer();
+  updateLevelDisplay();
   renderLives();
 }
 
@@ -363,8 +368,12 @@ function goToNextLevel() {
   }
 
   localStorage.setItem("level", level);
+  // ✅ Update the displayed level
+  updateLevelDisplay();
+
   document.getElementById("rows-container").innerHTML = "";
   loadGameData();
+  
 }
 
 

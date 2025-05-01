@@ -1,0 +1,31 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# VS Code project settings
+.vscode/
+
+# Live Server temp files
+.liveserver.json
+
+# Audio and media files (skip this if you want them versioned)
+*.mp3
+*.wav
+*.ogg
+
+# Firebase secrets (if you store them separately)
+firebaseConfig.js
+
+# Environment files (if added later)
+.env
+.env.local
+.env.*.local
+
+# Build/output directories (future-proofing)
+dist/
+build/
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
