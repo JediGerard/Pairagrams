@@ -7,6 +7,11 @@ import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/f
 const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675", "#74b9ff", "#fd79a8"];
 let colorIndex = 0;
 
+const backgrounds = [
+  "#fce4ec", "#e3f2fd", "#e8f5e9", "#fff3e0", "#ede7f6",
+  "#f3e5f5", "#f1f8e9", "#e0f7fa", "#ffebee", "#fbe9e7"
+];
+
 let selectedLeft = null;
 let selectedRight = null;
 let correctPairs = [];
@@ -52,8 +57,8 @@ document.getElementById("timer").textContent = `${timer}s`;
 renderLives();
 
 function renderLives() {
-  const el = document.getElementById("lives-container");
-  if (el) el.innerHTML = "Lives: " + "👤".repeat(Math.max(0, lives));
+  const el = document.getElementById("lives-display");
+  if (el) el.textContent = "👤".repeat(Math.max(0, lives));
 }
 
 // ==================== Load Game Data ====================
@@ -94,7 +99,9 @@ function updateLevelDisplay() {
 
 // ==================== Game Setup ====================
 function setupGame() {
+  document.body.style.backgroundColor = backgrounds[level % backgrounds.length];
   clearInterval(timerInterval);
+  localStorage.setItem('newGame', "false");
   timer = 300;
   gameEnded = false;
   matchedPairs = [];
@@ -150,6 +157,12 @@ function setupGame() {
   correctPairs = selected;
   redrawColumns();
   startTimer();
+  
+  const bgIndex = (level - 1) % 5 + 1;
+  const overlay = document.getElementById("background-overlay");
+  if (overlay) {
+    overlay.style.backgroundImage = `url('assets/library${bgIndex}.jpg')`;
+  }
   updateLevelDisplay();
   renderLives();
 }

@@ -11,9 +11,12 @@
   <title>PAIRAGRAMS</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    position: relative;
     }
     h1 {
       font-size: 36px;
@@ -88,6 +91,15 @@
       margin-top: 20px;
       font-size: 16px;
     }
+    #background-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("assets/library1.jpg"); /* will be replaced */
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;  /* adjust to taste */
+    z-index: -1;
+    }
     #encouragement-message {
       font-size: 22px;
       color: #2ecc71;
@@ -100,13 +112,15 @@
       100% { opacity: 0.3; }
     }
     #game-container {
-      background-color: rgba(173, 216, 230, 0.5);
-      padding: 30px;
-      border-radius: 16px;
-      margin: 30px auto;
-      max-width: 600px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding: 30px;
+    margin: 30px auto;
+    max-width: 600px;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
     }
+    
     #restart {
       margin-top: 20px;
       background-color: #3498db;
@@ -120,33 +134,26 @@
   </style>
 </head>
 <body>
-
+  <div id="background-overlay"></div>
   <div id="game-container">
-    <h1 id="pairagrams-title" style="display: flex; justify-content: center; gap: 0px;">
-      <span style="color: #e74c3c">P</span>
-      <span style="color: #f1c40f">A</span>
-      <span style="color: #2ecc71">I</span>
-      <span style="color: #f39c12">R</span>
-      <span style="color: #1abc9c">A</span>
-      <span style="color: #3498db">G</span>
-      <span style="color: #9b59b6">R</span>
-      <span style="color: #34495e">A</span>
-      <span style="color: #e67e22">M</span>
-      <span style="color: #e84393">S</span>
-    </h1>
-
-    <div id="game-description">
-      Pick letters on right and left that you think make a word.<br>
-      Bonus points for finding valid words that are not the matches we picked.<br>
-      Happy Hunting. Go Faster for more points!
-    </div>
-
-    <div id="lives-container"></div>
-
-    <div id="status-bar">
-      Level: <span id="level-number">1</span> |
-      Score: <span id="score-value">0</span> |
-      Time Left: <span id="timer">300s</span>
+    
+    <div id="status-header" style="padding: 10px 30px; background: rgba(255,255,255,0.9); border-radius: 12px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight: bold; font-size: 20px;">Score: <span id="score-value">0</span></div>
+    
+        <h1 style="margin: 0; display: flex; gap: 0px; font-size: 32px;">
+          <span style="color: #e74c3c">P</span><span style="color: #f1c40f">A</span><span style="color: #2ecc71">I</span>
+          <span style="color: #f39c12">R</span><span style="color: #1abc9c">A</span><span style="color: #3498db">G</span>
+          <span style="color: #9b59b6">R</span><span style="color: #34495e">A</span><span style="color: #e67e22">M</span>
+          <span style="color: #e84393">S</span>
+        </h1>
+    
+        <div style="font-weight: bold; font-size: 20px;">Time Left: <span id="timer">300s</span></div>
+      </div>
+    
+      <div style="text-align: right; font-size: 18px; margin-top: 6px;">
+        Lives: <span id="lives-display">👤👤👤👤👤</span>
+      </div>
     </div>
 
     <div id="rows-container"></div>
