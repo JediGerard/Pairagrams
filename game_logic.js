@@ -113,48 +113,73 @@ function setupGame() {
 
   const format = config[level - 1];
   const validEntries = [];
-  const seenLefts = new Set();
-  const seenRights = new Set();
-  matchedPairs = [];
+const seenLefts = new Set();
+const seenRights = new Set();
+matchedPairs = [];
 
-  for (const [word, partsList] of Object.entries(masterWords)) {
-    for (const parts of partsList) {
-      if (
-        parts.length === 2 &&
-        parts[0].length === format[0] &&
-        parts[1].length === format[1] &&
-        !seenLefts.has(parts[0]) &&
-        !seenRights.has(parts[1])
-      ) {
-        validEntries.push({ full: word, left: parts[0], right: parts[1] });
-        seenLefts.add(parts[0]);
-        seenRights.add(parts[1]);
-        break;
-      }
+const leftReuseLog = {};
+const rightReuseLog = {};
+
+// Shuffle the word list to ensure fairness
+const shuffledWords = Object.entries(masterWords).sort(() => Math.random() - 0.5);
+
+for (const [word, partsList] of shuffledWords) {
+  for (const parts of partsList) {
+    if (parts.length !== 2) continue;
+    const [left, right] = parts;
+    if (left.length !== format[0] || right.length !== format[1]) continue;
+
+    if (seenLefts.has(left)) {
+      leftReuseLog[left] = (leftReuseLog[left] || 0) + 1;
+      continue;
     }
+
+    if (seenRights.has(right)) {
+      rightReuseLog[right] = (rightReuseLog[right] || 0) + 1;
+      continue;
+    }
+
+    validEntries.push({ full: word, left, right });
+    seenLefts.add(left);
+    seenRights.add(right);
+    break;
   }
+}
 
-  let attempts = 0, selected;
-  do {
-    const shuffled = shuffle(validEntries);
-    const temp = shuffled.slice(0, rowCount);
-    const parts = temp.flatMap(p => [p.left, p.right]);
-    const uniqueParts = new Set(parts);
+// Try to select a valid board
+let attempts = 0, selected;
+do {
+  const shuffled = shuffle(validEntries);
+  const temp = shuffled.slice(0, rowCount);
+  const parts = temp.flatMap(p => [p.left, p.right]);
+  const uniqueParts = new Set(parts);
 
-    if (uniqueParts.size === rowCount * 2) {
-      unmatchedLeft = temp.map(p => p.left);
-      unmatchedRight = shuffle(temp.map(p => p.right));
-      const valid = !unmatchedLeft.some((l, i) => temp[i].left === l && temp[i].right === unmatchedRight[i]);
-      if (valid) {
-        selected = temp;
-        break;
-      }
-    }
+  if (uniqueParts.size === rowCount * 2) {
+    selected = temp;
+    console.log(`✅ Board succeeded after ${attempts + 1} attempt(s)`);
+    break;
+  }
+  attempts++;
+} while (attempts < 50);
 
-    attempts++;
-  } while (attempts < 50);
+if (!selected) {
+  console.warn("⚠️ Failed to find a valid board after 50 attempts.");
+} else {
+  console.log("✅ Selected words:", selected.map(w => w.full));
+}
 
-  correctPairs = selected;
+// Optional: Show most-rejected parts (left or right)
+const topLeftSkips = Object.entries(leftReuseLog).sort((a, b) => b[1] - a[1]).slice(0, 5);
+const topRightSkips = Object.entries(rightReuseLog).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+console.log("🔁 Most skipped LEFT parts:", topLeftSkips);
+console.log("🔁 Most skipped RIGHT parts:", topRightSkips);
+
+correctPairs = selected;
+
+unmatchedLeft = selected.map(p => p.left);
+unmatchedRight = shuffle(selected.map(p => p.right));
+
   redrawColumns();
   startTimer();
   

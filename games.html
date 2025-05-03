@@ -100,12 +100,20 @@
     opacity: 0.4;  /* adjust to taste */
     z-index: -1;
     }
-    #encouragement-message {
-      font-size: 22px;
+    
+    .encouragement-flash {
+      background-color: rgba(255, 255, 255, 0.9);
       color: #2ecc71;
       font-weight: bold;
+      font-size: 20px;
+      padding: 12px 20px;
       margin-top: 20px;
+      border-radius: 12px;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
       animation: flash 1s infinite alternate;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     @keyframes flash {
       0% { opacity: 1; }
@@ -139,7 +147,10 @@
     
     <div id="status-header" style="padding: 10px 30px; background: rgba(255,255,255,0.9); border-radius: 12px; margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-weight: bold; font-size: 20px;">Score: <span id="score-value">0</span></div>
+        <div style="font-weight: bold; font-size: 20px;">
+          Score: <span id="score-value">0</span><br>
+          Level: <span id="level-number">1</span>
+        </div>
     
         <h1 style="margin: 0; display: flex; gap: 0px; font-size: 32px;">
           <span style="color: #e74c3c">P</span><span style="color: #f1c40f">A</span><span style="color: #2ecc71">I</span>
@@ -148,17 +159,18 @@
           <span style="color: #e84393">S</span>
         </h1>
     
-        <div style="font-weight: bold; font-size: 20px;">Time Left: <span id="timer">300s</span></div>
-      </div>
-    
-      <div style="text-align: right; font-size: 18px; margin-top: 6px;">
-        Lives: <span id="lives-display">👤👤👤👤👤</span>
+        <div style="font-weight: bold; font-size: 20px;">
+          Time Left: <span id="timer">300s</span><br>
+          Lives: <span id="lives-display">👤👤👤👤👤</span>
+        </div>
       </div>
     </div>
 
     <div id="rows-container"></div>
 
-    <h3>Bonus Words</h3>
+    <div style="font-size: 22px; font-weight: bold; background: rgba(255,255,255,0.9); padding: 6px 16px; border-radius: 10px; display: inline-block; margin-top: 20px;">
+      Bonus Words
+    </div>
     <div id="bonus-words"></div>
 
     <div id="encouragement-message" style="display:none;"></div>

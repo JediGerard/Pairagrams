@@ -186,11 +186,16 @@
 
 
   <script>
-   function restartGame() {
+    function restartGame() {
       localStorage.setItem("lives", "5");
-      localStorage.setItem("newGame", "true");
+      localStorage.setItem("score", "0");
+      localStorage.setItem("totalScore", "0");
       localStorage.setItem("bonusWords", "[]");
-      window.location.href = "index.html";    // ← go back to splash page
+      localStorage.setItem("wordCount", "0");
+      localStorage.setItem("totalTimeSpent", "0");
+       localStorage.setItem("newGame", "true");
+
+       window.location.href = "index.html"; // or "games.html" if skipping splash
     }
 
     const level = parseInt(localStorage.getItem("level") || "1");
