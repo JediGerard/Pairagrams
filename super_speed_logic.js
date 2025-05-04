@@ -83,6 +83,7 @@ function generateBoard() {
   const pairs = [];
 
   const shuffled = shuffle([...wordList]);
+  console.log("Selected 12 words:", shuffled.slice(0, 12).map(w => w.word));
   for (const entry of shuffled) {
     if (!usedWords.has(entry.word)) {
       selectedWords.push(entry);

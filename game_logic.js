@@ -41,12 +41,14 @@ if (savedBonus) JSON.parse(savedBonus).forEach(word => usedBonusWords.add(word))
 
 if (localStorage.getItem("newGame") === "true") {
   localStorage.setItem("wordCount", "0");
+  localStorage.setItem("startLevel", level.toString()); // ✅ Record base level
   localStorage.setItem("bonusWords", "[]");
   localStorage.setItem("totalTimeSpent", "0");
   localStorage.setItem("lives", "5");         // ✅ NEW LINE
   lives = 5;                                  // ✅ NEW LINE
   usedBonusWords.clear();
   localStorage.setItem("newGame", "false");
+  
 }
 
 
@@ -211,8 +213,17 @@ function handleClick(el) {
   if (el.classList.contains("locked")) return;
 
   const side = el.dataset.side;
+  if (el.classList.contains("selected")) {
+    el.classList.remove("selected");
+    if (side === "left") selectedLeft = null;
+    else selectedRight = null;
+    return;
+  }
+  
+  // Deselect other selection on that side
   document.querySelectorAll(`.word-box.selected[data-side="${side}"]`).forEach(e => e.classList.remove("selected"));
   el.classList.add("selected");
+  
 
   if (side === "left") selectedLeft = el;
   else selectedRight = el;
@@ -399,6 +410,12 @@ function goToNextLevel() {
     return;
   }
 
+  const startLevel = parseInt(localStorage.getItem("startLevel") || level);
+  if ((level - startLevel + 1) % 5 === 0 && lives < 10) {
+  lives++;
+  localStorage.setItem("lives", lives.toString());
+  renderLives();
+  }
   level++;
   if (level > 65) {
     alert("You’ve reached the final level!");
