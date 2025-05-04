@@ -4,6 +4,21 @@ import { collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.0/fi
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 // ==================== Game State ====================
+
+// ==================== LocalStorage Fallbacks for First-Time Users ====================
+if (!localStorage.getItem("playerName")) {
+  localStorage.setItem("playerName", "Player");
+}
+if (!localStorage.getItem("level")) {
+  localStorage.setItem("level", "1");
+}
+if (!localStorage.getItem("lives")) {
+  localStorage.setItem("lives", "5");
+}
+if (!localStorage.getItem("newGame")) {
+  localStorage.setItem("newGame", "true");
+}
+
 const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675", "#74b9ff", "#fd79a8"];
 let colorIndex = 0;
 
