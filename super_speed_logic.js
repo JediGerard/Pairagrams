@@ -3,7 +3,7 @@ let masterWords = {};
 let wordList = [];
 let validWords = new Set();
 
-let timer = 60;
+let timer = 90;
 let lives = 5;
 let score = 0;
 let scoreIndex = 0;
@@ -11,6 +11,7 @@ let fibonacci = [1, 1];
 let selectedPairs = [];
 let foundWords = [];
 let timerInterval = null;
+let selectedWords = [];
 
 let timerDisplay, livesDisplay, scoreDisplay, container, wordListDisplay;
 
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const [word, partsList] of Object.entries(masterWords)) {
       if (word.length !== 4) continue;
 
-      const cleanSplit = partsList.find(p => 
+      const cleanSplit = partsList.find(p =>
         Array.isArray(p) &&
         p.length === 2 &&
         p[0].length === 2 &&
@@ -78,12 +79,11 @@ function generateBoard() {
   container.innerHTML = "";
   selectedPairs = [];
 
-  const selectedWords = [];
+  selectedWords = [];
   const usedWords = new Set();
   const pairs = [];
 
   const shuffled = shuffle([...wordList]);
-  console.log("Selected 12 words:", shuffled.slice(0, 12).map(w => w.word));
   for (const entry of shuffled) {
     if (!usedWords.has(entry.word)) {
       selectedWords.push(entry);
@@ -162,7 +162,6 @@ function checkWord() {
     else if (foundWords.length === 25) speak("I think you are cheating");
 
     clearSelections();
-    generateBoard();
     return;
   } else {
     speak("Wrong");
@@ -189,7 +188,60 @@ function updateWordList(word) {
 
 function endGame() {
   clearInterval(timerInterval);
-  alert("Time's up! You found:\n" + foundWords.join(", "));
+  speak("Game Over");
+
+  const gameOverMessage = document.createElement("h2");
+  gameOverMessage.textContent = "GAME OVER";
+  gameOverMessage.style.color = "#d63031";
+  gameOverMessage.style.marginTop = "30px";
+  document.body.appendChild(gameOverMessage);
+
+  const intro = document.createElement("div");
+  intro.textContent = "Here are my words:";
+  intro.style.marginTop = "15px";
+  intro.style.fontSize = "20px";
+  document.body.appendChild(intro);
+
+  const wordGridWrapper = document.createElement("div");
+  wordGridWrapper.style.display = "flex";
+  wordGridWrapper.style.justifyContent = "center";
+
+  const wordGrid = document.createElement("div");
+  wordGrid.style.display = "grid";
+  wordGrid.style.gridTemplateColumns = "repeat(3, auto)";
+  wordGrid.style.gap = "10px";
+  wordGrid.style.marginTop = "20px";
+  wordGrid.style.maxWidth = "360px";
+
+  selectedWords.forEach(({ word }, index) => {
+    const cell = document.createElement("div");
+    cell.textContent = word;
+    cell.className = "bonus-word-box";
+    cell.style.backgroundColor = colors[index % colors.length];
+    cell.style.color = "white";
+    wordGrid.appendChild(cell);
+  });
+
+  wordGridWrapper.appendChild(wordGrid);
+  document.body.appendChild(wordGridWrapper);
+
+  const playAgain = document.createElement("button");
+  playAgain.textContent = "Play Again";
+  playAgain.style.marginTop = "30px";
+  playAgain.style.padding = "12px 24px";
+  playAgain.style.fontSize = "18px";
+  playAgain.style.borderRadius = "8px";
+  playAgain.style.border = "none";
+  playAgain.style.cursor = "pointer";
+  playAgain.style.backgroundColor = "#00b894";
+  playAgain.style.color = "white";
+  playAgain.addEventListener("click", () => location.reload());
+  document.body.appendChild(playAgain);
+}
+
+function playJeopardyTheme() {
+  const audio = new Audio("jeopardy-theme-song.mp3");
+  audio.play();
 }
 
 function startTimer() {
@@ -197,6 +249,7 @@ function startTimer() {
   timerInterval = setInterval(() => {
     timer--;
     timerDisplay.textContent = timer;
+    if (timer === 30) playJeopardyTheme();
     if (timer === 0) endGame();
   }, 1000);
-}
+} 
