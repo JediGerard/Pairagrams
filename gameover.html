@@ -5,20 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Game Over - Pairagrams</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: Arial, sans-serif;
       background: #f9f9f9;
       text-align: center;
       padding: 30px;
     }
-    #pairagrams-title {
+    #header-summary {
+      background-color: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
       display: flex;
-      justify-content: center;
-      gap: 0px;
-      font-size: 42px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .summary-block {
       font-weight: bold;
-      letter-spacing: 0;
-      margin-bottom: 20px;
+      font-size: 18px;
+      flex: 1;
+      min-width: 100px;
+    }
+    #pairagrams-title {
+      margin: 0 auto;
+      font-size: 32px;
+      display: flex;
+      gap: 0;
+      justify-content: center;
     }
     .score-board {
       background-color: rgba(255,255,255,0.95);
@@ -59,7 +80,6 @@
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       text-align: left;
-      box-sizing: border-box;
     }
     form label {
       display: block;
@@ -96,83 +116,76 @@
 </head>
 <body>
 
-  <!-- Colored PAIRAGRAMS Title -->
-  <h1 id="pairagrams-title">
-    <span style="color: #e74c3c">P</span>
-    <span style="color: #f1c40f">A</span>
-    <span style="color: #2ecc71">I</span>
-    <span style="color: #f39c12">R</span>
-    <span style="color: #1abc9c">A</span>
-    <span style="color: #3498db">G</span>
-    <span style="color: #9b59b6">R</span>
-    <span style="color: #34495e">A</span>
-    <span style="color: #e67e22">M</span>
-    <span style="color: #e84393">S</span>
-  </h1>
+  <!-- Header Summary -->
+  <div id="header-summary">
+    <div class="summary-block">
+      Level: <strong id="level-result">-</strong><br>
+      Time Avg: <strong id="avg-time">-</strong>
+    </div>
 
-  <!-- Score Summary -->
-  <!-- Score Summary -->
-<div class="score-board">
-  <h2>Game Over</h2>
-  <div class="score-item">Highest Level Achieved: <strong id="level-result">-</strong></div>
-  <div class="score-item">Total Words Found: <strong id="word-count">0</strong></div>
-  <div class="score-item">Bonus Words Found: <strong id="bonus-count">0</strong></div>
-  <div id="bonus-words-list"></div>
-  <div class="score-item">Average Time Per Level: <strong id="avg-time">-</strong></div>
+    <div id="pairagrams-title">
+      <span style="color: #e74c3c">P</span>
+      <span style="color: #f1c40f">A</span>
+      <span style="color: #2ecc71">I</span>
+      <span style="color: #f39c12">R</span>
+      <span style="color: #1abc9c">A</span>
+      <span style="color: #3498db">G</span>
+      <span style="color: #9b59b6">R</span>
+      <span style="color: #34495e">A</span>
+      <span style="color: #e67e22">M</span>
+      <span style="color: #e84393">S</span>
+    </div>
 
-  <!-- Stat Buttons -->
-  <div style="margin-top: 20px;">
-    <a href="halloffame.html">
-      <button style="
-        margin: 5px;
-        background-color: #e67e22;
-        color: white;
-        font-size: 16px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-      ">
-        🏆 View Hall of Fame
-      </button>
-    </a>
-
-    <a href="stats.html">
-      <button style="
-        margin: 5px;
-        background-color: #2980b9;
-        color: white;
-        font-size: 16px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-      ">
-        📊 See All Stats
-      </button>
-    </a>
-
-    <!-- ✅ Restored Play Again button -->
-    <button id="play-again-btn" onclick="restartGame()" style="
-      margin-top: 15px;
-      background-color: #2ecc71;
-      color: white;
-      font-size: 18px;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    ">
-      🔁 Play Again
-    </button>
+    <div class="summary-block" style="text-align: right;">
+      Total Words: <strong id="word-count">0</strong><br>
+      Bonus: <strong id="bonus-count">0</strong>
+    </div>
   </div>
-</div>
 
+  <!-- Score Summary -->
+  <div class="score-board">
+    <h2>Game Over</h2>
+    <div id="bonus-words-list"></div>
 
-  <!-- Thank You Message -->
+    <div style="margin-top: 20px;">
+      <a href="halloffame.html">
+        <button style="
+          margin: 5px;
+          background-color: #e67e22;
+          color: white;
+          font-size: 16px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        ">
+          🏆 View Hall of Fame
+        </button>
+      </a>
+
+      <a href="stats.html">
+        <button style="
+          margin: 5px;
+          background-color: #2980b9;
+          color: white;
+          font-size: 16px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        ">
+          📊 See All Stats
+        </button>
+      </a>
+
+      <button id="play-again-btn" onclick="restartGame()">
+        🔁 Play Again
+      </button>
+    </div>
+  </div>
+
   <div class="thank-you">Thank you for playing!</div>
 
-  <!-- Feedback Form using Formspree -->
   <form action="https://formspree.io/f/xrbpnwnk" method="POST">
     <h3>We'd love your feedback!</h3>
     <label>Your email:
@@ -184,7 +197,6 @@
     <button type="submit">Send</button>
   </form>
 
-
   <script>
     function restartGame() {
       localStorage.setItem("lives", "5");
@@ -193,33 +205,25 @@
       localStorage.setItem("bonusWords", "[]");
       localStorage.setItem("wordCount", "0");
       localStorage.setItem("totalTimeSpent", "0");
-       localStorage.setItem("newGame", "true");
-
-       window.location.href = "index.html"; // or "games.html" if skipping splash
+      localStorage.setItem("newGame", "true");
+      window.location.href = "index.html";
     }
 
     const level = parseInt(localStorage.getItem("level") || "1");
     document.getElementById("level-result").textContent = level > 1 ? level - 1 : 1;
-
     document.getElementById("word-count").textContent = localStorage.getItem("wordCount") || "0";
 
-    // read exactly what endGame() saved
     const bonusList = JSON.parse(localStorage.getItem("bonusWords") || "[]");
     document.getElementById("bonus-count").textContent = bonusList.length;
 
     const bonusContainer = document.getElementById("bonus-words-list");
-    if (bonusList.length === 0) {
-      bonusContainer.innerHTML = "<i>No bonus words found.</i>";
-    } else {
-      bonusContainer.innerHTML = bonusList
-        .map(word => `<span class="bonus-word">${word}</span>`)
-        .join("");
-    }
+    bonusContainer.innerHTML = bonusList.length === 0
+      ? "<i>No bonus words found.</i>"
+      : bonusList.map(word => `<span class="bonus-word">${word}</span>`).join("");
 
     const avgTime = localStorage.getItem("avgTime");
     document.getElementById("avg-time").textContent = avgTime ? avgTime + "s" : "-";
   </script>
-
 
 </body>
 </html>

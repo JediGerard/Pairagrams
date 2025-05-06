@@ -19,6 +19,8 @@ export const db = getFirestore(app);
 // =============== Utility Functions ===============
 
 export function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel(); // ✅ stops ongoing speech
   const utterance = new SpeechSynthesisUtterance(text);
   window.speechSynthesis.speak(utterance);
 }

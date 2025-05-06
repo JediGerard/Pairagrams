@@ -86,11 +86,20 @@ async function loadGameData() {
   try {
     if (!configCache || !wordMapCache || !dictCache) {
       console.time("initialLoad");
-      const [levelConfig, wordMap, dictText] = await Promise.all([
+      const [levelConfig, wordMapRaw, dictText] = await Promise.all([
         fetch("level_config_2col.json").then(r => r.json()),
-        fetch("master_words_file_with_parts.json").then(r => r.json()),
+        fetch("master_words_file_with_parts_labeled.json").then(r => r.json()),
         fetch("words_scrabble.csv").then(r => r.text())
       ]);
+      
+      // Filter to only "common": true words
+      const wordMap = {};
+      for (const [word, data] of Object.entries(wordMapRaw)) {
+        if (data.common === true) {
+          wordMap[word] = data.parts;
+        }
+      }
+      
       configCache = levelConfig;
       wordMapCache = wordMap;
       dictCache = new Set(dictText.trim().split(/\r?\n/).map(w => w.toLowerCase()));
@@ -195,7 +204,17 @@ console.log("🔁 Most skipped RIGHT parts:", topRightSkips);
 correctPairs = selected;
 
 unmatchedLeft = selected.map(p => p.left);
-unmatchedRight = shuffle(selected.map(p => p.right));
+unmatchedRight = selected.map(p => p.right);
+
+// Shuffle until no item matches across the same row
+let safetyTries = 0;
+do {
+  unmatchedRight = shuffle([...unmatchedRight]);
+  safetyTries++;
+} while (
+  unmatchedLeft.some((left, i) => left === unmatchedRight[i]) &&
+  safetyTries < 50
+);
 
   redrawColumns();
   startTimer();
@@ -257,7 +276,7 @@ function handleClick(el) {
       if (matchedPairs.length === rowCount) endGame();
     } else {
       const combined = left + right;
-      if (dictionary.has(combined)) {
+      if (dictionary.has(combined.toLowerCase())){
         if (!usedBonusWords.has(combined)) {
           addBonusWord(combined);
           usedBonusWords.add(combined);

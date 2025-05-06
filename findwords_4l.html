@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pairagrams – Find Words (4L)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #eaf2ff;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin: 20px 0 10px;
+    }
+
+    #game-header {
+      background-color: rgba(255,255,255,0.95);
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .stat-block {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 60px;
+      font-size: 24px;
+      font-weight: bold;
+      background-color: #ffeaa7;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .selected {
+      background-color: #a29bfe !important;
+    }
+
+    #found-words {
+      margin-top: 30px;
+      padding: 10px;
+    }
+
+    #found-words h3 {
+      margin-bottom: 15px;
+    }
+
+    #word-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      justify-content: center;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .bonus-word-box {
+      text-align: center;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+    }
+
+    #done-btn {
+      margin: 40px auto 20px;
+      padding: 14px 30px;
+      font-size: 20px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #correct-words-section {
+      display: none;
+      margin-top: 30px;
+    }
+    .correct-grid {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 12px;
+  justify-content: center;
+  margin-top: 10px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.answer-box {
+  background-color: #81ecec;
+  color: black;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Find All the Words</h1>
+
+  <div id="game-header">
+    <div class="stat-block">❤️ Lives: <span id="lives">5</span></div>
+    <div class="stat-block">⭐ Score: <span id="score">0</span></div>
+  </div>
+
+  <div id="rows-container"></div>
+
+  <div id="found-words">
+    <h3>Words Found:</h3>
+    <ul id="word-list"></ul>
+  </div>
+
+  <button id="done-btn" onclick="showCorrectWords()">I AM DONE</button>
+
+
+  <div id="correct-words-section">
+    <h3>Here are the correct words:</h3>
+    <div id="correct-words" class="correct-grid"></div>
+  </div>
+
+  <script type="module" src="findwords_4l_logic.js"></script>
+  
+  <script>
+    function showCorrectWords() {
+      const words = JSON.parse(localStorage.getItem("correctWords") || '[]');
+      const container = document.getElementById("correct-words");
+      container.innerHTML = words.map(w => `<div class="answer-box">${w}</div>`).join("");
+      document.getElementById("correct-words-section").style.display = "block";
+      document.getElementById("done-btn").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
