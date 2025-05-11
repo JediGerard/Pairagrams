@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pairagrams – Find Words (4L)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #eaf2ff;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      font-size: 36px;
+      margin: 20px 0 10px;
+    }
+    .button-base {
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .button-green { background-color: #27ae60; }  /* I AM DONE */
+.button-red   { background-color: #e74c3c; }  /* SHUFFLE */
+.button-gray  { background-color: #7f8c8d; }  /* Submit / Clear */
+
+
+    #game-header {
+    background-color: rgba(255,255,255,0.95);
+    margin: 10px auto; /* 🔽 tightened from 20px */
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    }
+
+    #word-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: calc(50% - 140px); /* aligns with left side of grid */
+  margin-bottom: 12px;
+  gap: 6px;
+}
+
+#word-tools label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+}
+
+
+#word-preview {
+  font-size: 20px;            /* ✅ smaller text */
+  width: 100px;               /* ✅ narrower */
+  height: 34px;               /* matches button height */
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+
+
+
+    .stat-block {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+    .pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 48px;
+      font-size: 24px;
+      font-weight: bold;
+      background-color: #ffeaa7;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .selected {
+      background-color: #ffeaa7 !important;
+      outline: 3px solid #f1c40f;
+      outline-offset: -2px;
+    }
+    #found-words {
+  margin-top: 4px; /* 🔽 reduce gap after shuffle */
+  padding: 4px;
+  }
+
+#found-words h3 {
+  margin: 8px 0 4px 0;
+  }
+    #word-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      justify-content: center;
+      gap: 12px;
+      padding: 0;
+      list-style: none;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .bonus-word-box {
+      text-align: center;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+    }
+   .done-btn {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 30px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 40px auto 20px;
+  display: block;
+}
+
+    #correct-words-section {
+      display: none;
+      margin-top: 30px;
+    }
+    .correct-grid {
+      display: grid;
+      grid-template-columns: repeat(4, auto);
+      gap: 12px;
+      justify-content: center;
+      margin-top: 10px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .answer-box {
+      background-color: #81ecec;
+      color: black;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div id="game-header">
+    <div class="stat-block">❤️ Lives: <span id="lives">5</span></div>
+    <div class="stat-block">⭐ Score: <span id="score">0</span></div>
+  </div>
+
+  <div id="word-tools">
+    <label><input type="checkbox" id="manual-mode" /> Manual Entry Mode</label>
+    
+    <div style="display: flex; align-items: center;">
+      <label><input type="checkbox" id="sound-toggle" /> Sound Off</label>
+      <button class="button-base button-red" onclick="shuffleBoard()" style="margin-left: 100px;">Shuffle</button>
+    </div>
+    
+  
+    <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
+      <input id="word-preview" type="text" readonly maxlength="4" placeholder="type here" />
+      <button class="button-base button-gray" onclick="submitWord()">Submit</button>
+      <button class="button-base button-gray" onclick="clearPreview()">Clear</button>
+
+    </div>
+  </div>
+  
+  
+    
+ 
+  <div id="rows-container"></div>
+
+  
+  
+
+  <div id="found-words">
+    <h3>Words Found:</h3>
+    <ul id="word-list"></ul>
+  </div>
+
+  <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>
+
+  <div id="correct-words-section">
+    <h3>Here are the words I found:</h3>
+    <div id="correct-words" class="correct-grid"></div>
+  </div>
+
+  <script type="module" src="findwords_4l_logic.js"></script>
+
+  
+</body>
+</html>

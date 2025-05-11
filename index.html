@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAIRAGRAMS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-image: url('Pairagrams mockup2.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    h1 {
+      font-size: 48px;
+      margin: 0;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+    h3 {
+      font-size: 18px;
+      margin: 0;
+      color: blue;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+    @media (max-width: 480px) {
+  .title-box {
+    padding: 8px 12px;
+  }
+  .title-box img {
+    max-width: 80%;
+  }
+}
+    
+    .center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 20px;
+    }
+    .box {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+    input, button {
+      font-size: 18px;
+      margin: 10px 0;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .start-btn {
+      background-color: #3498db;
+      color: white;
+      font-size: 20px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #top-scores {
+      list-style: none;
+      padding: 0;
+    }
+    #continue-btn {
+      margin-top: 15px;
+    }
+    #top-scores .entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
+  font-size: 16px;
+}
+  </style>
+</head>
+<body>
+  <div class="center-container">
+
+
+
+    <!-- LOGIN FORM -->
+    <div id="login-form" class="box">
+      <label for="playerName">Your Name:</label>
+      <input type="text" id="playerName" placeholder="Your name">
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter or create password">
+      <button class="start-btn" onclick="startGame()">START</button>
+    </div>
+
+    <!-- STATUS SCREEN (Returning Users) -->
+    <div id="status-screen" class="box" style="display:none;">
+      <h2 id="greeting"></h2>
+      <p>You are at level <strong id="level-number"></strong>.</p>
+      <button class="start-btn" id="continue-btn">CONTINUE</button>
+      <a href="findwords_4l.html" class="button">PLAY PUZZLE ROUND</a></a>
+      <button class="start-btn" id="logout-btn">LOG OUT</button>
+    </div>
+
+    <!-- Top Scores Panel -->
+    <div class="box">
+      <h3>TOP SCORES</h3>
+      <ul id="top-scores"></ul>
+
+      <a href="halloffame.html">
+        <button style="
+          padding: 10px 20px;
+          font-size: 16px;
+          border-radius: 8px;
+          background-color: #e67e22; /* 🍊 Nice bold orange */
+          color: white;
+          border: none;
+          cursor: pointer;
+          width: auto;
+          min-width: 120px;
+          display: inline-block;
+        ">
+          🏆 Hall of Fame
+        </button>
+      </a>
+      
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import {
+  getFirestore, collection, addDoc,
+  getDocs, getDoc, doc, query, orderBy, limit, where
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyADcjbU1jM9Pqq4ZDrInVGSN7SdUb6O5nA",
+      authDomain: "pairagrams.firebaseapp.com",
+      projectId: "pairagrams",
+      storageBucket: "pairagrams.firebasestorage.app",
+      messagingSenderId: "958505224302",
+      appId: "1:958505224302:web:81bae163e8a526467afe7f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener("DOMContentLoaded", () => {
+  const name = localStorage.getItem("playerName");
+
+  if (name) {
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("status-screen").style.display = "block";
+    setupStatusScreen();
+  }
+});
+
+
+
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function loadTopScores() {
+    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+    const snapshot = await getDocs(q);
+    const ul = document.getElementById("top-scores");
+    ul.innerHTML = "";
+
+    snapshot.forEach(doc => {
+      const d = doc.data();
+      const li = document.createElement("li");
+      li.classList.add("entry"); // Optional: add flex styling
+      li.innerHTML = `<span>${d.name || "Anon"}</span><span>${d.score} pts</span>`;
+      ul.appendChild(li);
+    });
+  }
+
+  async function setupStatusScreen() {
+  const name = localStorage.getItem("playerName");
+  let lvl = parseInt(localStorage.getItem("level") || "1");
+
+  // ✅ Try loading fresh level from Firebase
+  try {
+    const ref = doc(db, "progress", name);
+    const snapshot = await getDoc(ref);
+    if (snapshot.exists()) {
+      const d = snapshot.data();
+      if (d.level) {
+        lvl = d.level;
+        localStorage.setItem("level", lvl);
+      }
+    }
+  } catch (e) {
+    console.warn("⚠️ Could not refresh level from Firebase:", e);
+  }
+
+  document.getElementById("greeting").textContent = `Welcome back, ${name}!`;
+  document.getElementById("level-number").textContent = lvl;
+
+  const percent = ((lvl / 500) * 100).toFixed(1);
+  const phrase = `You are at level ${lvl} and you are ${percent}% complete.`;
+  const utterance = new SpeechSynthesisUtterance(phrase);
+  window.speechSynthesis.speak(utterance);
+
+  document.getElementById("continue-btn").onclick = () => {
+    window.location.href = "howtoplay.html";
+  };
+
+  document.getElementById("logout-btn").onclick = () => {
+    localStorage.removeItem("playerName");
+    localStorage.removeItem("level");
+    localStorage.removeItem("lives");
+    localStorage.removeItem("totalScore");
+    localStorage.removeItem("wordCount");
+    localStorage.removeItem("bonusWords");
+    localStorage.removeItem("newGame");
+    location.reload();
+  };
+}
+
+
+
+async function startGame() {
+  const name = document.getElementById("playerName").value.trim();
+  const pw = document.getElementById("password").value;
+  if (!name || pw.length < 5) {
+    alert("Please enter a name and a 5+ character password.");
+    return;
+  }
+
+  const hash = await hashPassword(pw);
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+  if (users[name] && users[name] !== hash) {
+    alert("Incorrect password.");
+    return;
+  }
+
+  users[name] = hash;
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("playerName", name);
+  localStorage.setItem("newGame", "true");
+  localStorage.setItem("lives", "5");
+  localStorage.setItem("bonusWords", "[]");
+  localStorage.setItem("totalScore", "0");
+
+  // ✅ Fetch user level from Firebase
+  let userLevel = 1;
+  const ref = doc(db, "progress", name);
+const snapshot = await getDoc(ref);
+if (snapshot.exists()) {
+  const d = snapshot.data();
+  console.log("🧠 Firebase doc for", name, "=", d);
+  if (d.level) userLevel = d.level;
+} else {
+  console.warn("⚠️ No saved progress found for", name);
+}
+
+console.log("🎯 Final resolved level for", name, "=", userLevel);
+
+  localStorage.setItem("level", userLevel);
+
+  // ✅ Show status screen
+  document.getElementById("login-form").style.display = "none";
+  document.getElementById("status-screen").style.display = "block";
+
+  document.getElementById("level-number").textContent = userLevel;
+  document.getElementById("greeting").textContent = `Welcome back, ${name}!`;
+
+  const percent = ((userLevel / 500) * 100).toFixed(1);
+  const phrase = `You are at level ${userLevel} and you are ${percent}% complete.`;
+  const utterance = new SpeechSynthesisUtterance(phrase);
+  window.speechSynthesis.speak(utterance);
+
+  // ✅ Use consistent button behavior
+  setupStatusScreen();
+}
+
+
+loadTopScores();
+
+window.startGame = startGame;
+  </script>
+</body>
+</html>

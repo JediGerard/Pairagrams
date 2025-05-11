@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pairagrams Hall of Fame</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    .section {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+    .section h2 {
+      color: #3498db;
+      margin-bottom: 10px;
+    }
+    .entry {
+      font-size: 18px;
+      margin: 8px 0;
+      color: #333;
+    }
+    #all-users {
+      margin-top: 40px;
+      font-size: 16px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pairagrams Hall of Fame</h1>
+
+  <div id="fastestLevel" class="section">
+    <h2>Fastest Level Completion</h2>
+    <div class="entry" id="fastestLevelEntry">Loading...</div>
+  </div>
+
+  <div id="fastestAverage" class="section">
+    <h2>Fastest Average Time (10+ Levels)</h2>
+    <div class="entry" id="fastestAverageEntry">Loading...</div>
+  </div>
+
+  <div id="mostBonus" class="section">
+    <h2>Most Bonus Words in a Game</h2>
+    <div class="entry" id="mostBonusEntry">Loading...</div>
+  </div>
+
+  <div id="longestBonus" class="section">
+    <h2>Longest Bonus Word Found</h2>
+    <div class="entry" id="longestBonusEntry">Loading...</div>
+  </div>
+
+  <div class="section" id="all-users">
+    <h2>All Players</h2>
+    <div id="userList">Loading...</div>
+  </div>
+  <a href="stats.html">
+    <button style="
+      margin-top: 20px;
+      background-color: #27ae60;
+      color: white;
+      font-size: 16px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    ">
+      📊 View Your Stats
+    </button>
+  </a>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import {
+      getFirestore, getDocs, collection
+    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyADcjbU1jM9Pqq4ZDrInVGSN7SdUb6O5nA",
+      authDomain: "pairagrams.firebaseapp.com",
+      projectId: "pairagrams",
+      storageBucket: "pairagrams.firebasestorage.app",
+      messagingSenderId: "958505224302",
+      appId: "1:958505224302:web:81bae163e8a526467afe7f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadHallOfFame() {
+      try {
+        const snapshot = await getDocs(collection(db, "halloffame"));
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (doc.id === "fastestLevel") {
+            document.getElementById("fastestLevelEntry").textContent = `${data.name} (Level ${data.level}) - ${data.time}s`;
+          } else if (doc.id === "fastestAverage") {
+            document.getElementById("fastestAverageEntry").textContent = `${data.name} - ${data.avg}s average`;
+          } else if (doc.id === "mostBonus") {
+            document.getElementById("mostBonusEntry").textContent = `${data.name} - ${data.count} bonus words`;
+          } else if (doc.id === "longestBonus") {
+            document.getElementById("longestBonusEntry").textContent = `${data.name} (Level ${data.level}) - "${data.word}"`;
+          }
+        });
+
+        const scores = await getDocs(collection(db, "scores"));
+        const users = new Set();
+        scores.forEach(doc => {
+          const data = doc.data();
+          users.add(data.name);
+        });
+
+        document.getElementById("userList").textContent = Array.from(users).sort().join(", ");
+      } catch (e) {
+        console.error("Error loading hall of fame:", e);
+      }
+    }
+
+    loadHallOfFame();
+  </script>
+</body>
+</html>

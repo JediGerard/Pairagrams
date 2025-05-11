@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pairagrams Credits</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f8ff;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #3498db;
+    }
+
+    .info-line {
+      font-size: 18px;
+      margin: 8px 0;
+      color: #444;
+    }
+
+    .groot-clickable {
+      cursor: pointer;
+      color: #e67e22;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .groot-clickable:hover {
+      color: #d35400;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">Pairagrams.com</div>
+    <div class="info-line groot-clickable" onclick="playGroot()">I AM GROOT!</div>
+    <div class="info-line">but some call me Tim Nye</div>
+    <div class="info-line">GitHub Name - JediKnight</div>
+    <div class="info-line">EDX Name - timnye2020</div>
+    <div class="info-line">Bridgetown, Barbados</div>
+    <div class="info-line">Recorded in April 2025</div>
+  </div>
+
+  <audio id="groot-audio" preload="auto">
+    <source src="groot.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Script to play audio -->
+  <script>
+    function playGroot() {
+      const audio = document.getElementById("groot-audio");
+      audio.currentTime = 0; // restart audio if clicked repeatedly
+      audio.play();
+    }
+  </script>
+</body>
+</html>

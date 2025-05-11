@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAIRAGRAMS</title>
+  <style>
+    * {
+    box-sizing: border-box;
+    }
+    body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    position: relative;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    #status-bar {
+      font-size: 20px;
+      margin: 10px 0;
+      color: #333;
+    }
+    #rows-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    #game-description {
+      font-size: 18px;
+      color: #444;
+      margin-bottom: 20px;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #lives-container {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    #lives-display {
+    white-space: nowrap;
+    display: inline-block;
+  }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .word-box {
+      padding: 8px 12px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      font-size: 22px;
+      width: 100px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .word-box.selected {
+     outline: 3px solid #ffeaa7;
+     outline-offset: -2px;
+     background-color: inherit; /* keeps the original color */
+    }
+
+    .word-box.locked {
+      cursor: default;
+    }
+    .word-box.strike {
+      text-decoration: line-through;
+      color: #e74c3c;
+    }
+    .bonus-word-box {
+      font-size: 18px;
+      color: #333;
+      padding: 6px 14px;
+      border-radius: 10px;
+      margin: 5px auto;
+      width: fit-content;
+      background-color: #ddd;
+      display: inline-block;
+      text-align: center;
+    }
+    #bonus-words {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    #background-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("assets/library1.jpg"); /* will be replaced */
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;  /* adjust to taste */
+    z-index: -1;
+    }
+    
+    .encouragement-flash {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #2ecc71;
+      font-weight: bold;
+      font-size: 20px;
+      padding: 12px 20px;
+      margin-top: 20px;
+      border-radius: 12px;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    @keyframes flash {
+      0% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    #game-container {
+    position: relative;
+    padding: 30px;
+    margin: 30px auto;
+    max-width: 600px;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    }
+    
+    #restart {
+      margin-top: 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="background-overlay"></div>
+  <div id="game-container">
+    
+    <div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 20px;">
+      <div style="
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      ">
+        <div style="font-weight: bold; font-size: 18px; flex: 1; min-width: 100px; text-align: left;">
+          Score: <span id="score-value">0</span><br>
+          Level: <span id="level-number">1</span>
+        </div>
+    
+        <h1 style="margin: 0 auto; display: flex; gap: 0px; font-size: 30px; text-align: center;">
+
+          <span style="color: #e74c3c">P</span><span style="color: #f1c40f">A</span><span style="color: #2ecc71">I</span>
+          <span style="color: #f39c12">R</span><span style="color: #1abc9c">A</span><span style="color: #3498db">G</span>
+          <span style="color: #9b59b6">R</span><span style="color: #34495e">A</span><span style="color: #e67e22">M</span>
+          <span style="color: #e84393">S</span>
+        </h1>
+    
+        <div style="font-weight: bold; font-size: 18px; flex: 1; min-width: 100px; text-align: right;">
+          Time Left: <span id="timer">300s</span><br>
+          Lives: <span id="lives-display">👤👤👤👤👤</span>
+        </div>
+      </div>
+    </div>
+    
+    <div id="rows-container"></div>
+
+    <div style="font-size: 22px; font-weight: bold; background: rgba(255,255,255,0.9); padding: 6px 16px; border-radius: 10px; display: inline-block; margin-top: 20px;">
+      Bonus Words
+    </div>
+    <div id="bonus-words"></div>
+
+    <div id="encouragement-message" style="display:none;"></div>
+
+    <button id="restart" style="display:none;" onclick="goToNextLevel()">Next Level</button>
+  </div>
+
+  <script type="module" src="utility.js"></script>
+  <script type="module">
+    (async () => {
+      console.log("✅ games.html script loaded");
+      const { getModeForLevel } = await import('./utility.js');
+      const playerName = localStorage.getItem("playerName") || "Player";
+      const level = parseInt(localStorage.getItem(`level-${playerName}`)) || 1;
+      const colMode = getModeForLevel(level);
+      document.getElementById("level-number").textContent = level;
+
+      localStorage.setItem("colMode", colMode);
+  
+      try {
+        await import(`./game_logic.js?v=${Date.now()}`);
+        console.log("✅ game_logic.js loaded");
+      } catch (err) {
+        console.error("❌ Failed to load game_logic.js", err);
+      }
+    })();
+  </script>
+
+</body>
+</html>

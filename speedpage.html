@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pairagrams Speed Round</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0e6ff; /* light purple */
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    #game-stats {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 5px 0;
+    }
+
+    .pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 60px;
+      font-size: 24px;
+      font-weight: bold;
+      background-color: #ffeaa7;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pair.selected {
+    background-color: #a29bfe !important;
+    }
+
+    #found-words {
+      margin-top: 30px;
+      padding: 10px;
+    }
+
+    #found-words h3 {
+      margin-bottom: 15px;
+    }
+
+#word-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  justify-content: center;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.bonus-word-box {
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Speed Round</h1>
+
+  <div id="game-stats">
+    <div>⏱ Time Left: <span id="timer">30</span> seconds</div>
+    <div>❤️ Lives: <span id="lives">5</span></div>
+    <div>⭐ Score: <span id="score">0</span></div>
+  </div>
+
+  <div id="rows-container"></div>
+
+  <div id="found-words">
+    <h3>Words Found:</h3>
+    <ul id="word-list"></ul>
+  </div>
+
+  <script type="module" src="speed_logic.js"></script>
+</body>
+</html>

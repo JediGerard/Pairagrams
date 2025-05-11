@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Over - Pairagrams</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+      padding: 30px;
+    }
+    #header-summary {
+      background-color: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .summary-block {
+      font-weight: bold;
+      font-size: 18px;
+      flex: 1;
+      min-width: 100px;
+    }
+    #pairagrams-title {
+      margin: 0 auto;
+      font-size: 32px;
+      display: flex;
+      gap: 0;
+      justify-content: center;
+    }
+    .score-board {
+      background-color: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      padding: 30px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 600px;
+    }
+    .score-board h2 {
+      margin-bottom: 10px;
+    }
+    .score-item {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .bonus-word {
+      display: inline-block;
+      background: #ffeaa7;
+      padding: 5px 10px;
+      margin: 4px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .thank-you {
+      margin-top: 40px;
+      font-size: 20px;
+      color: #2ecc71;
+    }
+    form {
+      margin-top: 30px;
+      display: inline-block;
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    form label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    form button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #play-again-btn {
+      margin-top: 25px;
+      background-color: #2ecc71;
+      color: white;
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Summary -->
+  <div id="header-summary">
+    <div class="summary-block">
+      Level: <strong id="level-result">-</strong><br>
+      Time Avg: <strong id="avg-time">-</strong>
+    </div>
+
+    <div id="pairagrams-title">
+      <span style="color: #e74c3c">P</span>
+      <span style="color: #f1c40f">A</span>
+      <span style="color: #2ecc71">I</span>
+      <span style="color: #f39c12">R</span>
+      <span style="color: #1abc9c">A</span>
+      <span style="color: #3498db">G</span>
+      <span style="color: #9b59b6">R</span>
+      <span style="color: #34495e">A</span>
+      <span style="color: #e67e22">M</span>
+      <span style="color: #e84393">S</span>
+    </div>
+
+    <div class="summary-block" style="text-align: right;">
+      Total Words: <strong id="word-count">0</strong><br>
+      Bonus: <strong id="bonus-count">0</strong>
+    </div>
+  </div>
+
+  <!-- Score Summary -->
+  <div class="score-board">
+    <h2>Game Over</h2>
+    <div id="bonus-words-list"></div>
+
+    <div style="margin-top: 20px;">
+      <a href="halloffame.html">
+        <button style="
+          margin: 5px;
+          background-color: #e67e22;
+          color: white;
+          font-size: 16px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        ">
+          🏆 View Hall of Fame
+        </button>
+      </a>
+
+      <a href="stats.html">
+        <button style="
+          margin: 5px;
+          background-color: #2980b9;
+          color: white;
+          font-size: 16px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        ">
+          📊 See All Stats
+        </button>
+      </a>
+
+      <button id="play-again-btn" onclick="restartGame()">
+        🔁 Play Again
+      </button>
+    </div>
+  </div>
+
+  <div class="thank-you">Thank you for playing!</div>
+
+  <form action="https://formspree.io/f/xrbpnwnk" method="POST">
+    <h3>We'd love your feedback!</h3>
+    <label>Your email:
+      <input type="email" name="email" placeholder="you@example.com" required>
+    </label>
+    <label>Your message:
+      <textarea name="message" rows="5" maxlength="1000" placeholder="Share your feedback or suggestions..." required></textarea>
+    </label>
+    <button type="submit">Send</button>
+  </form>
+
+  <script>
+    function restartGame() {
+      localStorage.setItem("lives", "5");
+      localStorage.setItem("score", "0");
+      localStorage.setItem("totalScore", "0");
+      localStorage.setItem("bonusWords", "[]");
+      localStorage.setItem("wordCount", "0");
+      localStorage.setItem("totalTimeSpent", "0");
+      localStorage.setItem("newGame", "true");
+      window.location.href = "index.html";
+    }
+
+    const level = parseInt(localStorage.getItem("level") || "1");
+    document.getElementById("level-result").textContent = level > 1 ? level - 1 : 1;
+    document.getElementById("word-count").textContent = localStorage.getItem("wordCount") || "0";
+
+    const bonusList = JSON.parse(localStorage.getItem("bonusWords") || "[]");
+    document.getElementById("bonus-count").textContent = bonusList.length;
+
+    const bonusContainer = document.getElementById("bonus-words-list");
+    bonusContainer.innerHTML = bonusList.length === 0
+      ? "<i>No bonus words found.</i>"
+      : bonusList.map(word => `<span class="bonus-word">${word}</span>`).join("");
+
+    const avgTime = localStorage.getItem("avgTime");
+    document.getElementById("avg-time").textContent = avgTime ? avgTime + "s" : "-";
+  </script>
+
+</body>
+</html>
