@@ -116,14 +116,18 @@ async function loadGameData() {
       console.log(`ℹ️ No saved progress found for ${playerName}, defaulting to level 1`);
     }
 
-    // ✅ Step 2: Load caches for config, dictionary, and word map
+    // ✅ Step 2: Load all required data in parallel if not cached
     if (!configCache || !wordMapCache || !dictCache) {
       console.time("initialLoad");
 
-      const configFile = level >= 26 ? "level_config_3col.json" : "level_config_2col.json";
-
-      const [levelConfig, wordMapRaw, dictText] = await Promise.all([
-        fetch(configFile).then(r => r.json()),
+      const [
+        config2col,
+        config3col,
+        wordMapRaw,
+        dictText
+      ] = await Promise.all([
+        fetch("level_config_2col.json").then(r => r.json()),
+        fetch("level_config_3col.json").then(r => r.json()),
         fetch("master_words_file_with_parts_labeled.json").then(r => r.json()),
         fetch("words_scrabble.csv").then(r => r.text())
       ]);
@@ -135,24 +139,25 @@ async function loadGameData() {
         }
       }
 
-      configCache = levelConfig;
+      configCache = level >= 26 ? config3col : config2col;
       wordMapCache = wordMap;
       dictCache = new Set(dictText.trim().split(/\r?\n/).map(w => w.toLowerCase()));
       console.timeEnd("initialLoad");
     }
 
     config = configCache;
-masterWords = wordMapCache;
-dictionary = dictCache;
+    masterWords = wordMapCache;
+    dictionary = dictCache;
 
-colMode = level >= 26 ? 3 : 2;  // ✅ FIXED: refresh column mode
-setupGame();
+    colMode = level >= 26 ? 3 : 2;
+    setupGame();
 
   } catch (e) {
     console.error("🔥 Problem loading game data:", e);
     alert("Game data could not be loaded. Try refreshing.");
   }
 }
+
 
 window.onload = loadGameData;
 
