@@ -696,6 +696,10 @@ function setupThreeColumnGame() {
   rowCount = entry.rows;
   console.log(`🧩 Level ${level} uses format ${leftLen}-${midLen}-${rightLen} with ${rowCount} rows`);
 
+  document.getElementById("bonus-words").innerHTML = "";
+  document.getElementById("encouragement-message")?.remove();
+
+
 
   matchedPairs = [];
   matchedIndexMap.clear();
