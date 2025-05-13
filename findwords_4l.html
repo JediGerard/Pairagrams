@@ -9,7 +9,7 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background-color: #eaf2ff;
+      background-color: #ffffff;
       margin: 0;
       padding: 0;
     }
@@ -27,11 +27,11 @@
     cursor: pointer;
   }
   .button-green { background-color: #27ae60; }  /* I AM DONE */
-.button-red   { background-color: #e74c3c; }  /* SHUFFLE */
-.button-gray  { background-color: #7f8c8d; }  /* Submit / Clear */
+  .button-red   { background-color: #e74c3c; }  /* SHUFFLE */
+  .button-gray  { background-color: #7f8c8d; }  /* Submit / Clear */
 
 
-    #game-header {
+  #game-header {
     background-color: rgba(255,255,255,0.95);
     margin: 10px auto; /* 🔽 tightened from 20px */
     padding: 20px;
@@ -44,45 +44,40 @@
     gap: 30px;
     }
 
-    #word-tools {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-left: calc(50% - 140px); /* aligns with left side of grid */
-  margin-bottom: 12px;
-  gap: 6px;
-}
-
-#word-tools label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 15px;
-}
+  #word-tools {
+  display: none;
+  margin: 10px auto 20px;
+  width: fit-content;
+  text-align: center;
+  }
 
 
-#word-preview {
+ 
+
+
+
+  #word-preview {
   font-size: 20px;            /* ✅ smaller text */
   width: 100px;               /* ✅ narrower */
   height: 34px;               /* matches button height */
   text-align: center;
   margin-bottom: 4px;
-}
+  }
 
 
 
 
-    .stat-block {
+  .stat-block {
       font-weight: bold;
       font-size: 18px;
-    }
-    .row {
+  }
+  .row {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin: 6px 0;
-    }
-    .pair {
+  }
+  .pair {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -94,21 +89,21 @@
       border-radius: 8px;
       cursor: pointer;
       user-select: none;
-    }
-    .selected {
+  }
+  .selected {
       background-color: #ffeaa7 !important;
       outline: 3px solid #f1c40f;
       outline-offset: -2px;
-    }
-    #found-words {
+  }
+  #found-words {
   margin-top: 4px; /* 🔽 reduce gap after shuffle */
   padding: 4px;
   }
 
-#found-words h3 {
+  #found-words h3 {
   margin: 8px 0 4px 0;
   }
-    #word-list {
+  #word-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       justify-content: center;
@@ -117,16 +112,16 @@
       list-style: none;
       max-width: 400px;
       margin: 0 auto;
-    }
-    .bonus-word-box {
+  }
+  .bonus-word-box {
       text-align: center;
       padding: 10px 16px;
       border-radius: 20px;
       font-size: 18px;
       font-weight: bold;
       color: white;
-    }
-   .done-btn {
+  }
+  .done-btn {
   background-color: #27ae60;
   color: white;
   border: none;
@@ -137,13 +132,53 @@
   cursor: pointer;
   margin: 40px auto 20px;
   display: block;
-}
+  }
 
-    #correct-words-section {
+  .switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  }
+  .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  }
+  .slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.4s;
+  }
+  .slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+  }
+  input:checked + .slider {
+  background-color: #27ae60;
+  }
+  input:checked + .slider:before {
+  transform: translateX(16px);
+  }
+
+  #correct-words-section {
       display: none;
       margin-top: 30px;
-    }
-    .correct-grid {
+  }
+  .correct-grid {
       display: grid;
       grid-template-columns: repeat(4, auto);
       gap: 12px;
@@ -152,8 +187,8 @@
       max-width: 500px;
       margin-left: auto;
       margin-right: auto;
-    }
-    .answer-box {
+  }
+  .answer-box {
       background-color: #81ecec;
       color: black;
       padding: 10px 16px;
@@ -161,7 +196,9 @@
       font-size: 20px;
       font-weight: bold;
       text-align: center;
-    }
+  }
+  
+
   </style>
 </head>
 <body>
@@ -171,23 +208,28 @@
     <div class="stat-block">❤️ Lives: <span id="lives">5</span></div>
     <div class="stat-block">⭐ Score: <span id="score">0</span></div>
   </div>
+  <!-- Safe Mode toggle (ALWAYS visible) -->
+<div style="margin-top: 10px; margin-bottom: 12px;">
+  <label class="switch">
+    <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
+    <span class="slider"></span>
+  </label>
+  <span style="margin-left: 8px;">Safe Mode</span>
+</div>
 
-  <div id="word-tools">
-    <label><input type="checkbox" id="manual-mode" /> Manual Entry Mode</label>
-    
-    <div style="display: flex; align-items: center;">
-      <label><input type="checkbox" id="sound-toggle" /> Sound Off</label>
-      <button class="button-base button-red" onclick="shuffleBoard()" style="margin-left: 100px;">Shuffle</button>
-    </div>
-    
   
-    <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
-      <input id="word-preview" type="text" readonly maxlength="4" placeholder="type here" />
-      <button class="button-base button-gray" onclick="submitWord()">Submit</button>
-      <button class="button-base button-gray" onclick="clearPreview()">Clear</button>
-
-    </div>
+<div id="word-tools" style="display: none;">
+  <div style="display: flex; align-items: center; gap: 6px;">
+    <input id="word-preview" type="text" readonly maxlength="4" placeholder="type here" />
+    <button class="button-base button-gray" onclick="submitWord()">Submit</button>
+    <button class="button-base button-gray" onclick="clearPreview()">Clear</button>
   </div>
+</div>
+
+
+
+  
+
   
   
     
@@ -202,7 +244,9 @@
     <ul id="word-list"></ul>
   </div>
 
+  <button class="button-base button-red" onclick="shuffleBoard()" style="margin-right: 10px;">  SHUFFLE  </button>
   <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>
+
 
   <div id="correct-words-section">
     <h3>Here are the words I found:</h3>
@@ -212,5 +256,12 @@
   <script type="module" src="findwords_4l_logic.js"></script>
 
   
+  <script>
+    window.onload = () => {
+      if (document.getElementById("safe-mode-toggle")?.checked) {
+        toggleSafeMode();
+      }
+    };
+  </script>
 </body>
 </html>

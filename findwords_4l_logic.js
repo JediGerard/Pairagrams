@@ -105,6 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
   
 });
 
+window.toggleSafeMode = toggleSafeMode;
+
+function toggleSafeMode() {
+  const isSafe = document.getElementById("safe-mode-toggle").checked;
+  const tools = document.getElementById("word-tools");
+  tools.style.display = isSafe ? "block" : "none";
+}
+
+
 // ==================== Utility Functions ====================
 function speak(text) {
   const soundToggle = document.getElementById("sound-toggle");
@@ -213,24 +222,23 @@ function createSpeedBox(pair) {
 function toggleSelection(div) {
   if (div.classList.contains("selected")) {
     div.classList.remove("selected");
-  
-    // ✅ Remove this pair from the array (only if not using manual mode)
-    const manualMode = document.getElementById("manual-mode");
+
+    const manualMode = document.getElementById("safe-mode-toggle");
     if (!manualMode || !manualMode.checked) {
       const pair = div.textContent;
       selectedPairs = selectedPairs.filter(p => p !== pair);
     }
-  
+
     return;
   }
 
   div.classList.add("selected");
 
-  const manualMode = document.getElementById("manual-mode");
+  const manualMode = document.getElementById("safe-mode-toggle");
   const pair = div.textContent;
 
   if (manualMode && manualMode.checked) {
-    onLetterSelected(pair); // ✅ push to previewLetters and update input
+    onLetterSelected(pair);
   } else {
     selectedPairs.push(pair);
     if (selectedPairs.length === 2) {
@@ -345,23 +353,58 @@ function endGame() {
 window.previewLetters = [];
 
 window.onLetterSelected = function(letter) {
-  const manualMode = document.getElementById("manual-mode");
-  if (!manualMode || !manualMode.checked) return;
+  console.log("🟢 onLetterSelected called with:", letter);
 
-  if (previewLetters.length === 0) {
-    const title = document.getElementById("game-title");
-    if (title) title.style.display = "none";
+  const isSafeMode = document.getElementById("safe-mode-toggle")?.checked;
+  console.log("🔍 Safe mode checked:", isSafeMode);
 
-    const tools = document.getElementById("word-tools");
-    if (tools) tools.style.display = "block";
+  if (!isSafeMode) return;
+
+  if (!window.previewLetters) previewLetters = [];
+
+  console.log("📏 Letters before push:", previewLetters.join(""));
+
+  const totalChars = previewLetters.join("").length;
+  if (totalChars >= 4)
+    {
+    const soundOff = document.getElementById("sound-toggle")?.checked;
+
+    if (!soundOff && typeof speak === "function") {
+      console.log("🔊 Speaking max message");
+      speak("Max 4 letters");
+    } else {
+      console.log("⚠️ Alerting max message");
+      alert("Max 4 letters");
+    }
+
+    return;
   }
 
-  if (previewLetters.length < 4) {
-    previewLetters.push(letter);
-    const preview = document.getElementById("word-preview");
-    if (preview) preview.value = previewLetters.join("");
-  }
+  previewLetters.push(letter);
+  console.log("✏️ Letters after push:", previewLetters.join(""));
+
+  const preview = document.getElementById("word-preview");
+  if (preview) preview.value = previewLetters.join("");
 };
+
+function generatePuzzleId(letterPairs) {
+  const boardString = letterPairs.join("");
+
+  // SHA-256 hash
+  const buffer = new TextEncoder().encode(boardString);
+  return crypto.subtle.digest("SHA-256", buffer).then(hashBuffer => {
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const letters = String.fromCharCode(
+      65 + (hashArray[0] % 26),
+      65 + (hashArray[1] % 26)
+    );
+    const number = ((hashArray[2] << 16) | (hashArray[3] << 8) | hashArray[4]) % 1000000;
+    return `${letters}-${number.toString().padStart(6, "0")}`;
+  });
+}
+
+
+
 
 window.shufflePreview = function() {
   previewLetters = previewLetters.sort(() => Math.random() - 0.5);

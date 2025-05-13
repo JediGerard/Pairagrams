@@ -24,10 +24,6 @@ if (!localStorage.getItem("newGame")) {
 const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675", "#74b9ff", "#fd79a8"];
 let colorIndex = 0;
 
-const backgrounds = [
-  "#fce4ec", "#e3f2fd", "#e8f5e9", "#fff3e0", "#ede7f6",
-  "#f3e5f5", "#f1f8e9", "#e0f7fa", "#ffebee", "#fbe9e7"
-];
 
 let selectedLeft = null;
 let selectedMiddle = null;
@@ -63,7 +59,6 @@ if (savedBonus) JSON.parse(savedBonus).forEach(word => usedBonusWords.add(word))
 if (localStorage.getItem("newGame") === "true") {
   localStorage.setItem("wordCount", "0");
   localStorage.setItem("startLevel", level.toString()); // ✅ Record base level
-  localStorage.setItem("bonusWords", "[]");
   localStorage.setItem("totalTimeSpent", "0");
   localStorage.setItem("lives", "5");         // ✅ NEW LINE
   lives = 5;                                  // ✅ NEW LINE
@@ -103,6 +98,7 @@ async function saveProgressToFirebase(playerName, data) {
 
 
 async function loadGameData() {
+  window.loadGameData = loadGameData;
   try {
     // ✅ Step 1: Load player level from Firebase if possible
     const ref = doc(db, "progress", playerName);
@@ -110,6 +106,13 @@ async function loadGameData() {
     if (snapshot.exists()) {
       const d = snapshot.data();
       level = d.level || 1;
+      const savedBonusWords = d.bonusWords || [];
+      localStorage.setItem("bonusWords", JSON.stringify(savedBonusWords));
+      savedBonusWords.forEach(word => usedBonusWords.add(word));
+      console.log("💾 Restored bonusWords from Firebase:", savedBonusWords);
+
+      localStorage.setItem("bonusWords", JSON.stringify(savedBonusWords));
+    
       localStorage.setItem(`level-${playerName}`, level);
       console.log(`✅ Loaded level ${level} from Firebase for ${playerName}`);
     } else {
@@ -150,6 +153,8 @@ async function loadGameData() {
     dictionary = dictCache;
 
     colMode = level >= 26 ? 3 : 2;
+    console.log("🚀 loadGameData complete — setting up game");
+
     setupGame();
 
   } catch (e) {
@@ -159,7 +164,7 @@ async function loadGameData() {
 }
 
 
-window.onload = loadGameData;
+
 
 function updateLevelDisplay() {
   const levelEl = document.getElementById("level-number");
@@ -170,6 +175,8 @@ function updateLevelDisplay() {
 let colMode = level >= 26 ? 3 : 2;
 
 function setupGame() {
+  console.log("🧪 setupGame started. colMode =", colMode);
+
   if (colMode === 2) {
     setupTwoColumnGame();
   } else if (colMode === 3) {
@@ -180,14 +187,15 @@ function setupGame() {
 }
 
 function setupTwoColumnGame() {
-  document.body.style.backgroundColor = backgrounds[level % backgrounds.length];
+  document.body.style.backgroundColor = "#ffffff"; // pure white
+
   clearInterval(timerInterval);
   localStorage.setItem('newGame', "false");
   timer = 300;
   gameEnded = false;
   matchedPairs = [];
   rowCount = 3 + ((level - 1) % 5);
-  document.getElementById("bonus-words").innerHTML = "";
+
   document.getElementById("encouragement-message")?.remove();
   colorIndex = 0;
 
@@ -247,7 +255,6 @@ do {
 
 if (!selected) {
   console.warn("⚠️ Failed to find a valid board after 50 attempts.");
-  return; // ✅ prevents crash
 } else {
   console.log("✅ Selected words:", selected.map(w => w.full));
 }
@@ -276,13 +283,17 @@ do {
 );
 
   redrawColumns();
+  // Restore bonus words from localStorage
+const saved = JSON.parse(localStorage.getItem("bonusWords") || "[]");
+saved.forEach(word => {
+  if (!usedBonusWords.has(word)) {
+    usedBonusWords.add(word);
+    addBonusWord(word);
+  }
+});
+
   startTimer();
   
-  const bgIndex = (level - 1) % 5 + 1;
-  const overlay = document.getElementById("background-overlay");
-  if (overlay) {
-    overlay.style.backgroundImage = `url('assets/library${bgIndex}.jpg')`;
-  }
   updateLevelDisplay();
   renderLives();
 }
@@ -303,6 +314,26 @@ function startTimer() {
 }
 
 // ==================== Gameplay ====================
+function getBonusPoints(index) {
+  // Fibonacci sequence ×10: 10, 10, 20, 30, 50, 80, 130...
+  const fib = [10, 10];
+  for (let i = 2; i <= index; i++) {
+    fib[i] = fib[i - 1] + fib[i - 2];
+  }
+  return fib[index] || 10;
+}
+function applySpeedBonus(levelTime, colMode) {
+  if (levelTime >= 30) return 0;
+
+  let bonus = 0;
+  if (colMode === 2) bonus = 100;
+  else if (colMode === 3) bonus = 300;
+  else if (colMode === 4) bonus = 500;
+
+  speak("Speed bonus");
+  return bonus;
+}
+
 async function handleClick(el) {
   if (el.classList.contains("locked")) return;
 
@@ -317,6 +348,8 @@ async function handleClick(el) {
     return;
   }
 
+  
+  
   // Deselect existing selection on that side
   document.querySelectorAll(`.word-box.selected[data-side="${side}"]`).forEach(e => e.classList.remove("selected"));
   el.classList.add("selected");
@@ -330,44 +363,48 @@ async function handleClick(el) {
     const left = selectedLeft.dataset.word;
     const right = selectedRight.dataset.word;
     const match = correctPairs.find(p => p.left === left && p.right === right);
-
+  
     if (match) {
       matchedPairs.push(match);
       const color = colors[matchedPairs.length % colors.length];
-    
+  
       [selectedLeft, selectedRight].forEach(el => {
         el.classList.add("locked");
         el.classList.remove("selected");
         el.style.backgroundColor = color;
       });
-    
+  
       speakRandomPraise();
-      score += 10;
+      score += 10 + level;
+  
       selectedLeft = selectedRight = null;
-    
+  
       if (matchedPairs.length === rowCount) {
-        document.getElementById("restart").style.display = "inline-block";
+        await endGame(); // ✅ triggers encouragement, time tracking, bonus sync, and shows button
+
       }
     } else {
       const combined = left + right;
+  
       if (dictionary.has(combined.toLowerCase())) {
         if (!usedBonusWords.has(combined)) {
+          const bonusIndex = usedBonusWords.size;
+          const bonusPoints = getBonusPoints(bonusIndex);
+          score += bonusPoints;
           addBonusWord(combined);
           usedBonusWords.add(combined);
-          score += 15;
           speak("BONUS");
         } else {
           speak("Already found");
         }
-    
-        // ✅ Always clear selection and background for bonus/duplicate
+  
         [selectedLeft, selectedRight].forEach(el => {
           if (el) {
             el.classList.remove("selected");
             el.style.backgroundColor = "";
           }
         });
-    
+  
         selectedLeft = selectedRight = null;
       } else {
         strikeBoxes([selectedLeft, selectedRight]);
@@ -377,11 +414,11 @@ async function handleClick(el) {
         selectedLeft = selectedRight = null;
       }
     }
-
-    selectedLeft = selectedRight = null;
+  
     updateScoreDisplay();
     renderLives();
   }
+
 
   // === 3-column logic ===
   if (colMode === 3 && selectedLeft && selectedMiddle && selectedRight) {
@@ -408,7 +445,8 @@ async function handleClick(el) {
       });
   
       speakRandomPraise();
-      score += 10;
+      score += 10 + level;
+
       selectedLeft = selectedMiddle = selectedRight = null;
       redrawColumns3();
   
@@ -416,34 +454,29 @@ async function handleClick(el) {
 console.log("🔢 Matched pairs so far:", matchedPairs.length);
 console.log("🔢 Expected rowCount:", rowCount);
 console.log("🎯 All matches found — ready to show NEXT LEVEL");
-      if (matchedPairs.length === rowCount) {
-        await saveProgressToFirebase(playerName, {
-          level,
-          totalScore: totalScore + score,
-          lives,
-          totalTimeSpent: parseInt(localStorage.getItem("totalTimeSpent") || "0"),
-          bonusWords: [...usedBonusWords]
-        });
-      
-        const restart = document.getElementById("restart");
-        if (restart) restart.style.display = "inline-block";
-      }
+if (matchedPairs.length === rowCount) {
+  await endGame();
+}
+
       
       
     } else {
       const combined = (l + m + r).toLowerCase();
-      if (dictionary.has(combined)) {
-        if (!usedBonusWords.has(combined)) {
-          addBonusWord(combined);
-          usedBonusWords.add(combined);
-          score += 15;
-          speak("BONUS");
-        } else {
-          speak("Already found");
-        }
-        [selectedLeft, selectedMiddle, selectedRight].forEach(el => el?.classList.remove("selected"));
-        selectedLeft = selectedMiddle = selectedRight = null;
-      } else {
+if (dictionary.has(combined)) {
+  if (!usedBonusWords.has(combined)) {
+    const bonusIndex = usedBonusWords.size; // 0-based index
+    const bonusPoints = getBonusPoints(bonusIndex);
+    score += bonusPoints;
+    addBonusWord(combined);
+    usedBonusWords.add(combined);
+    speak("BONUS");
+  } else {
+    speak("Already found");
+  }
+
+  [selectedLeft, selectedMiddle, selectedRight].forEach(el => el?.classList.remove("selected"));
+  selectedLeft = selectedMiddle = selectedRight = null;
+} else {
         strikeBoxes([selectedLeft, selectedMiddle, selectedRight]);
         lives--;
         score -= 1;
@@ -455,7 +488,6 @@ console.log("🎯 All matches found — ready to show NEXT LEVEL");
     updateScoreDisplay();
     renderLives();
   }
-  
 }
 
 function updateScoreDisplay() {
@@ -476,7 +508,14 @@ function speakRandomPraise() {
 
 
 function redrawColumns() {
+  
+  console.log("🎨 Drawing rows to #rows-container");
+
+
   const container = document.getElementById("rows-container");
+  console.log("📦 unmatchedLeft:", unmatchedLeft);
+  console.log("📦 unmatchedRight:", unmatchedRight);
+
   container.innerHTML = "";
 
   for (let i = 0; i < unmatchedLeft.length; i++) {
@@ -533,6 +572,7 @@ function createBox(word, side, row) {
     el.onclick = () => handleClick(el);
   }
 
+  console.log(`🧱 createBox: ${word}, side: ${side}, row: ${row}`);
   return el;
 }
 
@@ -540,13 +580,39 @@ function createBox(word, side, row) {
 
 
 
+
+let lastRowColorSet = new Set();
+
 function addBonusWord(word) {
+  const container = document.getElementById("bonus-words");
+
   const box = document.createElement("div");
   box.textContent = word.toLowerCase();
   box.className = "bonus-word-box";
-  box.style.backgroundColor = colors[colorIndex++ % colors.length];
-  document.getElementById("bonus-words").appendChild(box);
+
+  // Rotate colors without repeating in a row of 3
+  let attempts = 0;
+  do {
+    box.style.backgroundColor = colors[colorIndex % colors.length];
+    colorIndex = (colorIndex + 1) % colors.length;
+    attempts++;
+  } while (lastRowColorSet.has(box.style.backgroundColor) && attempts < colors.length);
+
+  lastRowColorSet.add(box.style.backgroundColor);
+  if (lastRowColorSet.size >= 3) {
+    lastRowColorSet.clear(); // Start fresh every row
+  }
+
+  container.appendChild(box);
+
+  const boxes = container.querySelectorAll(".bonus-word-box");
+  if (boxes.length > 12) {
+    container.removeChild(boxes[0]);
+  }
 }
+
+
+
 
 // ==================== End of Game ====================
 async function saveScore(score) {
@@ -569,6 +635,9 @@ async function endGame() {
   clearInterval(timerInterval);
 
   const levelTimeSpent = 300 - timer;
+  const speedBonus = applySpeedBonus(levelTimeSpent, colMode);
+  score += speedBonus;
+
 
   totalScore += score + Math.max(0, timer);
   localStorage.setItem("totalScore", totalScore.toString());
@@ -619,11 +688,13 @@ async function endGame() {
   .then(data => {
     const lines = data.trim().split(/\r?\n/).slice(1);
     const pick = lines[Math.floor(Math.random() * lines.length)];
-    const el = document.createElement("div");
-    el.id = "encouragement-message";
-    el.textContent = pick;
-    el.className = "encouragement-flash";
-    document.getElementById("bonus-words").appendChild(el);
+  
+    const msgContainer = document.createElement("div");
+    msgContainer.id = "encouragement-message";
+    msgContainer.className = "encouragement-flash";
+    msgContainer.textContent = pick;
+    document.getElementById("bonus-words").after(msgContainer);  // 👈 append *after* bonus list
+
     speak(pick);
   })
   .catch(() => {
@@ -638,17 +709,17 @@ async function endGame() {
 
 // ==================== Next Level ====================
 function goToNextLevel() {
-  
   if (matchedPairs.length < rowCount) {
     return;
   }
 
   const startLevel = parseInt(localStorage.getItem("startLevel") || level);
   if ((level - startLevel + 1) % 5 === 0 && lives < 10) {
-  lives++;
-  localStorage.setItem("lives", lives.toString());
-  renderLives();
+    lives++;
+    localStorage.setItem("lives", lives.toString());
+    renderLives();
   }
+
   level++;
   if (level > 65) {
     alert("You’ve reached the final level!");
@@ -656,10 +727,10 @@ function goToNextLevel() {
   }
 
   localStorage.setItem(`level-${playerName}`, level);
-  // ✅ Update the displayed level
   updateLevelDisplay();
 
   document.getElementById("rows-container").innerHTML = "";
+
   saveProgressToFirebase(playerName, {
     level,
     totalScore: totalScore + score,
@@ -667,10 +738,11 @@ function goToNextLevel() {
     totalTimeSpent: parseInt(localStorage.getItem("totalTimeSpent") || "0"),
     bonusWords: [...usedBonusWords]
   });
-  
-  loadGameData();
-  
+
+  // ✅ ADD THIS LINE
+  setupGame();
 }
+
 
 async function updateUserStats(name, bonusWordsThisGame) {
   const ref = doc(db, "users", name);
@@ -686,6 +758,7 @@ window.goToNextLevel = goToNextLevel;
 
 
 function setupThreeColumnGame() {
+  document.body.style.backgroundColor = "#ffffff";
   const entry = config[level - 26];
   if (!entry || !entry.format || typeof entry.rows !== "number") {
     alert("Invalid config for this level.");
@@ -696,7 +769,7 @@ function setupThreeColumnGame() {
   rowCount = entry.rows;
   console.log(`🧩 Level ${level} uses format ${leftLen}-${midLen}-${rightLen} with ${rowCount} rows`);
 
-  document.getElementById("bonus-words").innerHTML = "";
+  
   document.getElementById("encouragement-message")?.remove();
 
 
@@ -773,9 +846,21 @@ function setupThreeColumnGame() {
   shuffle(unmatchedRight);
 
   redrawColumns3();
+  // Restore bonus words from localStorage
+const saved = JSON.parse(localStorage.getItem("bonusWords") || "[]");
+saved.forEach(word => {
+  if (!usedBonusWords.has(word)) {
+    usedBonusWords.add(word);
+    addBonusWord(word);
+  }
+});
+
   startTimer();
   updateLevelDisplay();
   renderLives();
 }
 
-loadGameData();
+window.onload = () => {
+  console.log("🟢 window.onload fired");
+  loadGameData();
+};
