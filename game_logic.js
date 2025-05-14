@@ -142,7 +142,13 @@ async function loadGameData() {
         }
       }
 
-      configCache = level >= 26 ? config3col : config2col;
+      configCache = (level >= 26 ? config3col : config2col)[level - 1]
+  ?   (level >= 26 ? config3col : config2col)
+  :   null;
+
+      if (!configCache) {
+        throw new Error(`❌ No config found for level ${level}`);
+      }
       wordMapCache = wordMap;
       dictCache = new Set(dictText.trim().split(/\r?\n/).map(w => w.toLowerCase()));
       console.timeEnd("initialLoad");
@@ -155,6 +161,10 @@ async function loadGameData() {
     colMode = level >= 26 ? 3 : 2;
     console.log("🚀 loadGameData complete — setting up game");
 
+    if (!config[level - 1]) {
+    alert(`⚠️ No config found for level ${level}. Please check configuration files.`);
+    return;
+}
     setupGame();
 
   } catch (e) {
