@@ -1,5 +1,5 @@
 // ==================== Imports ====================
-import { db, speak, shuffle, getLongestWord, updateHallOfFame } from "./utility.js";
+import { db, shuffle, getLongestWord, updateHallOfFame } from "./utility.js";
 import {
   collection, addDoc,
   doc, getDoc, setDoc
@@ -274,8 +274,7 @@ if (!selected) {
 const topLeftSkips = Object.entries(leftReuseLog).sort((a, b) => b[1] - a[1]).slice(0, 5);
 const topRightSkips = Object.entries(rightReuseLog).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
-console.log("🔁 Most skipped LEFT parts:", topLeftSkips);
-console.log("🔁 Most skipped RIGHT parts:", topRightSkips);
+
 
 correctPairs = selected;
 
@@ -340,7 +339,7 @@ function applySpeedBonus(levelTime, colMode) {
   else if (colMode === 3) bonus = 300;
   else if (colMode === 4) bonus = 500;
 
-  speak("Speed bonus");
+  showPopupMessage("Speed bonus");
   return bonus;
 }
 
@@ -403,9 +402,9 @@ async function handleClick(el) {
           score += bonusPoints;
           addBonusWord(combined);
           usedBonusWords.add(combined);
-          speak("BONUS");
+          showPopupMessage("BONUS");
         } else {
-          speak("Already found");
+          showPopupMessage("Already found");
         }
   
         [selectedLeft, selectedRight].forEach(el => {
@@ -460,12 +459,9 @@ async function handleClick(el) {
       selectedLeft = selectedMiddle = selectedRight = null;
       redrawColumns3();
   
-      console.log("🧩 Match found:", match);
-console.log("🔢 Matched pairs so far:", matchedPairs.length);
-console.log("🔢 Expected rowCount:", rowCount);
-console.log("🎯 All matches found — ready to show NEXT LEVEL");
-if (matchedPairs.length === rowCount) {
-  await endGame();
+    
+    if (matchedPairs.length === rowCount) {
+        await endGame();
 }
 
       
@@ -479,9 +475,9 @@ if (dictionary.has(combined)) {
     score += bonusPoints;
     addBonusWord(combined);
     usedBonusWords.add(combined);
-    speak("BONUS");
+    showPopupMessage("BONUS");
   } else {
-    speak("Already found");
+    showPopupMessage("Already found");
   }
 
   [selectedLeft, selectedMiddle, selectedRight].forEach(el => el?.classList.remove("selected"));
@@ -500,6 +496,28 @@ if (dictionary.has(combined)) {
   }
 }
 
+function showPopupMessage(message) {
+  const popup = document.createElement("div");
+  popup.textContent = message;
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.background = "#ffffff";
+  popup.style.color = "#2c3e50";
+  popup.style.padding = "16px 32px";
+  popup.style.fontSize = "28px";
+  popup.style.fontWeight = "bold";
+  popup.style.borderRadius = "12px";
+  popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+  popup.style.zIndex = "9999";
+  document.body.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 1000);
+}
+
 function updateScoreDisplay() {
   document.getElementById("score-value").textContent = totalScore + score;
 }
@@ -512,20 +530,20 @@ function strikeBoxes(boxes) {
 }
 
 function speakRandomPraise() {
-  const phrases = ["Yes!", "Bingo!", "Amazing!", "You got it!", "Correct!", "Nice!", "Well done!", "Boom!", "That’s right!", "Sweet!"];
-  speak(phrases[Math.floor(Math.random() * phrases.length)]);
+  const phrases = [
+    "Yes!", "Bingo!", "Amazing!", "You got it!", "Correct!",
+    "Nice!", "Well done!", "Boom!", "That’s right!", "Sweet!"
+  ];
+  const message = phrases[Math.floor(Math.random() * phrases.length)];
+  showPopupMessage(message);
 }
+
 
 
 function redrawColumns() {
   
-  console.log("🎨 Drawing rows to #rows-container");
-
-
   const container = document.getElementById("rows-container");
-  console.log("📦 unmatchedLeft:", unmatchedLeft);
-  console.log("📦 unmatchedRight:", unmatchedRight);
-
+  
   container.innerHTML = "";
 
   for (let i = 0; i < unmatchedLeft.length; i++) {
@@ -582,7 +600,6 @@ function createBox(word, side, row) {
     el.onclick = () => handleClick(el);
   }
 
-  console.log(`🧱 createBox: ${word}, side: ${side}, row: ${row}`);
   return el;
 }
 
@@ -704,8 +721,12 @@ async function endGame() {
     msgContainer.className = "encouragement-flash";
     msgContainer.textContent = pick;
     document.getElementById("bonus-words").after(msgContainer);  // 👈 append *after* bonus list
+    setTimeout(() => {
+    msgContainer.remove();
+    }, 3000);
 
-    speak(pick);
+
+    
   })
   .catch(() => {
     console.warn("Could not load encouragements.");
