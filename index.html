@@ -47,23 +47,44 @@
     max-width: 80%;
   }
 }
-    
-    .center-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 20px;
-    }
-    .box {
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 400px;
-    }
+ .box.beige-box {
+  background-color: #fdf5e6 !important;
+  border: 1px solid #e0d6c4;
+}
+  .center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  min-height: 100vh;
+  padding-top: 30px; /* Reduced from 60px to 30px */
+  gap: 30px;          /* Optional: adds consistent spacing between stacked items */
+}
+
+
+  .box {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+}
+.start-btn {
+  background-color: #3498db;
+  color: white;
+  font-size: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.start-btn:hover {
+  background-color: #2980b9;
+}
+
     input, button {
       font-size: 18px;
       margin: 10px 0;
@@ -73,15 +94,7 @@
       width: 100%;
       box-sizing: border-box;
     }
-    .start-btn {
-      background-color: #3498db;
-      color: white;
-      font-size: 20px;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
+    
     #top-scores {
       list-style: none;
       padding: 0;
@@ -95,21 +108,27 @@
   padding: 4px 10px;
   font-size: 16px;
 }
+.blue-box {
+  background-color: #e8f4fd; /* light blue tone */
+  border: 1px solid #cce0f5;
+}
   </style>
 </head>
 <body>
+  <img src="pairagrams_clear_logo.png" alt="Pairagrams Logo" style="max-width: 280px; margin-bottom: 20px;">
   <div class="center-container">
 
 
 
     <!-- LOGIN FORM -->
-    <div id="login-form" class="box">
-      <label for="playerName">Your Name:</label>
-      <input type="text" id="playerName" placeholder="Your name">
-      <label for="password">Password:</label>
-      <input type="password" id="password" placeholder="Enter or create password">
-      <button class="start-btn" onclick="startGame()">START</button>
-    </div>
+<div id="login-form" class="box beige-box">
+  <label for="playerName">Username:</label>
+  <input type="text" id="playerName" placeholder="Username">
+  <label for="password">Password:</label>
+  <input type="password" id="password" placeholder="Enter or create password">
+  <button class="start-btn" onclick="startGame()">START</button>
+</div>
+
 
     <!-- STATUS SCREEN (Returning Users) -->
     <div id="status-screen" class="box" style="display:none;">
@@ -121,28 +140,12 @@
     </div>
 
     <!-- Top Scores Panel -->
-    <div class="box">
-      <h3>TOP SCORES</h3>
-      <ul id="top-scores"></ul>
+    <!-- TOP SCORES PANEL -->
+<div class="box blue-box" style="margin-top: 30px;">
+  <h3>TOP SCORES</h3>
+  <ul id="top-scores"></ul>
+</div>
 
-      <a href="halloffame.html">
-        <button style="
-          padding: 10px 20px;
-          font-size: 16px;
-          border-radius: 8px;
-          background-color: #e67e22; /* 🍊 Nice bold orange */
-          color: white;
-          border: none;
-          cursor: pointer;
-          width: auto;
-          min-width: 120px;
-          display: inline-block;
-        ">
-          🏆 Hall of Fame
-        </button>
-      </a>
-      
-    </div>
 
   </div>
 
