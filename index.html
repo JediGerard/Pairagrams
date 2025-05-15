@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+
 <!-- Open Graph Meta Tags -->
 <meta property="og:title" content="Pairagrams – Pair Think Solve Win Glory" />
 <meta property="og:description" content="A Word Game for those who love Word Games" />
@@ -14,7 +15,7 @@
 <meta property="og:type" content="website" />
 
 <!-- Favicon and Icons -->
-<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -23,16 +24,17 @@
   <title>PAIRAGRAMS</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  flex-direction: column;
+  background-color: #fdfdfd;
+}
   
     .logo {
   display: block;
-  max-width: 280px;
+  max-width: 400px;
   margin-bottom: 0px;
   
 }
@@ -119,22 +121,6 @@ input, button {
 </div>
 
 
-    <!-- STATUS SCREEN (Returning Users) -->
-    <div id="status-screen" class="box" style="display:none;">
-      <h2 id="greeting"></h2>
-      <p>You are at level <strong id="level-number"></strong>.</p>
-      <button class="start-btn" id="continue-btn">CONTINUE</button>
-      <a href="findwords_4l.html" class="button">PLAY PUZZLE ROUND</a></a>
-      <button class="start-btn" id="logout-btn">LOG OUT</button>
-    </div>
-
-    <!-- Top Scores Panel -->
-    <!-- TOP SCORES PANEL -->
-<div class="box blue-box" style="margin-top: 30px;">
-  <h3>TOP SCORES</h3>
-  <ul id="top-scores"></ul>
-</div>
-
 
   </div>
 
@@ -162,9 +148,7 @@ input, button {
   const name = localStorage.getItem("playerName");
 
   if (name) {
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("status-screen").style.display = "block";
-    setupStatusScreen();
+    window.location.href = "continue.html";
   }
 });
 
@@ -220,7 +204,7 @@ input, button {
   window.speechSynthesis.speak(utterance);
 
   document.getElementById("continue-btn").onclick = () => {
-    window.location.href = "howtoplay.html";
+    window.location.href = "continue.html";
   };
 
   document.getElementById("logout-btn").onclick = () => {
@@ -275,22 +259,11 @@ if (snapshot.exists()) {
 
 console.log("🎯 Final resolved level for", name, "=", userLevel);
 
-  localStorage.setItem("level", userLevel);
 
-  // ✅ Show status screen
-  document.getElementById("login-form").style.display = "none";
-  document.getElementById("status-screen").style.display = "block";
+ localStorage.setItem("level", userLevel);
 
-  document.getElementById("level-number").textContent = userLevel;
-  document.getElementById("greeting").textContent = `Welcome back, ${name}!`;
-
-  const percent = ((userLevel / 500) * 100).toFixed(1);
-  const phrase = `You are at level ${userLevel} and you are ${percent}% complete.`;
-  const utterance = new SpeechSynthesisUtterance(phrase);
-  window.speechSynthesis.speak(utterance);
-
-  // ✅ Use consistent button behavior
-  setupStatusScreen();
+// ✅ Redirect to continue page
+window.location.href = "continue.html";
 }
 
 

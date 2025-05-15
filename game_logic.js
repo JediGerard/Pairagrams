@@ -455,11 +455,12 @@ async function handleClick(el) {
   
       speakRandomPraise();
       score += 10 + level;
-
+      
       selectedLeft = selectedMiddle = selectedRight = null;
       redrawColumns3();
+
   
-    
+   
     if (matchedPairs.length === rowCount) {
         await endGame();
 }
@@ -610,33 +611,68 @@ function createBox(word, side, row) {
 
 let lastRowColorSet = new Set();
 
+let showingAllBonus = false;
+
 function addBonusWord(word) {
+  usedBonusWords.add(word);
+  localStorage.setItem("bonusWords", JSON.stringify([...usedBonusWords])); // Optional persistence
+  renderBonusWords([...usedBonusWords]);
+}
+
+function renderBonusWords(wordList) {
   const container = document.getElementById("bonus-words");
+  container.innerHTML = "";
+  lastRowColorSet.clear();
 
-  const box = document.createElement("div");
-  box.textContent = word.toLowerCase();
-  box.className = "bonus-word-box";
+  const maxVisible = 11;
+  const wordsToShow = showingAllBonus ? wordList : wordList.slice(0, maxVisible);
+  const hiddenCount = wordList.length - maxVisible;
 
-  // Rotate colors without repeating in a row of 3
-  let attempts = 0;
-  do {
-    box.style.backgroundColor = colors[colorIndex % colors.length];
-    colorIndex = (colorIndex + 1) % colors.length;
-    attempts++;
-  } while (lastRowColorSet.has(box.style.backgroundColor) && attempts < colors.length);
+  wordsToShow.forEach(word => {
+    const box = document.createElement("div");
+    box.textContent = word.toLowerCase();
+    box.className = "bonus-word-box";
 
-  lastRowColorSet.add(box.style.backgroundColor);
-  if (lastRowColorSet.size >= 3) {
-    lastRowColorSet.clear(); // Start fresh every row
+    let attempts = 0;
+    do {
+      box.style.backgroundColor = colors[colorIndex % colors.length];
+      colorIndex = (colorIndex + 1) % colors.length;
+      attempts++;
+    } while (lastRowColorSet.has(box.style.backgroundColor) && attempts < colors.length);
+
+    lastRowColorSet.add(box.style.backgroundColor);
+    if (lastRowColorSet.size >= 3) lastRowColorSet.clear();
+
+    container.appendChild(box);
+  });
+
+  if (!showingAllBonus && hiddenCount > 0) {
+    const moreBox = document.createElement("div");
+    moreBox.textContent = `+${hiddenCount} more`;
+    moreBox.className = "bonus-word-box";
+    moreBox.style.backgroundColor = "#ccc";
+    moreBox.style.cursor = "pointer";
+    moreBox.onclick = () => {
+      showingAllBonus = true;
+      renderBonusWords(wordList);
+    };
+    container.appendChild(moreBox);
   }
 
-  container.appendChild(box);
-
-  const boxes = container.querySelectorAll(".bonus-word-box");
-  if (boxes.length > 12) {
-    container.removeChild(boxes[0]);
+  if (showingAllBonus && wordList.length > maxVisible) {
+    const lessBox = document.createElement("div");
+    lessBox.textContent = "SHOW LESS";
+    lessBox.className = "bonus-word-box";
+    lessBox.style.backgroundColor = "#999";
+    lessBox.style.cursor = "pointer";
+    lessBox.onclick = () => {
+      showingAllBonus = false;
+      renderBonusWords(wordList);
+    };
+    container.appendChild(lessBox);
   }
 }
+
 
 
 
@@ -724,7 +760,9 @@ async function endGame() {
     setTimeout(() => {
     msgContainer.remove();
     }, 3000);
-
+  
+  console.log("🎉 Encouragement message shown:", pick);
+  showPopupMessage(pick);
 
     
   })
