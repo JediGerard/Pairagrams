@@ -319,7 +319,7 @@ function startTimer() {
       clearInterval(timerInterval);
       endGame();
     }
-  }, 1000);
+  }, 500);
 }
 
 // ==================== Gameplay ====================

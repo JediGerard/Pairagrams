@@ -116,32 +116,26 @@ function toggleSafeMode() {
 
 // ==================== Utility Functions ====================
 function speak(text) {
-  const soundToggle = document.getElementById("sound-toggle");
   const feedback = document.getElementById("feedback-message");
+  if (!feedback) return;
 
-  if (soundToggle && soundToggle.checked && feedback) {
-    feedback.textContent = text;
-    feedback.style.position = "fixed";
-    feedback.style.top = "50%";
-    feedback.style.left = "50%";
-    feedback.style.transform = "translate(-50%, -50%)";
-    feedback.style.padding = "10px 20px";
-    feedback.style.backgroundColor = "#f7f7f7";
-    feedback.style.border = "2px solid #aaa";
-    feedback.style.borderRadius = "8px";
-    feedback.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
-    feedback.style.zIndex = "1000";
-    feedback.style.display = "block";
+  feedback.textContent = text;
+  feedback.style.position = "fixed";
+  feedback.style.top = "50%";
+  feedback.style.left = "50%";
+  feedback.style.transform = "translate(-50%, -50%)";
+  feedback.style.padding = "10px 20px";
+  feedback.style.backgroundColor = "#f7f7f7";
+  feedback.style.border = "2px solid #aaa";
+  feedback.style.borderRadius = "8px";
+  feedback.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+  feedback.style.zIndex = "1000";
+  feedback.style.display = "block";
 
-    const delay = text.includes(" ") ? 3000 : 1000;
-    setTimeout(() => feedback.style.display = "none", delay);
-    return;
-  }
-
-  speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utterance);
+  const delay = text.includes(" ") ? 1500 : 500;
+  setTimeout(() => feedback.style.display = "none", delay);
 }
+
 
 function nextFibonacci() {
   const next = fibonacci[fibonacci.length - 1] + fibonacci[fibonacci.length - 2];
