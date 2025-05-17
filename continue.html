@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,28 +22,25 @@
       flex-direction: column;
       background-color: #fdfdfd;
     }
+
     #greeting {
-  font-family: 'Raleway', sans-serif;
-  font-size: 26px;
-  margin-bottom: 10px;
-}
+      font-family: 'Raleway', sans-serif;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
 
-.catchphrase-img {
-  width: 30%;
-  max-width: 400 px;
-  
-  display: block;
-}
+    .catchphrase-img {
+      width: 30%;
+      max-width: 400 px;
+      display: block;
+    }
 
-.logo {
-  display: block;
-  width: 90%;
-  max-width: 300px;
-  margin-bottom: 0px;
-}
-
-
-
+    .logo {
+      display: block;
+      width: 90%;
+      max-width: 300px;
+      margin-bottom: 0px;
+    }
 
     .box {
       background: white;
@@ -74,18 +72,20 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-@media (max-width: 600px) {
-  .box {
-    width: 80%;
-    max-width: 320px;
-  }
-}
+
+    @media (max-width: 600px) {
+      .box {
+        width: 80%;
+        max-width: 320px;
+      }
+    }
 
     .start-btn:hover {
       background-color: #2980b9;
     }
 
-    input, button {
+    input,
+    button {
       font-size: 18px;
       margin: 10px 0;
       padding: 8px 12px;
@@ -106,27 +106,37 @@
       padding: 4px 10px;
       font-size: 16px;
     }
+
     .red-btn {
-  background-color: #e74c3c;
-}
-.red-btn:hover {
-  background-color: #c0392b;
-}
+      background-color: #e74c3c;
+    }
+
+    .red-btn:hover {
+      background-color: #c0392b;
+    }
+
+    #level-stats {
+      font-family: 'Raleway', sans-serif;
+      font-size: 14px;
+      margin-top: 6px;
+      color: #333;
+    }
   </style>
 </head>
+
 <body>
   <img src="/assets/Pairagrams_logo.png" style="margin-bottom: 20px;" alt="Pairagrams Logo" class="logo">
 
   <!-- Status screen shown immediately -->
   <div id="status-screen" class="box beige-box">
-  <h2 id="greeting">Welcome back!</h2>
-  <p id="level-stats">Loading level...</p>
-  <button class="start-btn" id="continue-btn">CONTINUE THE LADDER </button>
-<button class="start-btn red-btn" onclick="window.location.href='findwords_4l.html'">PLAY PUZZLE ROUND</button>
-<button class="start-btn" id="logout-btn">LOG OUT</button>
+    <h2 id="greeting">Welcome back!</h2>
+    <p id="level-stats">Loading level...</p>
+    <button class="start-btn" id="continue-btn">CONTINUE THE LADDER </button>
+    <button class="start-btn red-btn" onclick="window.location.href='findwords_4l.html'">PLAY PUZZLE ROUND</button>
+    <button class="start-btn" id="logout-btn">LOG OUT</button>
 
-</div>
-<img src="/assets/catchphrase_twolines.png" style="margin-top: 30px;" alt="Catch Phrase" class="catchphrase-img">
+  </div>
+  <img src="/assets/catchphrase_twolines.png" style="margin-top: 30px;" alt="Catch Phrase" class="catchphrase-img">
   <!-- Top Scores Panel -->
   <div class="box blue-box" style="margin-top: 30px;">
     <h3>TOP SCORES</h3>
@@ -186,9 +196,9 @@
       }
 
       document.getElementById("greeting").textContent = `Welcome back, ${name}!`;
-        const percent = ((lvl / 650) * 100).toFixed(1);
-        const levelLine = `You are at Level ${lvl}. You are ${percent}% down the path.`;
-        document.getElementById("level-stats").textContent = levelLine;
+      const percent = ((lvl / 650) * 100).toFixed(1);
+      const levelLine = `You are at Level ${lvl}. You are ${percent}% finished the ladder.`;
+      document.getElementById("level-stats").textContent = levelLine;
 
       document.getElementById("continue-btn").onclick = () => {
         window.location.href = "howtoplay.html";
@@ -205,4 +215,5 @@
     loadTopScores();
   </script>
 </body>
+
 </html>
