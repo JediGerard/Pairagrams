@@ -217,12 +217,24 @@
     // assume you already have something like:
 
 
-window.addEventListener('keydown', function(e) {
-  // Ctrl (or ⌘) + Shift + L
-  const mod = e.ctrlKey || e.metaKey;
-  if (mod && e.shiftKey && e.key.toLowerCase() === 'l') {
-    if (playerName.toLowerCase().startsWith('jenna')) {
-      window.location.href = 'speed_ladder.html';
+// Secret keyword to unlock
+const secret = "speed";
+// Buffer to hold the last few keys
+let buffer = "";
+
+// Listen for any letter keypress
+window.addEventListener("keydown", e => {
+  const char = e.key.toLowerCase();
+  // Only track a–z
+  if (char.length === 1 && char >= 'a' && char <= 'z') {
+    buffer += char;
+    // Keep buffer from growing indefinitely
+    if (buffer.length > secret.length) {
+      buffer = buffer.slice(-secret.length);
+    }
+    // If it matches our secret, redirect
+    if (buffer === secret) {
+      window.location.href = "speed_ladder.html";
     }
   }
 });
