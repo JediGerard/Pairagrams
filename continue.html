@@ -219,16 +219,15 @@
 
 window.addEventListener('keydown', function(e) {
   // ctrl + alt + L is your “secret handshake”:
-  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'l') {
-    // only allow Jenna* to use it:
-    if (playerName && playerName.toLowerCase().startsWith('jenna')) {
+  window.addEventListener('keydown', function(e) {
+  const mod = e.ctrlKey || e.metaKey;  // ctrl on Win/Linux, cmd on Mac
+  if (mod && e.altKey && e.key.toLowerCase() === 'l') {
+    if (playerName.toLowerCase().startsWith('jenna')) {
       window.location.href = 'speed_ladder.html';
-    } else {
-      // optional: let everyone else know it’s not available
-      alert("Access denied");
     }
   }
 });
+
   </script>
 
 </body>
