@@ -218,26 +218,30 @@
 
 
 // Secret keyword to unlock
-const secret = "speed";
-// Buffer to hold the last few keys
-let buffer = "";
+// map each keyword to its target page
+  const shortcuts = {
+    speed: 'speed_ladder.html',
+    theme: 'theme_pages.html'
+  };
+  // track the longest keyword so we can trim our buffer
+  const maxLen = Math.max(...Object.keys(shortcuts).map(k => k.length));
 
-// Listen for any letter keypress
-window.addEventListener("keydown", e => {
-  const char = e.key.toLowerCase();
-  // Only track a–z
-  if (char.length === 1 && char >= 'a' && char <= 'z') {
-    buffer += char;
-    // Keep buffer from growing indefinitely
-    if (buffer.length > secret.length) {
-      buffer = buffer.slice(-secret.length);
+  let buffer = '';
+  window.addEventListener('keydown', e => {
+    const ch = e.key.toLowerCase();
+    if (/^[a-z]$/.test(ch)) {
+      buffer += ch;
+      // keep buffer from growing beyond longest keyword
+      if (buffer.length > maxLen) buffer = buffer.slice(-maxLen);
+      // check each shortcut
+      for (const [key, url] of Object.entries(shortcuts)) {
+        if (buffer.endsWith(key)) {
+          window.location.href = url;
+          return;
+        }
+      }
     }
-    // If it matches our secret, redirect
-    if (buffer === secret) {
-      window.location.href = "speed_ladder.html";
-    }
-  }
-});
+  });
 
   </script>
 

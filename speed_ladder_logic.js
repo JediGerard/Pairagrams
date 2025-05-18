@@ -198,7 +198,9 @@
       b.textContent = fw.word;
       b.className = 'word-box locked';
       b.style.backgroundColor = colors[i % colors.length];
-      if (fw.isHard) b.style.outline = '3px solid gold';
+    if (fw.isHard) {
+    b.classList.add('hard');
+  }
       row.appendChild(b);
     });
     rowsContainer.appendChild(row);
