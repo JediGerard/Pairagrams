@@ -218,10 +218,9 @@
 
 
 window.addEventListener('keydown', function(e) {
-  // ctrl + alt + L is your “secret handshake”:
-  window.addEventListener('keydown', function(e) {
-  const mod = e.ctrlKey || e.metaKey;  // ctrl on Win/Linux, cmd on Mac
-  if (mod && e.altKey && e.key.toLowerCase() === 'l') {
+  // Ctrl (or ⌘) + Shift + L
+  const mod = e.ctrlKey || e.metaKey;
+  if (mod && e.shiftKey && e.key.toLowerCase() === 'l') {
     if (playerName.toLowerCase().startsWith('jenna')) {
       window.location.href = 'speed_ladder.html';
     }
