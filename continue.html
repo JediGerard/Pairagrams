@@ -213,7 +213,24 @@
     // Initialize on load
     setupStatusScreen();
     loadTopScores();
+
+    // assume you already have something like:
+
+
+window.addEventListener('keydown', function(e) {
+  // ctrl + alt + L is your “secret handshake”:
+  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'l') {
+    // only allow Jenna* to use it:
+    if (playerName && playerName.toLowerCase().startsWith('jenna')) {
+      window.location.href = 'speed_ladder.html';
+    } else {
+      // optional: let everyone else know it’s not available
+      alert("Access denied");
+    }
+  }
+});
   </script>
+
 </body>
 
 </html>
