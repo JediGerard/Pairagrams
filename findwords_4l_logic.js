@@ -2,6 +2,7 @@
 let masterWords = {};
 let wordList = [];
 let validWords = new Set();
+let classification = {};   
 
 let lives = 5;
 let score = 0;
@@ -44,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   Promise.all([
   fetch("master_words_file_with_parts_labeled.json").then(res => res.json()),
-  fetch("words_scrabble.csv").then(res => res.text())
+  fetch("words_scrabble_labeled.csv").then(res => res.text())
 ]).then(([masterData, csvText]) => {
   masterWords = masterData;
   wordList = [];
@@ -69,11 +70,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const lines = csvText.trim().split("\n");
   for (let i = 1; i < lines.length; i++) {
-    validWords.add(lines[i].trim().toUpperCase());
-  }
+  const [w, cls] = lines[i].split(",");
+  const word = w.trim().toUpperCase();
+  const label = cls.trim().toUpperCase();      // “COMMON” / “UNCOMMON” / “RARE”
+  classification[word] = label;
+  validWords.add(word);
+}
 
   generateBoard();
 });
+
 
 
   document.getElementById("done-btn").onclick = () => {
@@ -264,10 +270,45 @@ function toggleSelection(div) {
 function updateWordList(word) {
   const li = document.createElement("li");
   li.textContent = word;
-  li.className = "bonus-word-box";
-  li.style.backgroundColor = colors[colorIndex++ % colors.length];
+
+  // Determine classification: COMMON, UNCOMMON, or RARE
+  const cls = classification[word.toUpperCase()] || "RARE";
+
+  // ← DEBUG LOGGING:
+  console.log(`Adding word “${word}”: classified as ${cls}`);
+
+  if (cls === "COMMON") {
+    li.className = "bonus-word-box";
+    li.style.backgroundColor = colors[colorIndex++ % colors.length];
+  } else if (cls === "UNCOMMON") {
+    li.className = "uncommon-word-box";
+    li.style.backgroundColor = colors[colorIndex++ % colors.length];
+  } else {
+    li.className = "hard-word-box";
+  }
+
   wordListDisplay.appendChild(li);
+
+  // update the WORDS / UNCOMMON / RARE counts
+  updateStats();
 }
+
+
+function updateStats() {
+  const total = foundWords.length;
+  const uncommon = foundWords.filter(
+    w => classification[w.toUpperCase()] === "UNCOMMON"
+  ).length;
+  const rare = foundWords.filter(
+    w => classification[w.toUpperCase()] === "RARE"
+  ).length;
+
+  document.getElementById("total-count").textContent    = total;
+  document.getElementById("uncommon-count").textContent = uncommon;
+  document.getElementById("rare-count").textContent     = rare;
+}
+
+
 
 
 function clearSelections() {
@@ -288,14 +329,8 @@ function checkWord() {
   foundWords.push(combined);
   updateWordList(combined);
 
-  // Check if it's hard
-  if (!common4.has(combined)) {
-    hardFoundCount++;
-    document.getElementById("hard-count").textContent = hardFoundCount;
-  }
 
   // update display
-  document.getElementById("bonus-count").textContent = foundWords.length;
   speak("Correct!");
   score += fibonacci[scoreIndex] || nextFibonacci();
   scoreIndex++;

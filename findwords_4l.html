@@ -104,24 +104,23 @@
   max-width: 360px;
   margin: 0 auto 10px;
 }
-
-
- .bonus-word-box {
-  background-color: #aaa;
-  text-align: center;
-  color: black;
-  font-size: 18px;
-  font-weight: bold;
-  padding: 10px 16px;
-  border-radius: 12px;          /* boxy, not oval */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 80px;
-  min-height: 40px;
+#word-list,
+.correct-grid {
+  display: inline-grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 12px;
+  margin: 0 auto 10px;
 }
 
-
+#correct-words-section {
+      display: none;
+      margin-top: 10px;
+  }
+  .correct-grid {
+  /* change this… */
+  max-width: 360px;    /* ← exactly what #word-list uses */
+  margin: 10px auto 0;
+}
 
 
   .done-btn {
@@ -177,23 +176,15 @@
   transform: translateX(16px);
   }
 
-  #correct-words-section {
-      display: none;
-      margin-top: 10px;
-  }
-  .correct-grid {
-      display: grid;
-      grid-template-columns: repeat(3, auto);
-      gap: 12px;
-      justify-content: center;
-      margin-top: 10px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-  }
-  .answer-box {
-  background-color: #81ecec;
-  color: black; /* changed from white to match top boxes */
+  
+  
+/* ─── 1) Shared “word‐box” base (same as .answer-box) ─── */
+/* ─── shared base for every word‐box variant ─── */
+.answer-box,
+.bonus-word-box,
+.common-word-box,
+.uncommon-word-box,
+.hard-word-box {
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 18px;
@@ -204,7 +195,40 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;                    /* no extra per-item margin */
+  border: 2px solid transparent;/* default border, overridden below */
+  box-sizing: border-box;
+  color: black;
 }
+
+/* ─── then only tweak what’s different ─── */
+.common-word-box {
+  background-color: lightgreen;
+  border-color: transparent;
+}
+
+.bonus-word-box {
+  background-color: #81ecec;
+}
+
+.uncommon-word-box {
+  /* background is set inline by your JS colors */
+  border-color: black;
+  border-width: 4px;
+}
+
+.hard-word-box {
+  background-color: gold;
+  border-color: black;
+  border-width: 4px;
+}
+
+/* ─── 2) Common & answer boxes (identical look) ─── */
+.answer-box,
+.bonus-word-box {
+  background-color: #81ecec;    /* same turquoise as your answer-box :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */
+}
+
 
   
 
@@ -259,11 +283,19 @@
 </div>
 
   <div id="found-words">
-  <div style="font-size: 18px; margin-top: 0px; display: flex; justify-content: center; gap: 24px;">
-
-  <div><strong>Words Found:</strong> <span id="bonus-count">0</span></div>
-  <div>Hard: <span id="hard-count">0</span></div>
+  <div style="
+    font-size: 18px;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+  ">
+    <div><strong>WORDS:</strong> <span id="total-count">0</span></div>
+    <div><strong>UNCOMMON:</strong> <span id="uncommon-count">0</span></div>
+    <div><strong>RARE:</strong> <span id="rare-count">0</span></div>
+  </div>
 </div>
+
 <ul id="word-list"></ul>
 
 </div>
