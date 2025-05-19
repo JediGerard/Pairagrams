@@ -14,6 +14,14 @@ let boardPairs = [];
 
 let livesDisplay, scoreDisplay, container, wordListDisplay;
 
+let common4 = new Set();       // common 4-letter words
+let hardFoundCount = 0;
+
+const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675", "#74b9ff", "#fd79a8"];
+let colorIndex = 0;
+
+
+
 // ==================== DOM Ready Wrapper ====================
 document.addEventListener("DOMContentLoaded", () => {
   const manualRadio = document.getElementById("manual-mode");
@@ -35,72 +43,85 @@ document.addEventListener("DOMContentLoaded", () => {
   
 
   Promise.all([
-    fetch("master_words_file_with_parts_labeled.json").then(res => res.json()),
-    fetch("words_scrabble.csv").then(res => res.text())
-  ]).then(([masterData, csvText]) => {
-    masterWords = masterData;
-    wordList = [];
+  fetch("master_words_file_with_parts_labeled.json").then(res => res.json()),
+  fetch("words_scrabble.csv").then(res => res.text())
+]).then(([masterData, csvText]) => {
+  masterWords = masterData;
+  wordList = [];
 
-    for (const [word, entry] of Object.entries(masterWords)) {
-      if (!entry || entry.common !== true || word.length !== 4) continue;
-    
-      const cleanSplit = entry.parts.find(p =>
-        Array.isArray(p) &&
-        p.length === 2 &&
-        p[0].length === 2 &&
-        p[1].length === 2
-      );
-    
-      if (cleanSplit) {
-        wordList.push({ word, left: cleanSplit[0], right: cleanSplit[1] });
-      }
+  for (const [word, entry] of Object.entries(masterWords)) {
+    if (!entry || word.length !== 4) continue;
+
+    const isCommon = entry.common === true;
+    if (isCommon) common4.add(word.toUpperCase());
+
+    const cleanSplit = entry.parts.find(p =>
+      Array.isArray(p) &&
+      p.length === 2 &&
+      p[0].length === 2 &&
+      p[1].length === 2
+    );
+
+    if (isCommon && cleanSplit) {
+      wordList.push({ word, left: cleanSplit[0], right: cleanSplit[1] });
     }
+  }
 
   const lines = csvText.trim().split("\n");
-    for (let i = 1; i < lines.length; i++) {
-      validWords.add(lines[i].trim().toUpperCase());
-    }
+  for (let i = 1; i < lines.length; i++) {
+    validWords.add(lines[i].trim().toUpperCase());
+  }
 
-    generateBoard();
-  });
+  generateBoard();
+});
+
 
   document.getElementById("done-btn").onclick = () => {
-    const box = document.getElementById("correct-words");
-    const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675"];
-    box.innerHTML = selectedWords.map((w, i) =>
-      `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
-    ).join("");
+  const box = document.getElementById("correct-words");
+  box.innerHTML = selectedWords.map((w, i) =>
+  `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
+).join("");
   
-    document.getElementById("done-btn").style.display = "none";
-  
-    // ✅ Create "Play Again" button
-    const playAgain = document.createElement("button");
-    playAgain.textContent = "PLAY AGAIN";
-    playAgain.className = "button-base button-green"; 
-    playAgain.onclick = () => location.reload();
-  
-    // ✅ Create "Go to Main" button
-    const goHome = document.createElement("button");
-    goHome.textContent = "GO TO MAIN";
-    goHome.className = "button-base button-green"; 
-    goHome.onclick = () => location.href = "index.html";
-  
-    // ✅ Add both to a container row
-    const btnRow = document.createElement("div");
-    btnRow.style.marginTop = "40px";
-    btnRow.style.display = "flex";
-    btnRow.style.justifyContent = "center";
-    btnRow.style.gap = "12px";
-    btnRow.appendChild(playAgain);
-    btnRow.appendChild(goHome);
-  
-    // ✅ Insert the button row before "Words Found" section
-    const foundWordsDiv = document.getElementById("found-words");
-    foundWordsDiv.parentNode.insertBefore(btnRow, foundWordsDiv);
-  
-    // ✅ Show the correct words section
-    document.getElementById("correct-words-section").style.display = "block";
-  };
+
+  // ✅ Hide the I AM DONE button
+  document.getElementById("done-btn").style.display = "none";
+
+  // ✅ Remove SHUFFLE button
+  const shuffleBtn = document.querySelector("button.button-red");
+  if (shuffleBtn) shuffleBtn.remove();
+
+  // ✅ Create PLAY AGAIN button
+  const playAgain = document.createElement("button");
+  playAgain.textContent = "PLAY AGAIN";
+  playAgain.className = "button-base button-green";
+  playAgain.style.marginRight = "8px"; // separates the buttons
+  playAgain.style.padding = "8px 16px";
+  playAgain.style.fontSize = "16px";
+
+
+  playAgain.onclick = () => location.reload();
+
+  // ✅ Create GO TO MAIN button
+  const goHome = document.createElement("button");
+  goHome.textContent = "GO TO MAIN";
+  goHome.className = "button-base button-green";
+  playAgain.style.marginRight = "8px"; // separates the buttons
+  goHome.style.padding = "8px 16px";
+  goHome.style.fontSize = "16px";
+  goHome.onclick = () => location.href = "index.html";
+
+  // ✅ Insert both buttons into the same parent container as SHUFFLE was
+  const shuffleContainer = document.querySelector("div[style*='margin-top']");
+  if (shuffleContainer) {
+    shuffleContainer.innerHTML = ""; // clear old buttons
+    shuffleContainer.appendChild(playAgain);
+    shuffleContainer.appendChild(goHome);
+  }
+
+  // ✅ Reveal answer grid
+  document.getElementById("correct-words-section").style.display = "block";
+};
+
   
   
 });
@@ -202,8 +223,7 @@ function generateBoard() {
   }
 }
 
-const colors = ["#6c5ce7", "#00b894", "#fd79a8", "#0984e3", "#e17055", "#d63031", "#fab1a0", "#55efc4"];
-let colorIndex = 0;
+
 
 function createSpeedBox(pair) {
   const div = document.createElement("div");
@@ -249,6 +269,7 @@ function updateWordList(word) {
   wordListDisplay.appendChild(li);
 }
 
+
 function clearSelections() {
   document.querySelectorAll(".pair").forEach(p => p.classList.remove("selected"));
   selectedPairs = [];
@@ -263,24 +284,33 @@ function checkWord() {
     return;
   }
 
-  if (validWords.has(combined)) {
-    foundWords.push(combined);
-    updateWordList(combined);
-    speak("Correct!");
-    score += fibonacci[scoreIndex] || nextFibonacci();
-    scoreIndex++;
-    scoreDisplay.textContent = score;
+ if (validWords.has(combined)) {
+  foundWords.push(combined);
+  updateWordList(combined);
 
-    if (foundWords.length === 5) speak("You are killing it");
-    else if (foundWords.length === 10) speak("Hot diggity dog");
-    else if (foundWords.length === 15) speak("You are a word beast");
-    else if (foundWords.length === 20) speak("You are making me look bad");
-    else if (foundWords.length === 25) speak("I think you are cheating");
+  // Check if it's hard
+  if (!common4.has(combined)) {
+    hardFoundCount++;
+    document.getElementById("hard-count").textContent = hardFoundCount;
+  }
 
-    clearSelections();
-    window.clearPreview();
-    return;
-  } else {
+  // update display
+  document.getElementById("bonus-count").textContent = foundWords.length;
+  speak("Correct!");
+  score += fibonacci[scoreIndex] || nextFibonacci();
+  scoreIndex++;
+  scoreDisplay.textContent = score;
+
+  if (foundWords.length === 5) speak("You are killing it");
+  else if (foundWords.length === 10) speak("Hot diggity dog");
+  else if (foundWords.length === 15) speak("You are a word beast");
+  else if (foundWords.length === 20) speak("You are making me look bad");
+  else if (foundWords.length === 25) speak("I think you are cheating");
+
+  clearSelections();
+  window.clearPreview();
+  return;
+} else {
     speak("Wrong");
     lives--;
     livesDisplay.textContent = lives;
@@ -429,6 +459,12 @@ window.submitWord = function() {
     score += fibonacci[scoreIndex] || nextFibonacci();
     scoreIndex++;
     scoreDisplay.textContent = score;
+    if (!common4.has(word)) {
+  hardFoundCount++;
+  document.getElementById("hard-count").textContent = hardFoundCount;
+}
+document.getElementById("bonus-count").textContent = foundWords.length;
+
   } else {
     speak("Not in the word list");
     lives--;

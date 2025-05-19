@@ -30,11 +30,10 @@
   .button-red   { background-color: #e74c3c; }  /* SHUFFLE */
   .button-gray  { background-color: #7f8c8d; }  /* Submit / Clear */
 
-
   #game-header {
     background-color: rgba(255,255,255,0.95);
-    margin: 10px auto; /* 🔽 tightened from 20px */
-    padding: 20px;
+    margin: 0px auto; /* 🔽 tightened from 20px */
+    padding: 10px;
     border-radius: 12px;
     max-width: 600px;
     display: flex;
@@ -51,11 +50,6 @@
   text-align: center;
   }
 
-
- 
-
-
-
   #word-preview {
   font-size: 20px;            /* ✅ smaller text */
   width: 100px;               /* ✅ narrower */
@@ -63,9 +57,6 @@
   text-align: center;
   margin-bottom: 4px;
   }
-
-
-
 
   .stat-block {
       font-weight: bold;
@@ -104,23 +95,35 @@
   margin: 8px 0 4px 0;
   }
   #word-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      justify-content: center;
-      gap: 12px;
-      padding: 0;
-      list-style: none;
-      max-width: 400px;
-      margin: 0 auto;
-  }
-  .bonus-word-box {
-      text-align: center;
-      padding: 10px 16px;
-      border-radius: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-  }
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: center;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+  max-width: 360px;
+  margin: 0 auto 10px;
+}
+
+
+ .bonus-word-box {
+  background-color: #aaa;
+  text-align: center;
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 16px;
+  border-radius: 12px;          /* boxy, not oval */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 40px;
+}
+
+
+
+
   .done-btn {
   background-color: #27ae60;
   color: white;
@@ -176,11 +179,11 @@
 
   #correct-words-section {
       display: none;
-      margin-top: 30px;
+      margin-top: 10px;
   }
   .correct-grid {
       display: grid;
-      grid-template-columns: repeat(4, auto);
+      grid-template-columns: repeat(3, auto);
       gap: 12px;
       justify-content: center;
       margin-top: 10px;
@@ -189,14 +192,20 @@
       margin-right: auto;
   }
   .answer-box {
-      background-color: #81ecec;
-      color: black;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
-  }
+  background-color: #81ecec;
+  color: black; /* changed from white to match top boxes */
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  min-width: 80px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
   
 
   </style>
@@ -204,18 +213,21 @@
 <body>
 
 
-  <div id="game-header">
-    <div class="stat-block">❤️ Lives: <span id="lives">5</span></div>
-    <div class="stat-block">⭐ Score: <span id="score">0</span></div>
+<div id="game-header">
+  
+
+  <div class="stat-block">Score: <span id="score">0</span></div>
+  <div class="stat-block">Lives: <span id="lives">5</span></div>
+  <div class="stat-block">
+    <label class="switch">
+      <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
+      <span class="slider"></span>
+    </label>
+    <span style="margin-left: 8px;">Safe Mode</span>
   </div>
-  <!-- Safe Mode toggle (ALWAYS visible) -->
-<div style="margin-top: 10px; margin-bottom: 12px;">
-  <label class="switch">
-    <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
-    <span class="slider"></span>
-  </label>
-  <span style="margin-left: 8px;">Safe Mode</span>
 </div>
+<div style="margin-bottom: 6px;"></div>
+
 
   
 <div id="word-tools" style="display: none;">
@@ -226,27 +238,24 @@
   </div>
 </div>
 
-
-
   
-
-  
-  
-    
  
   <div id="rows-container"></div>
 
-  
-  
+  <div style="margin-top: 8px; margin-bottom: 5px;">
+  <button class="button-base button-red" onclick="shuffleBoard()" style="margin-right: 10px;">SHUFFLE</button>
+  <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>
+</div>
 
   <div id="found-words">
-    <h3>Words Found:</h3>
-    <ul id="word-list"></ul>
-  </div>
+  <div style="font-size: 18px; margin-top: 0px; display: flex; justify-content: center; gap: 24px;">
 
-  <button class="button-base button-red" onclick="shuffleBoard()" style="margin-right: 10px;">  SHUFFLE  </button>
-  <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>
+  <div><strong>Words Found:</strong> <span id="bonus-count">0</span></div>
+  <div>Hard: <span id="hard-count">0</span></div>
+</div>
+<ul id="word-list"></ul>
 
+</div>
 
   <div id="correct-words-section">
     <h3>Here are the words I found:</h3>
