@@ -516,7 +516,7 @@ function showPopupMessage(message) {
 
   setTimeout(() => {
     popup.remove();
-  }, 1000);
+  }, 500);
 }
 
 function updateScoreDisplay() {
