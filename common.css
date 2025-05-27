@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap');
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  flex-direction: column;
+  background-color: #ffffff; /* Changed from #fdfdfd */
+  font-family: 'Raleway', sans-serif; /* Changed from Arial */
+  text-align: center; /* Added */
+  margin: 0; /* Added */
+  padding: 0; /* Added */
+}
+
+.logo {
+  display: block;
+  max-width: 300px;
+  margin-bottom: 0px;
+  width: 90%; /* Added from continue.css, seems like a reasonable default */
+}
+
+.box {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+}
+
+@media (max-width: 600px) {
+  .box {
+    width: 80%;
+    max-width: 320px;
+  }
+}
+
+.start-btn {
+  background-color: #3498db;
+  color: white;
+  font-size: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.start-btn:hover {
+  background-color: #2980b9;
+}
+
+input,
+button {
+  font-size: 18px;
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.button-base {
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.4s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #27ae60;
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+.beige-box {
+  background-color: #fdf5e6 !important;
+  border: 1px solid #e0d6c4;
+}
+
+.blue-box {
+  background-color: #e8f4fd;
+  border: 1px solid #cce0f5;
+}
+
+#top-scores {
+  list-style: none;
+  padding: 0;
+}
+
+#top-scores .entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
+  font-size: 16px;
+}

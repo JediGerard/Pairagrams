@@ -1,0 +1,185 @@
+Page: index.html
+--------------------
+Linked JS:
+  - index_logic.js
+
+Functions from inline HTML attributes:
+  - startGame (from <button class="start-btn" onclick="startGame()">START</button>)
+
+Globally exposed/exported functions from linked JS:
+  - index_logic.js:
+    - startGame (window.startGame = startGame;)
+    - hashPassword (async function, called by startGame)
+    - loadTopScores (imported from utility.js, called on script load)
+    - (DOMContentLoaded event listener for auto-redirect)
+
+Page: findwords_4l.html
+--------------------
+Linked JS:
+  - findwords_4l_logic.js
+
+Functions from inline HTML attributes:
+  - toggleSafeMode (from <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />)
+  - submitWord (from <button class="button-base button-gray" onclick="submitWord()">Submit</button>)
+  - clearPreview (from <button class="button-base button-gray" onclick="clearPreview()">Clear</button>)
+  - shuffleBoard (from <button class="button-base button-red" onclick="shuffleBoard()" style="margin-right: 10px;">SHUFFLE</button>)
+  - showCorrectWords (from <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>)
+  - (window.onload inline script calls toggleSafeMode if checkbox is checked)
+
+Globally exposed/exported functions from linked JS:
+  - findwords_4l_logic.js:
+    - toggleSafeMode (window.toggleSafeMode)
+    - shuffleBoard (window.shuffleBoard)
+    - onLetterSelected (window.onLetterSelected)
+    - shufflePreview (window.shufflePreview)
+    - clearPreview (window.clearPreview)
+    - submitWord (window.submitWord)
+    - (DOMContentLoaded event listener for initial setup)
+    - (document.getElementById("done-btn").onclick for showing correct words and setting up play again/go home buttons)
+    - showFeedbackMessage (function, called internally by event handlers)
+    - nextFibonacci (function, called internally)
+    - generateBoard (function, called on script load)
+    - createSpeedBox (function, called by generateBoard)
+    - toggleSelection (function, event listener for speed boxes)
+    - updateWordList (function, called by checkWord/submitWord)
+    - updateStats (function, called by updateWordList)
+    - clearSelections (function, called by checkWord/clearPreview)
+    - checkWord (function, called by toggleSelection)
+    - endGame (function, called by checkWord/submitWord)
+
+Page: games.html
+--------------------
+Linked JS:
+  - utility.js
+  - game_logic.js
+
+Functions from inline HTML attributes:
+  - goToNextLevel (from <button id="restart" style="display:none;" onclick="goToNextLevel()">Next Level</button>)
+
+Globally exposed/exported functions from linked JS:
+  - utility.js:
+    - loadTopScores (export async function)
+    - speak (export function)
+    - shuffle (export function)
+    - getLongestWord (export function)
+    - updateHallOfFame (export async function)
+    - getModeForLevel (export function)
+  - game_logic.js:
+    - goToNextLevel (window.goToNextLevel)
+    - loadGameData (window.loadGameData, also called by window.onload)
+    - saveProgressToFirebase (async function, called by endGame, goToNextLevel)
+    - setupGame (function, called by loadGameData, goToNextLevel)
+    - setupTwoColumnGame (function, called by setupGame)
+    - setupThreeColumnGame (function, called by setupGame)
+    - startTimer (function, called by setupTwoColumnGame, setupThreeColumnGame)
+    - handleClick (async function, event listener for dynamically created boxes)
+    - endGame (async function, called by timer, handleClick)
+    - updateUserStats (async function, called by endGame)
+    - (Initial localStorage setup and UI rendering logic at top level)
+    - (window.onload event listener calling loadGameData)
+
+Page: continue.html
+--------------------
+Linked JS:
+  - continue_logic.js (imports from utility.js)
+
+Functions from inline HTML attributes:
+  - window.location.href='findwords_4l.html' (from <button class="start-btn red-btn" onclick="window.location.href='findwords_4l.html'">) 
+
+Globally exposed/exported functions from linked JS:
+  - continue_logic.js:
+    - setupStatusScreen (async function, called on script load)
+    - loadTopScores (imported from utility.js, called on script load)
+    - (keydown event listener for shortcuts)
+  - utility.js (via continue_logic.js):
+    - loadTopScores (export async function)
+    - db (export const - Firestore database instance)
+
+Page: speed_ladder.html
+--------------------
+Linked JS:
+  - speed_ladder_logic.js
+
+Functions from inline HTML attributes:
+  - None (Event listeners are attached in JS)
+
+Globally exposed/exported functions from linked JS:
+  - speed_ladder_logic.js:
+    - (IIFE - Immediately Invoked Function Expression, which encapsulates all logic)
+    - showMessage (internal, called by onSelect, checkMatch)
+    - shuffle (internal, used by fillPools, renderPools)
+    - getNextCommon (internal, used by fillPools, checkMatch)
+    - fillPools (internal, called on script start)
+    - updateStats (internal, called by checkMatch, tick)
+    - renderPools (internal, called on script start, checkMatch)
+    - makeBox (internal, called by renderPools)
+    - clearSel (internal, called by onSelect, checkMatch)
+    - onSelect (event listener for dynamically created boxes)
+    - checkMatch (internal, called by onSelect)
+    - endGame (internal, called by tick)
+    - tick (internal, called by setInterval)
+
+Page: superspeed.html
+--------------------
+Linked JS:
+  - super_speed_logic.js
+
+Functions from inline HTML attributes:
+  - None (Event listeners are attached in JS)
+
+Globally exposed/exported functions from linked JS:
+  - super_speed_logic.js:
+    - (DOMContentLoaded event listener for initial setup)
+    - speak (function, called by checkWord, endGame)
+    - nextFibonacci (function, called by checkWord)
+    - shuffle (function, used by generateBoard)
+    - generateBoard (function, called on script load)
+    - createSpeedBox (function, called by generateBoard)
+    - toggleSelection (function, event listener for speed boxes)
+    - checkWord (function, called by toggleSelection)
+    - clearSelections (function, called by checkWord)
+    - updateWordList (function, called by checkWord)
+    - endGame (function, called by checkWord, startTimer)
+    - playJeopardyTheme (function, called by startTimer)
+    - startTimer (function, called on script load)
+
+Page: theme_pages.html
+--------------------
+Linked JS:
+  - theme_pages.js
+
+Functions from inline HTML attributes:
+  - None (Event listeners are attached in JS)
+
+Globally exposed/exported functions from linked JS:
+  - theme_pages.js:
+    - (IIFE - Immediately Invoked Function Expression, which encapsulates all logic)
+    - updateStats (internal, called by renderLevel, onSelect)
+    - shuffle (internal, used by renderLevel)
+    - clearSel (internal, called by onSelect)
+    - makeBox (internal, called by renderLevel)
+    - renderLevel (internal, called on script start, onSelect)
+    - onSelect (event listener for dynamically created boxes)
+
+Page: speedpage.html
+--------------------
+Linked JS:
+  - speed_logic.js
+
+Functions from inline HTML attributes:
+  - None (Event listeners are attached in JS)
+
+Globally exposed/exported functions from linked JS:
+  - speed_logic.js:
+    - (DOMContentLoaded event listener for initial setup)
+    - speak (function, called by checkWord)
+    - nextFibonacci (function, called by checkWord)
+    - shuffle (function, used by generateBoard)
+    - generateBoard (function, called on script load)
+    - createSpeedBox (function, called by generateBoard)
+    - selectPair (function, event listener for speed boxes)
+    - checkWord (function, called by selectPair)
+    - resetSelectionColors (function, called by checkWord)
+    - updateWordList (function, called by checkWord)
+    - endGame (function, called by checkWord, startTimer)
+    - startTimer (function, called on script load)

@@ -1,0 +1,163 @@
+h1 {
+  font-size: 36px;
+  margin: 20px 0 10px;
+}
+.button-green { background-color: #27ae60; }  /* I AM DONE */
+.button-red   { background-color: #e74c3c; }  /* SHUFFLE */
+.button-gray  { background-color: #7f8c8d; }  /* Submit / Clear */
+
+#game-header {
+  background-color: rgba(255,255,255,0.95);
+  margin: 0px auto; /* 🔽 tightened from 20px */
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 600px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+#word-tools {
+  display: none;
+  margin: 10px auto 20px;
+  width: fit-content;
+  text-align: center;
+}
+
+#word-preview {
+  font-size: 20px;            /* ✅ smaller text */
+  width: 100px;               /* ✅ narrower */
+  height: 34px;               /* matches button height */
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.stat-block {
+  font-weight: bold;
+  font-size: 18px;
+}
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 6px 0;
+}
+.pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 48px;
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #ffeaa7;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.selected {
+  background-color: #ffeaa7 !important;
+  outline: 3px solid #f1c40f;
+  outline-offset: -2px;
+}
+#found-words {
+  margin-top: 4px; /* 🔽 reduce gap after shuffle */
+  padding: 4px;
+}
+
+#found-words h3 {
+  margin: 8px 0 4px 0;
+}
+#word-list {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: center;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+  max-width: 360px;
+  margin: 0 auto 10px;
+}
+#word-list,
+.correct-grid {
+  display: inline-grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 12px;
+  margin: 0 auto 10px;
+}
+
+#correct-words-section {
+  display: none;
+  margin-top: 10px;
+}
+.correct-grid {
+  /* change this… */
+  max-width: 360px;    /* ← exactly what #word-list uses */
+  margin: 10px auto 0;
+}
+
+.done-btn {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 30px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 40px auto 20px;
+  display: block;
+}
+
+/* ─── 1) Shared “word‐box” base (same as .answer-box) ─── */
+/* ─── shared base for every word‐box variant ─── */
+.answer-box,
+.bonus-word-box,
+.common-word-box,
+.uncommon-word-box,
+.hard-word-box {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  min-width: 80px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;                    /* no extra per-item margin */
+  border: 2px solid transparent;/* default border, overridden below */
+  box-sizing: border-box;
+  color: black;
+}
+
+/* ─── then only tweak what’s different ─── */
+.common-word-box {
+  background-color: lightgreen;
+  border-color: transparent;
+}
+
+.bonus-word-box {
+  background-color: #81ecec;
+}
+
+.uncommon-word-box {
+  /* background is set inline by your JS colors */
+  border-color: black;
+  border-width: 4px;
+}
+
+.hard-word-box {
+  background-color: gold;
+  border-color: black;
+  border-width: 4px;
+}
+
+/* ─── 2) Common & answer boxes (identical look) ─── */
+.answer-box,
+.bonus-word-box {
+  background-color: #81ecec;    /* same turquoise as your answer-box :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */
+}

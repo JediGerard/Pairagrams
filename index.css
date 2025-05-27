@@ -1,0 +1,15 @@
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  min-height: 100vh;
+  padding-top: 0px;
+  /* Reduced from 60px to 30px */
+  gap: 0px;
+  /* Optional: adds consistent spacing between stacked items */
+}
+
+#continue-btn {
+  margin-top: 15px;
+}

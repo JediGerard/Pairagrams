@@ -2,7 +2,7 @@
 
 // =============== Firebase Initialization ===============
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, setDoc, doc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyADcjbU1jM9Pqq4ZDrInVGSN7SdUb6O5nA",
@@ -17,6 +17,25 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 // =============== Utility Functions ===============
+
+export async function loadTopScores() {
+  const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+  const snapshot = await getDocs(q);
+  const ul = document.getElementById("top-scores");
+  if (ul) { // Ensure the element exists before trying to modify it
+    ul.innerHTML = ""; // Clear existing scores
+
+    snapshot.forEach(doc => {
+      const d = doc.data();
+      const li = document.createElement("li");
+      li.classList.add("entry"); // Optional: add flex styling
+      li.innerHTML = `<span>${d.name || "Anon"}</span><span>${d.score} pts</span>`;
+      ul.appendChild(li);
+    });
+  } else {
+    console.warn("#top-scores element not found. Cannot display scores.");
+  }
+}
 
 export function speak(text) {
   if (!window.speechSynthesis) return;

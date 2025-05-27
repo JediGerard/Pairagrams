@@ -1,3 +1,4 @@
+import { shuffle } from './utility.js';
 // ==================== Game State ====================
 let masterWords = {};
 let wordList = [];
@@ -142,7 +143,7 @@ function toggleSafeMode() {
 
 
 // ==================== Utility Functions ====================
-function speak(text) {
+function showFeedbackMessage(text) {
   const feedback = document.getElementById("feedback-message");
   if (!feedback) return;
 
@@ -168,14 +169,6 @@ function nextFibonacci() {
   const next = fibonacci[fibonacci.length - 1] + fibonacci[fibonacci.length - 2];
   fibonacci.push(next);
   return next;
-}
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
 }
 
 window.shuffleBoard = function() {
@@ -320,7 +313,7 @@ function checkWord() {
   const combined = selectedPairs.join("").toUpperCase();
 
   if (foundWords.includes(combined)) {
-    speak("Already found");
+    showFeedbackMessage("Already found");
     clearSelections();
     return;
   }
@@ -331,22 +324,22 @@ function checkWord() {
 
 
   // update display
-  speak("Correct!");
+  showFeedbackMessage("Correct!");
   score += fibonacci[scoreIndex] || nextFibonacci();
   scoreIndex++;
   scoreDisplay.textContent = score;
 
-  if (foundWords.length === 5) speak("You are killing it");
-  else if (foundWords.length === 10) speak("Hot diggity dog");
-  else if (foundWords.length === 15) speak("You are a word beast");
-  else if (foundWords.length === 20) speak("You are making me look bad");
-  else if (foundWords.length === 25) speak("I think you are cheating");
+  if (foundWords.length === 5) showFeedbackMessage("You are killing it");
+  else if (foundWords.length === 10) showFeedbackMessage("Hot diggity dog");
+  else if (foundWords.length === 15) showFeedbackMessage("You are a word beast");
+  else if (foundWords.length === 20) showFeedbackMessage("You are making me look bad");
+  else if (foundWords.length === 25) showFeedbackMessage("I think you are cheating");
 
   clearSelections();
   window.clearPreview();
   return;
 } else {
-    speak("Wrong");
+    showFeedbackMessage("Wrong");
     lives--;
     livesDisplay.textContent = lives;
     if (lives === 0) endGame();
@@ -357,7 +350,7 @@ function checkWord() {
 }
 
 function endGame() {
-  speak("Game Over");
+  showFeedbackMessage("Game Over");
 
   const gameOverMessage = document.createElement("h2");
   gameOverMessage.textContent = "GAME OVER";
@@ -428,9 +421,9 @@ window.onLetterSelected = function(letter) {
     {
     const soundOff = document.getElementById("sound-toggle")?.checked;
 
-    if (!soundOff && typeof speak === "function") {
+    if (!soundOff && typeof showFeedbackMessage === "function") {
       console.log("🔊 Speaking max message");
-      speak("Max 4 letters");
+      showFeedbackMessage("Max 4 letters");
     } else {
       console.log("⚠️ Alerting max message");
       alert("Max 4 letters");
@@ -445,25 +438,6 @@ window.onLetterSelected = function(letter) {
   const preview = document.getElementById("word-preview");
   if (preview) preview.value = previewLetters.join("");
 };
-
-function generatePuzzleId(letterPairs) {
-  const boardString = letterPairs.join("");
-
-  // SHA-256 hash
-  const buffer = new TextEncoder().encode(boardString);
-  return crypto.subtle.digest("SHA-256", buffer).then(hashBuffer => {
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const letters = String.fromCharCode(
-      65 + (hashArray[0] % 26),
-      65 + (hashArray[1] % 26)
-    );
-    const number = ((hashArray[2] << 16) | (hashArray[3] << 8) | hashArray[4]) % 1000000;
-    return `${letters}-${number.toString().padStart(6, "0")}`;
-  });
-}
-
-
-
 
 window.shufflePreview = function() {
   previewLetters = previewLetters.sort(() => Math.random() - 0.5);
@@ -481,14 +455,14 @@ window.clearPreview = function() {
 window.submitWord = function() {
   const word = previewLetters.join("").toUpperCase();
   if (word.length < 4) {
-    speak("Not enough letters");
+    showFeedbackMessage("Not enough letters");
     return;
   }
 
   if (foundWords.includes(word)) {
-    speak("Already found");
+    showFeedbackMessage("Already found");
   } else if (validWords.has(word)) {
-    speak("Correct!");
+    showFeedbackMessage("Correct!");
     foundWords.push(word);
     updateWordList(word);
     score += fibonacci[scoreIndex] || nextFibonacci();
@@ -501,7 +475,7 @@ window.submitWord = function() {
 document.getElementById("bonus-count").textContent = foundWords.length;
 
   } else {
-    speak("Not in the word list");
+    showFeedbackMessage("Not in the word list");
     lives--;
     livesDisplay.textContent = lives;
     if (lives === 0) endGame();
