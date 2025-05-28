@@ -932,4 +932,27 @@ saved.forEach(word => {
 window.onload = () => {
   console.log("🟢 window.onload fired");
   loadGameData();
+
+  // Add this new part:
+  if (document.fonts) { // Check for browser support (good practice)
+    document.fonts.ready.then(function () {
+      const titleElement = document.getElementById('pairagrams-title-main');
+      if (titleElement) {
+        titleElement.style.opacity = 1;
+      }
+    }).catch(function (error) {
+      // Fallback or error handling if fonts API fails or is not supported
+      console.error("Font loading error or API not supported:", error);
+      const titleElement = document.getElementById('pairagrams-title-main');
+      if (titleElement) {
+        titleElement.style.opacity = 1; // Show title anyway on error
+      }
+    });
+  } else {
+    // Fallback for older browsers without document.fonts API
+    const titleElement = document.getElementById('pairagrams-title-main');
+    if (titleElement) {
+      titleElement.style.opacity = 1; // Show title immediately
+    }
+  }
 };
