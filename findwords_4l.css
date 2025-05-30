@@ -41,16 +41,16 @@ h1 {
 .row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 5px; /* Changed from 10px */
   margin: 6px 0;
 }
 .pair {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 48px;
-  font-size: 24px;
+  width: 40px;  /* Changed from 60px */
+  height: 32px; /* Changed from 48px */
+  font-size: 18px; /* Changed from 24px */
   font-weight: bold;
   background-color: #ffeaa7;
   border-radius: 8px;
@@ -170,4 +170,15 @@ h1 {
   width: auto;
   display: inline-block;
   vertical-align: middle;
+  padding: 6px 12px; /* Adjusted padding */
+  font-size: 14px;   /* Adjusted font-size */
+}
+
+#hangman-display {
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 4px; /* Controls spacing between characters */
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: #333333; /* A dark gray color for visibility */
 }
