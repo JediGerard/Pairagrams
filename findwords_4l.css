@@ -161,3 +161,13 @@ h1 {
 .bonus-word-box {
   background-color: #81ecec;    /* same turquoise as your answer-box :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */
 }
+
+#action-button-area {
+  text-align: center;
+}
+
+#action-button-area button {
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
