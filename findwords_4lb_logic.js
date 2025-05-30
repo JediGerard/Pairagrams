@@ -3,7 +3,7 @@ import { shuffle } from './utility.js';
 let masterWords = {};
 let wordList = [];
 let validWords = new Set();
-let classification = {};   
+let classification = {};
 
 let lives = 5;
 let score = 0;
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   livesDisplay = document.getElementById("lives");
   scoreDisplay = document.getElementById("score");
-  
+
   container = document.getElementById("rows-container");
   wordListDisplay = document.getElementById("word-list");
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   feedbackDiv.id = "feedback-message";
   feedbackDiv.style.display = "none";
   document.getElementById("game-header").after(feedbackDiv);
-  
+
 
   Promise.all([
   fetch("master_words_file_with_parts_labeled.json").then(res => res.json()),
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
   box.innerHTML = selectedWords.map((w, i) =>
   `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
 ).join("");
-  
+
 
   // ✅ Hide the I AM DONE button
   document.getElementById("done-btn").style.display = "none";
@@ -101,21 +101,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const playAgain = document.createElement("button");
   playAgain.textContent = "PLAY AGAIN";
   playAgain.className = "button-base button-green";
-  playAgain.style.padding = "8px 16px"; 
+  playAgain.style.padding = "8px 16px";
   playAgain.style.fontSize = "16px";
-  playAgain.style.width = "auto"; 
-  playAgain.style.display = "inline-block"; 
-  playAgain.style.marginRight = "8px"; 
+  playAgain.style.width = "auto";
+  playAgain.style.display = "inline-block";
+  playAgain.style.marginRight = "8px";
   playAgain.onclick = () => location.reload();
 
   // ✅ Create GO TO MAIN button
   const goHome = document.createElement("button");
   goHome.textContent = "GO TO MAIN";
   goHome.className = "button-base button-green";
-  goHome.style.padding = "8px 16px"; 
+  goHome.style.padding = "8px 16px";
   goHome.style.fontSize = "16px";
-  goHome.style.width = "auto"; 
-  goHome.style.display = "inline-block"; 
+  goHome.style.width = "auto";
+  goHome.style.display = "inline-block";
   goHome.onclick = () => location.href = "index.html";
 
   // ✅ Insert both buttons into the same parent container as SHUFFLE was
@@ -130,8 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("correct-words-section").style.display = "block";
 };
 
-  
-  
+
+
 });
 
 window.toggleSafeMode = toggleSafeMode;

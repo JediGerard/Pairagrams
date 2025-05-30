@@ -84,7 +84,7 @@ Linked JS:
   - continue_logic.js (imports from utility.js)
 
 Functions from inline HTML attributes:
-  - window.location.href='findwords_4l.html' (from <button class="start-btn red-btn" onclick="window.location.href='findwords_4l.html'">) 
+  - window.location.href='findwords_4l.html' (from <button class="start-btn red-btn" onclick="window.location.href='findwords_4l.html'">)
 
 Globally exposed/exported functions from linked JS:
   - continue_logic.js:

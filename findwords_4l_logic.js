@@ -101,17 +101,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const playAgain = document.createElement("button");
   playAgain.textContent = "PLAY AGAIN";
   playAgain.className = "button-base button-green";
-  playAgain.style.width = "auto"; 
-  playAgain.style.display = "inline-block"; 
-  playAgain.style.marginRight = "8px"; 
+  playAgain.style.width = "auto";
+  playAgain.style.display = "inline-block";
+  playAgain.style.marginRight = "8px";
   playAgain.onclick = () => location.reload();
 
   // ✅ Create GO TO MAIN button
   const goHome = document.createElement("button");
   goHome.textContent = "GO TO MAIN";
   goHome.className = "button-base button-green";
-  goHome.style.width = "auto"; 
-  goHome.style.display = "inline-block"; 
+  goHome.style.width = "auto";
+  goHome.style.display = "inline-block";
   goHome.onclick = () => location.href = "index.html";
 
   // ✅ Insert both buttons into the same parent container as SHUFFLE was
