@@ -118,13 +118,13 @@ h1 {
 .common-word-box,
 .uncommon-word-box,
 .hard-word-box {
-  padding: 10px 16px;
+  padding: 6px 10px; /* Changed */
   border-radius: 12px;
   font-size: 18px;
   font-weight: bold;
   text-align: center;
-  min-width: 80px;
-  min-height: 40px;
+  min-width: 60px; /* Changed */
+  min-height: 30px; /* Changed */
   display: flex;
   align-items: center;
   justify-content: center;
