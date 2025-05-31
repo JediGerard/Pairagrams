@@ -1,9 +1,17 @@
 import { shuffle } from './utility.js';
 // ==================== Game State ====================
-const SOLUTION = "MORNING COFFEE";
-let revealedSolution = Array(SOLUTION.length).fill('_');
+const SOLUTION_PHRASES = [
+    "MORNING COFFEE", "COCONUT CREAM", "BUTTERSCOTCH", "PAPERCLIP ART",
+    "WALKING ALONE", "FOREST TRAILS", "APEROL SPRITZ", "GOLDEN TICKET",
+    "CANDLELIT DIN", "FRENCH TOAST", "SALMON PINK", "HUNTERS LODGE",
+    "PUMPKIN PATCH", "HIDDEN TALENT", "SUNDAY DRIVES",
+    "AFTERNOON TEA", "POCKET CHANGE"
+];
+let currentSolution = "";
+let revealedSolution = [];
 let masterWords = {};
-let wordList = [];
+let wordsByFirstLetter = {}; // For efficient lookup by starting letter
+let wordList = []; // Still useful for other things? Or phase out? For now, keep.
 let validWords = new Set();
 let classification = {};   
 
@@ -44,7 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
   feedbackDiv.id = "feedback-message";
   feedbackDiv.style.display = "none";
   document.getElementById("game-header").after(feedbackDiv);
-  
+
+  selectRandomSolution(); // Select solution before it's needed
 
   Promise.all([
   fetch("master_words_file_with_parts_labeled.json").then(res => res.json()),
@@ -67,8 +76,22 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (isCommon && cleanSplit) {
-      wordList.push({ word, left: cleanSplit[0], right: cleanSplit[1] });
+      const entryData = { word, left: cleanSplit[0], right: cleanSplit[1] };
+      // Populate wordList (if still needed for other purposes)
+      wordList.push(entryData);
+
+      // Populate wordsByFirstLetter
+      const firstLetter = word.charAt(0).toUpperCase();
+      if (!wordsByFirstLetter[firstLetter]) {
+          wordsByFirstLetter[firstLetter] = [];
+      }
+      wordsByFirstLetter[firstLetter].push(entryData);
     }
+  }
+
+  // It's good to shuffle each list in wordsByFirstLetter for better random selection later
+  for (const letter in wordsByFirstLetter) {
+    shuffle(wordsByFirstLetter[letter]);
   }
 
   const lines = csvText.trim().split("\n");
@@ -130,22 +153,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
   // Initialize Hangman Display
-  revealedSolution = SOLUTION.split('').map(char => char === ' ' ? ' ' : '_');
+  revealedSolution = currentSolution.split('').map(char => {
+    const upperChar = char.toUpperCase();
+    if (char === ' ') return ' '; // Preserve spaces
+    if (upperChar >= 'A' && upperChar <= 'Z') { // Is it a letter?
+        if (['Q', 'Z', 'X'].includes(upperChar)) return char; // Pre-reveal Q, Z, X (preserving original case)
+        return '_'; // Represent other letters as underscores
+    }
+    // If not a space and not an A-Z letter, it's an invalid character according to new rules
+    return ''; // Intend to filter this out, effectively ignoring/removing invalid char from display
+  });
+  // Filter out empty strings that might result from ignored characters
+  revealedSolution = revealedSolution.filter(rChar => rChar !== '');
   const hangmanDisplay = document.getElementById("hangman-display");
   if (hangmanDisplay) {
+    // Ensure display matches the length of the new currentSolution
     hangmanDisplay.textContent = revealedSolution.join(" ");
+    // Adjust the CSS for hangman-display if phrases can be very long
+    if (currentSolution.length > 16) { // Example threshold
+        hangmanDisplay.style.letterSpacing = "1px"; // Reduce spacing for longer phrases
+    } else {
+        hangmanDisplay.style.letterSpacing = "3px"; // Default spacing
+    }
   }
 });
 
 window.toggleSafeMode = toggleSafeMode;
 
+function selectRandomSolution() {
+    const randomIndex = Math.floor(Math.random() * SOLUTION_PHRASES.length);
+    currentSolution = SOLUTION_PHRASES[randomIndex].toUpperCase();
+    // console.log("Selected Solution:", currentSolution); // For debugging
+}
+
 function updateHangmanDisplay(foundLetter) {
   const upperLetter = foundLetter.toUpperCase();
   let letterRevealed = false;
-  for (let i = 0; i < SOLUTION.length; i++) {
-    if (SOLUTION[i].toUpperCase() === upperLetter) {
+  for (let i = 0; i < currentSolution.length; i++) {
+    if (currentSolution[i].toUpperCase() === upperLetter) {
       if (revealedSolution[i] === '_') { // Only reveal if not already revealed
-        revealedSolution[i] = SOLUTION[i]; // Use original casing from SOLUTION for display
+        revealedSolution[i] = currentSolution[i]; // Use original casing from currentSolution for display
         letterRevealed = true;
       }
     }
@@ -197,45 +244,131 @@ function nextFibonacci() {
 }
 
 window.shuffleBoard = function() {
-  boardPairs = shuffle([...boardPairs]);
-
-  container.innerHTML = "";
-  for (let i = 0; i < 6; i++) {
-    const row = document.createElement("div");
-    row.className = "row";
-    for (let j = 0; j < 4; j++) {
-      const pair = createSpeedBox(boardPairs[i * 4 + j]);
-      row.appendChild(pair);
-    }
-    container.appendChild(row);
-  }
+  // This function might need rethinking if boardPairs are generated differently
+  // For now, assume it shuffles the existing pairs on the board.
+  // If generateBoard completely re-populates boardPairs, this shuffle might be redundant
+  // or applied at a different stage.
+  // Let's assume generateBoard will call shuffle(boardPairs) at its end.
+  // So, this function could just call generateBoard() again, or be removed if
+  // shuffling is intrinsic to generation.
+  // For now, let's make it regenerate and redraw.
+  generateBoard(); // This will create new pairs and shuffle them.
 };
 
 
 function generateBoard() {
-  container.innerHTML = "";
-  selectedPairs = [];
-  selectedWords = [];
-  boardPairs = [];
-  const usedWords = new Set();
+  container.innerHTML = ""; // Clear existing board display
+  selectedWords = []; // Reset for the new board
+  boardPairs = [];    // Reset for the new board
+  const usedWordsOnBoard = new Set(); // Track words used in *this specific* board generation
 
-  const shuffled = shuffle([...wordList]);
-  for (const entry of shuffled) {
-    if (!usedWords.has(entry.word)) {
-      selectedWords.push(entry);
-      boardPairs.push(entry.left, entry.right);
-      usedWords.add(entry.word);
+  // 1. Determine Target Starting Letters from currentSolution
+  let targetLetters = [];
+  if (currentSolution && typeof currentSolution === 'string') {
+    for (const char of currentSolution) {
+      const upperChar = char.toUpperCase();
+      if (upperChar >= 'A' && upperChar <= 'Z' && !['Q', 'Z', 'X'].includes(upperChar)) {
+        targetLetters.push(upperChar);
+      }
     }
-    if (selectedWords.length === 12) break;
+  } else {
+    console.error("currentSolution is not valid for generating board.");
+    // Fallback: fill with random common letters or handle error appropriately
+    // For now, let's use a default set if currentSolution is problematic
+    const defaultTargetLetters = "EARIOTNSLCUL"; // Common letters
+    for(const char of defaultTargetLetters) targetLetters.push(char);
   }
 
-  if (selectedWords.length < 12) {
-    console.warn("Not enough unique words to generate a full board.");
-    return;
+  // 2. Adjust targetLetters to be exactly 12
+  if (targetLetters.length < 12) {
+    const uniqueLettersInSolution = [...new Set(targetLetters)];
+    if (uniqueLettersInSolution.length > 0) {
+      let i = 0;
+      while (targetLetters.length < 12) {
+        targetLetters.push(uniqueLettersInSolution[i % uniqueLettersInSolution.length]);
+        i++;
+      }
+    } else { // Fallback if solution had no usable letters (e.g. "Q Z X")
+        const fallbackLetters = ['A', 'E', 'I', 'O', 'S', 'T', 'R', 'N', 'L', 'C', 'U', 'D'];
+        while(targetLetters.length < 12) {
+            targetLetters.push(fallbackLetters[targetLetters.length % fallbackLetters.length]);
+        }
+    }
+  } else if (targetLetters.length > 12) {
+    targetLetters = targetLetters.slice(0, 12);
   }
 
-  shuffle(boardPairs);
+  // 3. Select 12 words for the board
+  let wordsSelectedCount = 0;
+  for (let i = 0; i < 12; i++) {
+    const startingLetter = targetLetters[i];
+    let potentialWords = wordsByFirstLetter[startingLetter] || [];
+    let wordData = null;
+    let attempts = 0;
 
+    // Try to find an unused word
+    while (attempts < (potentialWords.length || 1)) { // Max attempts = num of potential words or 1 if none
+        if (potentialWords.length === 0) {
+            console.warn(`No words found for letter: ${startingLetter}. Trying a random letter.`);
+            // Fallback: pick a random common letter and try again
+            const commonFallbackLetters = ['E','A','R','I','O','T','N','S','L','C','U','D','P','M','H','G','B','F','Y','W','K','V'];
+            const randomFallbackLetter = commonFallbackLetters[Math.floor(Math.random() * commonFallbackLetters.length)];
+            potentialWords = wordsByFirstLetter[randomFallbackLetter] || [];
+            if (potentialWords.length === 0) { // Still no words, this is bad
+                 console.error(`CRITICAL: No words for fallback letter ${randomFallbackLetter} either.`);
+                 // As a last resort, we might need a truly generic fallback word if available
+                 // or skip adding a word, which would break the 12-word board.
+                 // For now, we'll break this inner loop and might end up with < 12 words.
+                 break;
+            }
+        }
+
+        const randomIndex = Math.floor(Math.random() * potentialWords.length);
+        const candidateWord = potentialWords[randomIndex];
+
+        if (candidateWord && !usedWordsOnBoard.has(candidateWord.word)) {
+            wordData = candidateWord;
+            break;
+        }
+        attempts++;
+        // If all words for this letter are used, or if the list was empty, this loop will end.
+        // To prevent infinite loops with small lists, we can try removing the candidate
+        // or shuffling and picking from start. For now, random attempts should suffice for larger lists.
+        if (attempts >= potentialWords.length && potentialWords.length > 0) {
+            // All words for this starting letter are already on board or failed to pick.
+            // This indicates a small pool for that letter or many duplicates in targetLetters.
+            console.warn(`Could not find an unused word for ${startingLetter} after ${attempts} attempts. May try fallback.`);
+            // Fallback: try a different random common letter to ensure board diversity if stuck
+            const commonFallbackLetters = ['E','A','R','I','O','T','N','S','L','C','U','D','P','M','H','G','B','F','Y','W','K','V'];
+            const randomFallbackLetter = commonFallbackLetters[Math.floor(Math.random() * commonFallbackLetters.length)];
+            potentialWords = wordsByFirstLetter[randomFallbackLetter] || []; // Switch to a new list
+            attempts = 0; // Reset attempts for the new list
+            if (potentialWords.length === 0) break; // If fallback also empty, give up for this slot
+        }
+    }
+
+    if (wordData) {
+      selectedWords.push(wordData); // Store the full word object
+      boardPairs.push(wordData.left, wordData.right);
+      usedWordsOnBoard.add(wordData.word);
+      wordsSelectedCount++;
+    } else {
+      console.error(`Failed to select a word for target letter: ${startingLetter} (or its fallback). Board may be incomplete.`);
+      // Consider adding a placeholder or a very common word if this happens,
+      // to ensure boardPairs has 24 items. For now, it might be short.
+    }
+  }
+
+  if (wordsSelectedCount < 12) {
+      console.warn(`Board generated with ${wordsSelectedCount} words instead of 12. Check word list and solution complexity.`);
+      // Optionally, fill remaining slots with very common random words to ensure 24 pairs
+      // This is complex, for now, accept a potentially smaller board if errors occurred.
+  }
+
+  // 4. Shuffle and Display
+  shuffle(boardPairs); // Shuffle the collected pairs
+
+  // Rebuild the display
   for (let i = 0; i < 6; i++) {
     const row = document.createElement("div");
     row.className = "row";
