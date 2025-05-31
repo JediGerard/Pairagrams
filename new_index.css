@@ -11,13 +11,13 @@ body {
 }
 
 .logo-main {
-    max-width: 400px;
+    max-width: 350px;
     height: auto;
 }
 
 .challenge-banner,
 .why-banner {
-    max-width: 600px;
+    max-width: 375px;
     height: auto;
 }
 
@@ -31,7 +31,7 @@ body {
     grid-gap: 15px;
     margin-top: 20px;
     margin-bottom: 20px;
-    max-width: 500px;
+    max-width: 375px;
     width: 100%;
 }
 
