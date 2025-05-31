@@ -1,34 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap" rel="stylesheet">
-
-  <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Pairagrams – Pair Think Solve Win Glory" />
-  <meta property="og:description" content="A Word Game for those who love Word Games" />
-  <meta property="og:image" content="https://pairagrams.com/linkpreview.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="https://pairagrams.com" />
-  <meta property="og:type" content="website" />
-  <!-- Favicon and Icons -->
-  <link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
-  <link rel="shortcut icon" href="/assets/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/assets/site.webmanifest" />
-  <link rel="stylesheet" href="common.css">
-  <link rel="stylesheet" href="index.css">
-
-  <title>PAIRAGRAMS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pairagrams - Home</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="new_index.css">
 </head>
-
 <body>
 
   <div class="center-container">
-    <img src="/assets/Pairagrams_tighthp.png" alt="Pairagrams Logo" class="logo">
+    <img src="/assets/Pairagrams_logo.png" alt="Pairagrams Logo" class="logo">
 
     <!-- LOGIN FORM -->
     <div id="login-form" class="box beige-box">
@@ -40,7 +22,155 @@
     </div>
   </div>
 
-  <script type="module" src="index_logic.js"></script>
-</body>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc,
+      getDocs, getDoc, doc, query, orderBy, limit, where
+    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyADcjbU1jM9Pqq4ZDrInVGSN7SdUb6O5nA",
+      authDomain: "pairagrams.firebaseapp.com",
+      projectId: "pairagrams",
+      storageBucket: "pairagrams.firebasestorage.app",
+      messagingSenderId: "958505224302",
+      appId: "1:958505224302:web:81bae163e8a526467afe7f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🔄 Auto-redirect if returning user already logged in
+    document.addEventListener("DOMContentLoaded", () => {
+      const name = localStorage.getItem("playerName");
+
+      if (name) {
+        window.location.href = "continue.html";
+      }
+    });
+
+
+// 🔐 Securely hash password using SHA-256 before storing or comparing
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+// 🏆 Fetch top 10 scores from Firebase and display on the homepage
+    async function loadTopScores() {
+      const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+      const snapshot = await getDocs(q);
+      const ul = document.getElementById("top-scores");
+      ul.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const li = document.createElement("li");
+        li.classList.add("entry"); // Optional: add flex styling
+        li.innerHTML = `<span>${d.name || "Anon"}</span><span>${d.score} pts</span>`;
+        ul.appendChild(li);
+      });
+    }
+
+    // 📈 Refresh level data from Firebase for returning players and speak progress
+    async function setupStatusScreen() {
+      const name = localStorage.getItem("playerName");
+      let lvl = parseInt(localStorage.getItem("level") || "1");
+
+      // ✅ Try loading fresh level from Firebase
+      try {
+        const ref = doc(db, "progress", name);
+        const snapshot = await getDoc(ref);
+        if (snapshot.exists()) {
+          const d = snapshot.data();
+          if (d.level) {
+            lvl = d.level;
+            localStorage.setItem("level", lvl);
+          }
+        }
+      } catch (e) {
+        console.warn("⚠️ Could not refresh level from Firebase:", e);
+      }
+
+      document.getElementById("greeting").textContent = `Welcome back, ${name}!`;
+      document.getElementById("level-number").textContent = lvl;
+
+      const percent = ((lvl / 500) * 100).toFixed(1);
+      const phrase = `You are at level ${lvl} and you are ${percent}% complete.`;
+      const utterance = new SpeechSynthesisUtterance(phrase);
+      window.speechSynthesis.speak(utterance);
+
+      document.getElementById("continue-btn").onclick = () => {
+        window.location.href = "continue.html";
+      };
+
+      document.getElementById("logout-btn").onclick = () => {
+        localStorage.removeItem("playerName");
+        localStorage.removeItem("level");
+        localStorage.removeItem("lives");
+        localStorage.removeItem("totalScore");
+        localStorage.removeItem("wordCount");
+        localStorage.removeItem("bonusWords");
+        localStorage.removeItem("newGame");
+        location.reload();
+      };
+    }
+
+
+// 🚀 Handle login and game setup: validate input, check or store password, and redirect
+    async function startGame() {
+      const name = document.getElementById("playerName").value.trim();
+      const pw = document.getElementById("password").value;
+      if (!name || pw.length < 5) {
+        alert("Please enter a name and a 5+ character password.");
+        return;
+      }
+
+      const hash = await hashPassword(pw);
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+      if (users[name] && users[name] !== hash) {
+        alert("Incorrect password.");
+        return;
+      }
+
+      users[name] = hash;
+      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("playerName", name);
+      localStorage.setItem("newGame", "true");
+      localStorage.setItem("lives", "5");
+      localStorage.setItem("bonusWords", "[]");
+      localStorage.setItem("totalScore", "0");
+
+      // ✅ Fetch user level from Firebase
+      let userLevel = 1;
+      const ref = doc(db, "progress", name);
+      const snapshot = await getDoc(ref);
+      if (snapshot.exists()) {
+        const d = snapshot.data();
+        console.log("🧠 Firebase doc for", name, "=", d);
+        if (d.level) userLevel = d.level;
+      } else {
+        console.warn("⚠️ No saved progress found for", name);
+      }
+
+      console.log("🎯 Final resolved level for", name, "=", userLevel);
+
+
+      localStorage.setItem("level", userLevel);
+
+      // ✅ Redirect to continue page
+      window.location.href = "continue.html";
+    }
+
+// 🔁 Trigger top score fetch and expose game start method
+    loadTopScores();
+
+    window.startGame = startGame;
+  </script>
+</body>
 </html>

@@ -1,0 +1,44 @@
+body {
+    /* common.css handles base font and background */
+    text-align: center;
+}
+
+.homepage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.logo-main {
+    max-width: 400px;
+    height: auto;
+}
+
+.challenge-banner,
+.why-banner {
+    max-width: 600px;
+    height: auto;
+}
+
+.spacer-20 {
+    height: 20px;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.image-grid img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
