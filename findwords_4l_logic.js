@@ -1,5 +1,7 @@
 import { shuffle } from './utility.js';
 // ==================== Game State ====================
+const SOLUTION = "MORNING COFFEE";
+let revealedSolution = Array(SOLUTION.length).fill('_');
 let masterWords = {};
 let wordList = [];
 let validWords = new Set();
@@ -127,10 +129,36 @@ document.addEventListener("DOMContentLoaded", () => {
 };
 
   
-  
+  // Initialize Hangman Display
+  revealedSolution = SOLUTION.split('').map(char => char === ' ' ? ' ' : '_');
+  const hangmanDisplay = document.getElementById("hangman-display");
+  if (hangmanDisplay) {
+    hangmanDisplay.textContent = revealedSolution.join(" ");
+  }
 });
 
 window.toggleSafeMode = toggleSafeMode;
+
+function updateHangmanDisplay(foundLetter) {
+  const upperLetter = foundLetter.toUpperCase();
+  let letterRevealed = false;
+  for (let i = 0; i < SOLUTION.length; i++) {
+    if (SOLUTION[i].toUpperCase() === upperLetter) {
+      if (revealedSolution[i] === '_') { // Only reveal if not already revealed
+        revealedSolution[i] = SOLUTION[i]; // Use original casing from SOLUTION for display
+        letterRevealed = true;
+      }
+    }
+  }
+
+  // Update the display if a new letter was revealed
+  if (letterRevealed) {
+    const displayElement = document.getElementById("hangman-display");
+    if (displayElement) {
+      displayElement.textContent = revealedSolution.join(" ");
+    }
+  }
+}
 
 function toggleSafeMode() {
   const isSafe = document.getElementById("safe-mode-toggle").checked;
@@ -319,6 +347,8 @@ function checkWord() {
   foundWords.push(combined);
   updateWordList(combined);
 
+  const firstLetter = combined.charAt(0);
+  updateHangmanDisplay(firstLetter);
 
   // update display
   showFeedbackMessage("Correct!");
@@ -462,6 +492,10 @@ window.submitWord = function() {
     showFeedbackMessage("Correct!");
     foundWords.push(word);
     updateWordList(word);
+
+    const firstLetter = word.charAt(0);
+    updateHangmanDisplay(firstLetter);
+
     score += fibonacci[scoreIndex] || nextFibonacci();
     scoreIndex++;
     scoreDisplay.textContent = score;
