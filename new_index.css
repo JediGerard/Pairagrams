@@ -28,17 +28,24 @@ body {
 .image-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 15px;
+    grid-gap: 15px; /* This remains the space between images */
     margin-top: 20px;
     margin-bottom: 20px;
-    max-width: 375px;
+    /* NEW: Adjust max-width to shrink the overall grid, making images smaller */
+    max-width: 270px;
     width: 100%;
+    /* Optional: center the grid itself if its parent is wider */
+    /* margin-left: auto; */
+    /* margin-right: auto; */
 }
 
 .image-grid img {
+    /* NEW: Images should take full width of their new, smaller, grid cells */
     width: 100%;
     height: auto;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px; /* Keeps rounded corners if desired */
+    /* REMOVE: margin: 0 auto; (this was causing the internal spacing issue) */
+    /* REMOVE: border and box-shadow if they were still there */
+    /* border: none; */
+    /* box-shadow: none; */
 }
