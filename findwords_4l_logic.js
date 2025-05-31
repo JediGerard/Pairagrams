@@ -244,15 +244,42 @@ function nextFibonacci() {
 }
 
 window.shuffleBoard = function() {
-  // This function might need rethinking if boardPairs are generated differently
-  // For now, assume it shuffles the existing pairs on the board.
-  // If generateBoard completely re-populates boardPairs, this shuffle might be redundant
-  // or applied at a different stage.
-  // Let's assume generateBoard will call shuffle(boardPairs) at its end.
-  // So, this function could just call generateBoard() again, or be removed if
-  // shuffling is intrinsic to generation.
-  // For now, let's make it regenerate and redraw.
-  generateBoard(); // This will create new pairs and shuffle them.
+    // Ensure boardPairs is not empty and 'shuffle' function is available
+    if (boardPairs && boardPairs.length > 0 && typeof shuffle === 'function') {
+        shuffle(boardPairs); // Shuffle the existing boardPairs array in place.
+
+        const container = document.getElementById("rows-container");
+        if (!container) {
+            console.error("Shuffle_Board: Container for rows not found.");
+            return;
+        }
+        container.innerHTML = ""; // Clear existing board display.
+
+        // Re-render the board with the shuffled pairs.
+        // Assuming 6 rows and 4 pairs per row, fitting 24 pairs.
+        const numRows = 6;
+        const pairsPerRow = 4;
+        for (let i = 0; i < numRows; i++) {
+            const row = document.createElement("div");
+            row.className = "row";
+            for (let j = 0; j < pairsPerRow; j++) {
+                const pairIndex = i * pairsPerRow + j;
+                if (pairIndex < boardPairs.length) { // Check if the pair exists
+                    // Assuming createSpeedBox is globally available or correctly scoped
+                    const pairBox = createSpeedBox(boardPairs[pairIndex]);
+                    row.appendChild(pairBox);
+                }
+            }
+            container.appendChild(row);
+        }
+    } else {
+        if (!boardPairs || boardPairs.length === 0) {
+            console.warn("Shuffle_Board: No board pairs to shuffle.");
+        }
+        if (typeof shuffle !== 'function') {
+            console.error("Shuffle_Board: Shuffle function not available.");
+        }
+    }
 };
 
 
