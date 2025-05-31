@@ -15,7 +15,7 @@ let wordList = []; // Still useful for other things? Or phase out? For now, keep
 let validWords = new Set();
 let classification = {};   
 
-let lives = 5;
+// let lives = 5; // Removed
 let score = 0;
 let scoreIndex = 0;
 let fibonacci = [1, 1];
@@ -24,7 +24,7 @@ let foundWords = [];
 let selectedWords = [];
 let boardPairs = [];
 
-let livesDisplay, scoreDisplay, container, wordListDisplay;
+let /*livesDisplay,*/ scoreDisplay, container, wordListDisplay; // livesDisplay removed
 
 let common4 = new Set();       // common 4-letter words
 let hardFoundCount = 0;
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     previewBox.placeholder = "type here";
     previewBox.setAttribute("readonly", true);
   }
-  livesDisplay = document.getElementById("lives");
+  // livesDisplay = document.getElementById("lives"); // Removed
   scoreDisplay = document.getElementById("score");
   
   container = document.getElementById("rows-container");
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize Hangman Display
   revealedSolution = currentSolution.split('').map(char => {
     const upperChar = char.toUpperCase();
-    if (char === ' ') return ' '; // Preserve spaces
+    if (char === ' ') return '*';   // New line: represent space with *
     if (upperChar >= 'A' && upperChar <= 'Z') { // Is it a letter?
         if (['Q', 'Z', 'X'].includes(upperChar)) return char; // Pre-reveal Q, Z, X (preserving original case)
         return '_'; // Represent other letters as underscores
@@ -213,9 +213,90 @@ function toggleSafeMode() {
   tools.style.display = isSafe ? "block" : "none";
 }
 
+function checkWinCondition() {
+  // The solution is won if there are no underscores left in revealedSolution
+  return !revealedSolution.includes('_');
+}
+
+function handleWin() {
+  // 1. Display Congratulations Message
+  const feedback = document.getElementById("feedback-message");
+  if (feedback) {
+      feedback.textContent = "CONGRATULATIONS USERNAME - YOU WON";
+      feedback.style.position = "fixed";
+      feedback.style.top = "40%"; // Adjusted position
+      feedback.style.left = "50%";
+      feedback.style.transform = "translate(-50%, -50%)";
+      feedback.style.padding = "20px 40px"; // Larger padding
+      feedback.style.backgroundColor = "#2ecc71"; // Green background
+      feedback.style.color = "white"; // White text
+      feedback.style.border = "3px solid #27ae60";
+      feedback.style.borderRadius = "10px";
+      feedback.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
+      feedback.style.zIndex = "1001"; // Ensure it's above other elements
+      feedback.style.fontSize = "24px"; // Larger font
+      feedback.style.display = "block";
+      // No timeout for this message, it stays until Play Again/Go To Main
+  } else {
+      alert("CONGRATULATIONS USERNAME - YOU WON"); // Fallback
+  }
+
+  // 2. Hide Game Elements
+  const wordTools = document.getElementById("word-tools");
+  if (wordTools) wordTools.style.display = "none";
+
+  const rowsContainer = document.getElementById("rows-container");
+  if (rowsContainer) rowsContainer.style.display = "none";
+
+  const hangmanDisplay = document.getElementById("hangman-display");
+  if (hangmanDisplay) hangmanDisplay.style.marginTop = "20px";
+
+  const actionButtonArea = document.getElementById("action-button-area");
+  if (actionButtonArea) actionButtonArea.innerHTML = ""; // Clear existing buttons (Shuffle, I AM DONE)
+
+  // 3. Show "PLAY AGAIN" and "GO TO MAIN" buttons
+  const playAgainBtn = document.createElement("button");
+  playAgainBtn.textContent = "PLAY AGAIN";
+  playAgainBtn.className = "button-base button-green";
+  playAgainBtn.style.width = "auto";
+  playAgainBtn.style.display = "inline-block";
+  playAgainBtn.style.marginRight = "8px";
+  playAgainBtn.onclick = () => location.reload();
+
+  const goHomeBtn = document.createElement("button");
+  goHomeBtn.textContent = "GO TO MAIN";
+  goHomeBtn.className = "button-base button-green";
+  goHomeBtn.style.width = "auto";
+  goHomeBtn.style.display = "inline-block";
+  goHomeBtn.onclick = () => location.href = "index.html";
+
+  if (actionButtonArea) {
+      actionButtonArea.appendChild(playAgainBtn);
+      actionButtonArea.appendChild(goHomeBtn);
+      actionButtonArea.style.display = "flex";
+      actionButtonArea.style.justifyContent = "center";
+  }
+
+  const foundWordsSection = document.getElementById("found-words");
+  if (foundWordsSection) foundWordsSection.style.display = "none";
+  const wordListUl = document.getElementById("word-list");
+  if (wordListUl) wordListUl.style.display = "none";
+
+   const correctWordsSection = document.getElementById("correct-words-section");
+   if (correctWordsSection) correctWordsSection.style.display = "none";
+}
+
 
 // ==================== Utility Functions ====================
 function showFeedbackMessage(text) {
+  // If the win message is already showing, don't let regular feedback overwrite it.
+  const feedbackElement = document.getElementById("feedback-message");
+  if (feedbackElement && feedbackElement.textContent === "CONGRATULATIONS USERNAME - YOU WON" && feedbackElement.style.display === "block") {
+      if (text !== "CONGRATULATIONS USERNAME - YOU WON") { // only proceed if it's not trying to re-show win message
+          return;
+      }
+  }
+
   const feedback = document.getElementById("feedback-message");
   if (!feedback) return;
 
@@ -510,6 +591,11 @@ function checkWord() {
   const firstLetter = combined.charAt(0);
   updateHangmanDisplay(firstLetter);
 
+  if (checkWinCondition()) {
+      handleWin();
+      return; // Stop further processing if win condition is met
+  }
+
   // update display
   showFeedbackMessage("Correct!");
   score += fibonacci[scoreIndex] || nextFibonacci();
@@ -527,15 +613,16 @@ function checkWord() {
   return;
 } else {
     showFeedbackMessage("Wrong");
-    lives--;
-    livesDisplay.textContent = lives;
-    if (lives === 0) endGame();
+    // lives--; // Removed
+    // livesDisplay.textContent = lives; // Removed
+    // if (lives === 0) endGame(); // Removed
   }
 
   clearSelections();
   window.clearPreview();
 }
 
+/* // Entire endGame function removed
 function endGame() {
   showFeedbackMessage("Game Over");
 
@@ -587,6 +674,7 @@ function endGame() {
   playAgain.addEventListener("click", () => location.reload());
   document.body.appendChild(playAgain);
 }
+*/
 
 // ========== Submit Box Logic ==========
 window.previewLetters = [];
@@ -656,6 +744,11 @@ window.submitWord = function() {
     const firstLetter = word.charAt(0);
     updateHangmanDisplay(firstLetter);
 
+    if (checkWinCondition()) {
+        handleWin();
+        return; // Stop further processing if win condition is met
+    }
+
     score += fibonacci[scoreIndex] || nextFibonacci();
     scoreIndex++;
     scoreDisplay.textContent = score;
@@ -667,9 +760,9 @@ document.getElementById("bonus-count").textContent = foundWords.length;
 
   } else {
     showFeedbackMessage("Not in the word list");
-    lives--;
-    livesDisplay.textContent = lives;
-    if (lives === 0) endGame();
+    // lives--; // Removed
+    // livesDisplay.textContent = lives; // Removed
+    // if (lives === 0) endGame(); // Removed
   }
 
   window.clearPreview();
