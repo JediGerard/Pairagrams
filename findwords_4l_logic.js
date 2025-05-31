@@ -219,71 +219,56 @@ function checkWinCondition() {
 }
 
 function handleWin() {
-  // 1. Display Congratulations Message
-  const feedback = document.getElementById("feedback-message");
-  if (feedback) {
-      feedback.textContent = "CONGRATULATIONS USERNAME - YOU WON";
-      feedback.style.position = "fixed";
-      feedback.style.top = "40%"; // Adjusted position
-      feedback.style.left = "50%";
-      feedback.style.transform = "translate(-50%, -50%)";
-      feedback.style.padding = "20px 40px"; // Larger padding
-      feedback.style.backgroundColor = "#2ecc71"; // Green background
-      feedback.style.color = "white"; // White text
-      feedback.style.border = "3px solid #27ae60";
-      feedback.style.borderRadius = "10px";
-      feedback.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
-      feedback.style.zIndex = "1001"; // Ensure it's above other elements
-      feedback.style.fontSize = "24px"; // Larger font
-      feedback.style.display = "block";
-      // No timeout for this message, it stays until Play Again/Go To Main
-  } else {
-      alert("CONGRATULATIONS USERNAME - YOU WON"); // Fallback
-  }
+    // 1. Trigger the "I AM DONE" button's functionality
+    // to set up the screen state (buttons, hide game elements).
+    const doneButton = document.getElementById("done-btn");
+    if (doneButton && typeof doneButton.onclick === 'function') {
+        // Critical game elements like rowsContainer are hidden by doneButton.onclick()
+        // Also, actionButtonArea is repopulated by doneButton.onclick()
+        doneButton.onclick();
+    } else {
+        console.error("Could not programmatically trigger 'I AM DONE' logic for win state.");
+        // Fallback: Manually hide essential game elements if doneButton.onclick fails
+        const wordTools = document.getElementById("word-tools");
+        if (wordTools) wordTools.style.display = "none";
+        const rowsContainer = document.getElementById("rows-container");
+        if (rowsContainer) rowsContainer.style.display = "none";
+        const shuffleBtn = document.querySelector("button.button-red"); // Assuming SHUFFLE is red
+        if (shuffleBtn) shuffleBtn.style.display = "none";
+        // Note: This fallback does not create PLAY AGAIN / GO TO MAIN buttons.
+        // The primary path is relying on doneButton.onclick().
+    }
 
-  // 2. Hide Game Elements
-  const wordTools = document.getElementById("word-tools");
-  if (wordTools) wordTools.style.display = "none";
+    // 2. Hide the "correct-words-section" which is shown by "I AM DONE" logic.
+    // For winning, we might not want to immediately show all possible words.
+    const correctWordsSection = document.getElementById("correct-words-section");
+    if (correctWordsSection) {
+        correctWordsSection.style.display = "none";
+    }
 
-  const rowsContainer = document.getElementById("rows-container");
-  if (rowsContainer) rowsContainer.style.display = "none";
+    // 3. Reset/hide the custom feedback message div if it was used for the old win message.
+    const feedbackMessageDiv = document.getElementById("feedback-message");
+    if (feedbackMessageDiv && feedbackMessageDiv.textContent.startsWith("CONGRATULATIONS")) {
+        // Reset styles or simply hide it, as alert() is now used.
+        feedbackMessageDiv.style.display = "none";
+        // Optionally reset all styles if this div is reused for other messages
+        feedbackMessageDiv.style.position = "";
+        feedbackMessageDiv.style.top = "";
+        feedbackMessageDiv.style.left = "";
+        feedbackMessageDiv.style.transform = "";
+        feedbackMessageDiv.style.padding = "";
+        feedbackMessageDiv.style.backgroundColor = "";
+        feedbackMessageDiv.style.color = "";
+        feedbackMessageDiv.style.border = "";
+        feedbackMessageDiv.style.borderRadius = "";
+        feedbackMessageDiv.style.boxShadow = "";
+        feedbackMessageDiv.style.zIndex = "";
+        feedbackMessageDiv.style.fontSize = "";
+    }
 
-  const hangmanDisplay = document.getElementById("hangman-display");
-  if (hangmanDisplay) hangmanDisplay.style.marginTop = "20px";
-
-  const actionButtonArea = document.getElementById("action-button-area");
-  if (actionButtonArea) actionButtonArea.innerHTML = ""; // Clear existing buttons (Shuffle, I AM DONE)
-
-  // 3. Show "PLAY AGAIN" and "GO TO MAIN" buttons
-  const playAgainBtn = document.createElement("button");
-  playAgainBtn.textContent = "PLAY AGAIN";
-  playAgainBtn.className = "button-base button-green";
-  playAgainBtn.style.width = "auto";
-  playAgainBtn.style.display = "inline-block";
-  playAgainBtn.style.marginRight = "8px";
-  playAgainBtn.onclick = () => location.reload();
-
-  const goHomeBtn = document.createElement("button");
-  goHomeBtn.textContent = "GO TO MAIN";
-  goHomeBtn.className = "button-base button-green";
-  goHomeBtn.style.width = "auto";
-  goHomeBtn.style.display = "inline-block";
-  goHomeBtn.onclick = () => location.href = "index.html";
-
-  if (actionButtonArea) {
-      actionButtonArea.appendChild(playAgainBtn);
-      actionButtonArea.appendChild(goHomeBtn);
-      actionButtonArea.style.display = "flex";
-      actionButtonArea.style.justifyContent = "center";
-  }
-
-  const foundWordsSection = document.getElementById("found-words");
-  if (foundWordsSection) foundWordsSection.style.display = "none";
-  const wordListUl = document.getElementById("word-list");
-  if (wordListUl) wordListUl.style.display = "none";
-
-   const correctWordsSection = document.getElementById("correct-words-section");
-   if (correctWordsSection) correctWordsSection.style.display = "none";
+    // 4. Display Congratulations Pop-up
+    // Replace <playerName> with actual player name if available, otherwise generic.
+    alert("CONGRATULATIONS USERNAME - YOU WON");
 }
 
 
