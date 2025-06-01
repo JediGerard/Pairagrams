@@ -145,7 +145,7 @@ input:checked + .slider:before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 15px; /* Slightly reduced padding */
+    padding: 0; /* Slightly reduced padding */
     background-color: #f8f9fa; /* Lighter background */
     border-bottom: 1px solid #dee2e6; /* Lighter border */
     position: sticky;
