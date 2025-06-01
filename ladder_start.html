@@ -18,30 +18,28 @@
   <div id="game-container">
     
     <div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 20px;">
-      <div style="
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-      ">
-        <div style="font-weight: bold; font-size: 18px; flex: 1; min-width: 100px; text-align: left;">
-          Score: <span id="score-value">0</span><br>
-          Level: <span id="level-number">1</span>
-        </div>
-    
-        <h1 style="margin: 0 auto; display: flex; gap: 0px; font-size: 30px; text-align: center;">
+      <!-- Line 1: Logo, Centered -->
+      <div style="text-align: center; width: 100%;">
+          <h1 style="margin: 0 auto; display: inline-flex; gap: 0px; font-size: 30px;">
+              <span style="color: #e74c3c">P</span><span style="color: #f1c40f">A</span><span style="color: #2ecc71">I</span>
+              <span style="color: #f39c12">R</span><span style="color: #1abc9c">A</span><span style="color: #3498db">G</span>
+              <span style="color: #9b59b6">R</span><span style="color: #34495e">A</span><span style="color: #e67e22">M</span>
+              <span style="color: #e84393">S</span>
+          </h1>
+      </div>
 
-          <span style="color: #e74c3c">P</span><span style="color: #f1c40f">A</span><span style="color: #2ecc71">I</span>
-          <span style="color: #f39c12">R</span><span style="color: #1abc9c">A</span><span style="color: #3498db">G</span>
-          <span style="color: #9b59b6">R</span><span style="color: #34495e">A</span><span style="color: #e67e22">M</span>
-          <span style="color: #e84393">S</span>
-        </h1>
-    
-        <div style="font-weight: bold; font-size: 18px; flex: 1; min-width: 100px; text-align: right;">
-          Time Left: <span id="timer">300s</span><br>
-          Lives: <span id="lives-display">👤👤👤👤👤</span>
-        </div>
+      <!-- Line 2: Stats, potentially centered or space-between -->
+      <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; margin-top: 10px; font-weight: bold; font-size: 18px;">
+          <div style="text-align: left;">
+              Score: <span id="score-value">0</span>
+          </div>
+          <div style="text-align: center;">
+              Level: <span id="level-number">1</span>
+          </div>
+          <div style="text-align: right;">
+              <span style="display:none;">Time Left: <span id="timer">300s</span><br></span>
+              Lives: <span id="lives-display">👤👤👤👤👤</span>
+          </div>
       </div>
     </div>
     
