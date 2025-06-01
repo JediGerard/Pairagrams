@@ -143,7 +143,7 @@ input:checked + .slider:before {
 /* Global Navigation Header Styles */
 #global-nav {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 0; /* Slightly reduced padding */
     background-color: #f8f9fa; /* Lighter background */
