@@ -207,7 +207,7 @@ input:checked + .slider:before {
     text-decoration: none;
     color: #343a40; /* Darker color for icons */
     margin-left: 0; /* Ensures individual margin is off, gap handles spacing */
-    font-size: 22px; /* Slightly larger icons */
+    font-size: 18px; /* Slightly larger icons */
     background: none; /* Ensure buttons are transparent */
     border: none;     /* Ensure buttons have no border */
     cursor: pointer;  /* Ensure buttons show pointer */
