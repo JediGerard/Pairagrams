@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Theme Pages - Pairagrams</title>
+  <link rel="stylesheet" href="common.css">
   <style>
     body {
       background-image: url('/assets/Knights_logo.png');
@@ -65,6 +66,7 @@
       transform: scale(1.05);
     }
   </style>
+  <script src="global_nav.js" defer></script>
   <link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="shortcut icon" href="/assets/favicon.ico" />
@@ -72,6 +74,27 @@
   <link rel="manifest" href="/assets/site.webmanifest" />
 </head>
 <body>
+    <div id="global-nav">
+        <!-- Left Section: Hamburger Menu -->
+        <div id="global-nav-left">
+            <button id="hamburger-btn">&#9776;</button>
+            <div id="nav-dropdown" style="display: none;">
+                <a href="daily_puzzle_start.html">Daily Puzzle</a>
+                <a href="ladder_start.html">Ladder</a>
+                <a href="speed_round_start.html">Speed Round</a>
+                <a href="themes_start.html">Themes</a>
+            </div>
+        </div>
+        <!-- Right Section: Icon Links -->
+        <div id="global-nav-right">
+            <a href="stats.html" title="My Stats">📊</a>
+            <a href="halloffame.html" title="Hall of Fame">🏆</a>
+            <a href="howtoplay.html" title="How to Play">❓</a>
+            <button id="dark-mode-toggle" title="Toggle Dark Mode">🌓</button>
+            <a href="mailto:feedback@pairagrams.com" title="Send Feedback">✉️</a>
+            <button id="logout-btn" title="Logout">🚪</button>
+        </div>
+    </div>
   <div id="game-container">
     <div id="header">
       <h1>Golden Knights</h1>

@@ -6,6 +6,7 @@
   <title>PAIRAGRAMS</title>
   <link rel="stylesheet" href="common.css">
   <link rel="stylesheet" href="games.css">
+  <script src="global_nav.js" defer></script>
   <link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="shortcut icon" href="/assets/favicon.ico" />
@@ -79,27 +80,5 @@
   
   <script type="module" src="utility.js"></script>
   <script type ="module" src="game_logic.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const navDropdown = document.getElementById('nav-dropdown');
-
-    if (hamburgerBtn && navDropdown) {
-        hamburgerBtn.addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevents click from immediately closing if we add outside click later
-            const isVisible = navDropdown.style.display === 'block';
-            navDropdown.style.display = isVisible ? 'none' : 'block';
-        });
-
-        // Optional: Close dropdown if clicking outside of it
-        // document.addEventListener('click', function(event) {
-        //     if (navDropdown.style.display === 'block' && !navDropdown.contains(event.target) && event.target !== hamburgerBtn) {
-        //         navDropdown.style.display = 'none';
-        //     }
-        // });
-    }
-});
-</script>
 </body>
 </html>

@@ -139,3 +139,81 @@ input:checked + .slider:before {
   padding: 4px 10px;
   font-size: 16px;
 }
+
+/* Global Navigation Header Styles */
+#global-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px; /* Slightly reduced padding */
+    background-color: #f8f9fa; /* Lighter background */
+    border-bottom: 1px solid #dee2e6; /* Lighter border */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%; /* Ensure it spans full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#global-nav-left {
+    position: relative; /* For dropdown positioning context */
+}
+
+#hamburger-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px; /* Added some padding */
+    color: #343a40; /* Darker color for icon */
+}
+
+#nav-dropdown {
+    display: none; /* Initially hidden, JS will toggle */
+    position: absolute;
+    top: 40px;  /* Position below the button */
+    left: 0;
+    background-color: white;
+    border: 1px solid #ced4da;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    padding: 10px;
+    z-index: 1001; /* Above global-nav */
+    min-width: 150px; /* Minimum width for dropdown */
+}
+
+#nav-dropdown a {
+    display: block;
+    margin-bottom: 8px;
+    padding: 5px;
+    text-decoration: none;
+    color: #007bff; /* Standard link blue */
+}
+
+#nav-dropdown a:hover {
+    background-color: #e9ecef; /* Hover effect */
+    border-radius: 4px;
+}
+
+#global-nav-right {
+    display: flex;
+    align-items: center;
+}
+
+#global-nav-right a,
+#global-nav-right button {
+    text-decoration: none;
+    color: #343a40; /* Darker color for icons */
+    margin-left: 18px; /* Increased spacing */
+    font-size: 22px; /* Slightly larger icons */
+    background: none; /* Ensure buttons are transparent */
+    border: none;     /* Ensure buttons have no border */
+    cursor: pointer;  /* Ensure buttons show pointer */
+    padding: 0;       /* Reset padding for buttons */
+}
+
+#global-nav-right a:hover,
+#global-nav-right button:hover {
+    color: #0056b3; /* Link hover color */
+}
+
+/* Specific styling for text-based icons if needed, for now, font-size covers it */
