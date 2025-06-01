@@ -268,7 +268,9 @@ function handleWin() {
 
     // 4. Display Congratulations Pop-up
     // Replace <playerName> with actual player name if available, otherwise generic.
-    alert("CONGRATULATIONS USERNAME - YOU WON");
+    setTimeout(() => {
+        alert("CONGRATULATIONS USERNAME - YOU WON");
+    }, 0); // Using a 0ms delay to allow DOM updates before alert
 }
 
 
