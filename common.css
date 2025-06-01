@@ -197,13 +197,16 @@ input:checked + .slider:before {
 #global-nav-right {
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;  /* ADDED */
+    overflow-x: auto;   /* ADDED */
+    gap: 12px;          /* ADDED */
 }
 
 #global-nav-right a,
 #global-nav-right button {
     text-decoration: none;
     color: #343a40; /* Darker color for icons */
-    margin-left: 18px; /* Increased spacing */
+    margin-left: 0; /* Ensures individual margin is off, gap handles spacing */
     font-size: 22px; /* Slightly larger icons */
     background: none; /* Ensure buttons are transparent */
     border: none;     /* Ensure buttons have no border */
