@@ -197,7 +197,7 @@ function setupGame() {
 }
 
 function setupTwoColumnGame() {
-  document.body.style.backgroundColor = "#ffffff"; // pure white
+  // document.body.style.backgroundColor = "#ffffff"; // pure white
 
   clearInterval(timerInterval);
   localStorage.setItem('newGame', "false");
@@ -827,7 +827,7 @@ window.goToNextLevel = goToNextLevel;
 
 
 function setupThreeColumnGame() {
-  document.body.style.backgroundColor = "#ffffff";
+  // document.body.style.backgroundColor = "#ffffff";
   const entry = config[level - 26];
   if (!entry || !entry.format || typeof entry.rows !== "number") {
     alert("Invalid config for this level.");
