@@ -7,7 +7,7 @@ body {
   min-height: 100vh;
   flex-direction: column;
   background-color: #ffffff; /* Changed from #fdfdfd */
-  font-family: Arial, sans-serif; /* Changed from Arial */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: center; /* Added */
   margin: 0; /* Added */
   padding: 0; /* Added */
