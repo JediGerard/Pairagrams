@@ -13,6 +13,28 @@
   <link rel="manifest" href="/assets/site.webmanifest" />
 </head>
 <body>
+    <div id="global-nav">
+        <!-- Left Section: Hamburger Menu -->
+        <div id="global-nav-left">
+            <button id="hamburger-btn">&#9776;</button>
+            <div id="nav-dropdown" style="display: none;">
+                <a href="daily_puzzle_start.html">Daily Puzzle</a>
+                <a href="ladder_start.html">Ladder</a>
+                <a href="speed_round_start.html">Speed Round</a>
+                <a href="themes_start.html">Themes</a>
+            </div>
+        </div>
+
+        <!-- Right Section: Icon Links -->
+        <div id="global-nav-right">
+            <a href="stats.html" title="My Stats">📊</a>
+            <a href="halloffame.html" title="Hall of Fame">🏆</a>
+            <a href="howtoplay.html" title="How to Play">❓</a>
+            <button id="dark-mode-toggle" title="Toggle Dark Mode">🌓</button>
+            <a href="mailto:feedback@pairagrams.com" title="Send Feedback">✉️</a>
+            <button id="logout-btn" title="Logout">🚪</button>
+        </div>
+    </div>
   
 
   <div id="game-container">
@@ -58,6 +80,26 @@
   <script type="module" src="utility.js"></script>
   <script type ="module" src="game_logic.js"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const navDropdown = document.getElementById('nav-dropdown');
 
+    if (hamburgerBtn && navDropdown) {
+        hamburgerBtn.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevents click from immediately closing if we add outside click later
+            const isVisible = navDropdown.style.display === 'block';
+            navDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Optional: Close dropdown if clicking outside of it
+        // document.addEventListener('click', function(event) {
+        //     if (navDropdown.style.display === 'block' && !navDropdown.contains(event.target) && event.target !== hamburgerBtn) {
+        //         navDropdown.style.display = 'none';
+        //     }
+        // });
+    }
+});
+</script>
 </body>
 </html>
