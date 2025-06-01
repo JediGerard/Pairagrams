@@ -1,0 +1,79 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #e0f2f7;
+  margin: 0;
+  padding: 20px;
+}
+/* Match main game container styling */
+#game-container {
+  background-color: rgba(173, 216, 230, 0.5);
+  padding: 30px;
+  border-radius: 16px;
+  margin: 30px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+/* Header layout: title + stats | timer/score */
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+#title-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+#header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+#stats-inline, #time-score {
+  font-size: 18px;
+}
+/* Two columns of rows, centered, using flex rows like games.html */
+#rows-container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+/* Box styling copied from games.html */
+.word-box {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  font-size: 22px;
+  width: 100px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.word-box.selected {
+  outline: 3px solid #ffeaa7;
+  outline-offset: -2px;
+  background-color: inherit;
+}
+.word-box.locked {
+  cursor: default;
+  opacity: 0.5;
+}
+/* in your stylesheet */
+.word-box.hard {
+  background-color: #ffeb3b;
+  border: 2px solid #f1c40f;
+  box-shadow: 0 0 8px rgba(241,196,15,0.8);
+  font-weight: 700;
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
