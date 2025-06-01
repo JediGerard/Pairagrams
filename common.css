@@ -143,9 +143,9 @@ input:checked + .slider:before {
 /* Global Navigation Header Styles */
 #global-nav {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; /* Changed back */
     align-items: center;
-    padding: 0; /* Slightly reduced padding */
+    padding: 0; /* Stays 0 for now */
     background-color: #f8f9fa; /* Lighter background */
     border-bottom: 1px solid #dee2e6; /* Lighter border */
     position: sticky;
@@ -166,6 +166,7 @@ input:checked + .slider:before {
     cursor: pointer;
     padding: 0; /* Changed */
     color: #343a40; /* Darker color for icon */
+    margin-left: 10px; /* Added */
 }
 
 #nav-dropdown {
