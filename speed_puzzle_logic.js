@@ -45,24 +45,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // livesDisplay = document.getElementById("lives"); // Removed
   scoreDisplay = document.getElementById("score");
 
-  const gameHeader = document.getElementById('game-header');
-  if (gameHeader) {
+  const statusHeader = document.getElementById('status-header');
+  if (statusHeader) {
       const timerDisplay = document.createElement('div');
       timerDisplay.id = 'speed-puzzle-timer-display';
-      timerDisplay.className = 'stat-block'; // Match styling of other elements in game-header
+      timerDisplay.className = 'stat-block'; // Keep consistent class
       timerDisplay.textContent = 'Time: 00:00';
-      // Insert it, perhaps before the score or after safe mode
-      const scoreElement = gameHeader.querySelector('#score')?.parentNode; // parent is the stat-block
-      if (scoreElement) {
-          gameHeader.insertBefore(timerDisplay, scoreElement);
+
+      // Find the div that contains score and safe mode (the one with display:flex)
+      const statsContainer = statusHeader.querySelector('div[style*="display: flex"]');
+      if (statsContainer) {
+          // Insert timer as the first item in this flex container
+          statsContainer.insertBefore(timerDisplay, statsContainer.firstChild);
       } else {
-          // Fallback if score element or its parent structure is not as expected
-          const firstStatBlock = gameHeader.querySelector('.stat-block');
-          if (firstStatBlock) {
-            gameHeader.insertBefore(timerDisplay, firstStatBlock);
-          } else {
-            gameHeader.appendChild(timerDisplay); // Further fallback
-          }
+          // Fallback: append to statusHeader if the specific stats container isn't found
+          // This might happen if the style attribute changes, so consider a more robust selector if needed
+          statusHeader.appendChild(timerDisplay); 
       }
   }
   

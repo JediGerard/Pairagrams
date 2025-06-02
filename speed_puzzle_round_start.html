@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pairagrams – Speed Puzzle</title>
   <link rel="stylesheet" href="common.css">
-  <link rel="stylesheet" href="findwords_4l.css">
+  <link rel="stylesheet" href="games.css">
   <script src="global_nav.js" defer></script>
   <link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
@@ -36,27 +36,25 @@
         </div>
     </div>
 
-<div style="text-align: center; width: 100%; margin-top: 10px; margin-bottom: 10px;">
-    <h2 style="color: rgb(113, 196, 160); font-size: 24px; text-align: center; margin-bottom: 5px;">SPEED PUZZLE</h2>
-    <h1 style="margin: 0 auto; display: inline-flex; gap: 0px; font-size: 30px;">
-        <span style="color: #e74c3c">P</span><span style="color: #f1c40f">A</span><span style="color: #2ecc71">I</span><span style="color: #f39c12">R</span><span style="color: #1abc9c">A</span><span style="color: #3498db">G</span><span style="color: #9b59b6">R</span><span style="color: #34495e">A</span><span style="color: #e67e22">M</span><span style="color: #e84393">S</span>
-    </h1>
+<div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 20px;">
+    <!-- Line 1: SPEED PUZZLE Title and Image Logo -->
+    <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 10px;">
+        <h2 style="color: rgb(113, 196, 160); font-size: 24px; text-align: center; margin-bottom: 5px;">SPEED PUZZLE</h2>
+        <img src="assets/Pairagrams_tighthp.png" alt="Pairagrams Logo" style="height: 60px; margin-bottom: 10px;">
+    </div>
+
+    <!-- Line 2: Game Stats (Timer, Score, Safe Mode) -->
+    <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; font-weight: bold; font-size: 18px; margin-top: 5px;">
+        <div class="stat-block">Score: <span id="score">0</span></div>
+        <div class="stat-block">
+            <label class="switch">
+                <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
+                <span class="slider"></span>
+            </label>
+            <span style="margin-left: 8px;">Safe Mode</span>
+        </div>
+    </div>
 </div>
-<div id="game-header">
-  
-
-  <div class="stat-block">Score: <span id="score">0</span></div>
-  <div class="stat-block">
-    <label class="switch">
-      <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
-      <span class="slider"></span>
-    </label>
-    <span style="margin-left: 8px;">Safe Mode</span>
-  </div>
-</div>
-<div style="margin-bottom: 2px;"></div>
-
-
   
 <div id="word-tools" style="display: none;">
   <div style="display: flex; align-items: center; gap: 6px;">
