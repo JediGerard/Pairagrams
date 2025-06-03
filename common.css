@@ -221,3 +221,12 @@ input:checked + .slider:before {
 }
 
 /* Specific styling for text-based icons if needed, for now, font-size covers it */
+
+.page-header-logo {
+  max-width: 350px; /* Consistent with .logo-main on index.html */
+  height: auto;     /* Maintain aspect ratio */
+  display: block;   /* For centering with margin:auto and good practice */
+  margin-left: auto;  /* Center the logo */
+  margin-right: auto; /* Center the logo */
+  margin-bottom: 10px; /* From original inline style, seems reasonable */
+}
