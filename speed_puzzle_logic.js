@@ -13,7 +13,7 @@ let masterWords = {};
 let wordsByFirstLetter = {}; // For efficient lookup by starting letter
 let wordList = []; // Still useful for other things? Or phase out? For now, keep.
 let validWords = new Set();
-let classification = {};   
+let classification = {};
 
 // let lives = 5; // Removed
 let score = 0;
@@ -60,10 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
           // Fallback: append to statusHeader if the specific stats container isn't found
           // This might happen if the style attribute changes, so consider a more robust selector if needed
-          statusHeader.appendChild(timerDisplay); 
+          statusHeader.appendChild(timerDisplay);
       }
   }
-  
+
   container = document.getElementById("rows-container");
   wordListDisplay = document.getElementById("word-list");
 
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
   box.innerHTML = selectedWords.map((w, i) =>
   `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
 ).join("");
-  
+
 
   // ✅ Hide the I AM DONE button
   document.getElementById("done-btn").style.display = "none";
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("correct-words-section").style.display = "block";
 };
 
-  
+
   // Initialize Hangman Display
   revealedSolution = currentSolution.split('').map(char => {
     const upperChar = char.toUpperCase();
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         goHome.onclick = () => location.href = "index.html";
         actionArea.appendChild(goHome);
     }
-    
+
     // Show found words (similar to done-btn original logic but without mapping selectedWords if not needed for timer game over)
     const correctWordsSection = document.getElementById("correct-words-section");
     if (correctWordsSection) {
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         correctWordsSection.style.display = "block";
     }
-    
+
     // Disable further interactions (optional, as main elements are hidden)
     // document.querySelectorAll('.pair').forEach(p => p.removeEventListener('click', toggleSelection));
   }

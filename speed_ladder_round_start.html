@@ -9,13 +9,14 @@
   <style>
     /* Specific overrides for speed_ladder_round_start.html word boxes */
     #game-container .word-box {
+      box-sizing: content-box;
       font-size: 22px;
       width: 100px;
       height: 40px;
       padding: 8px 12px;
       background-color: #f0f0f0;
       border: none; /* Assuming original had no border or it was managed differently */
-      margin: 2px; /* A small margin, as original used gap on .row */
+      /* margin: 2px; */ /* This line removed or commented out */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -26,7 +27,7 @@
       outline: 3px solid #ffeaa7;
       outline-offset: -2px;
       background-color: #f0f0f0; /* Base background, outline is primary indicator */
-      border: none; 
+      border: none;
     }
 
     #game-container .word-box.locked {
@@ -73,7 +74,7 @@
             <button id="logout-btn" title="Logout">🚪</button>
         </div>
     </div>
-  
+
   <div id="game-container">
     <div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 20px;">
         <!-- Line 1: SPEED LADDER Title and Image Logo -->
