@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const feedbackDiv = document.createElement("div");
   feedbackDiv.id = "feedback-message";
   feedbackDiv.style.display = "none";
-  document.getElementById("game-header").after(feedbackDiv);
+  document.getElementById("status-header").after(feedbackDiv);
 
   selectRandomSolution(); // Select solution before it's needed
 
