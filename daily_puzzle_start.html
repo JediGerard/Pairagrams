@@ -3,9 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pairagrams – Find Words (4L)</title>
+  <title>Pairagrams – Daily Puzzle</title>
   <link rel="stylesheet" href="common.css">
-  <link rel="stylesheet" href="findwords_4l.css">
+  <link rel="stylesheet" href="games.css">
+  <style>
+    /* Specific styles from findwords_4l.css needed for daily_puzzle_start.html */
+    .pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 32px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #ffeaa7;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pair.selected { /* Assuming .selected is added to .pair elements */
+      background-color: #ffeaa7 !important; /* Maintain base color */
+      outline: 3px solid #f1c40f;
+      outline-offset: -2px;
+    }
+    .button-green { background-color: #27ae60; }
+    .button-red   { background-color: #e74c3c; }
+    .button-gray  { background-color: #7f8c8d; }
+
+    #word-preview {
+      font-size: 20px;
+      width: 100px;
+      height: 34px;
+      text-align: center;
+      margin-bottom: 4px; /* Matches original findwords_4l.css */
+    }
+
+    /* Base style for word list items / correct word boxes */
+    .answer-box,
+    .bonus-word-box, /* Used for li items in #word-list */
+    .common-word-box,
+    .uncommon-word-box,
+    .hard-word-box {
+      padding: 6px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      min-width: 50px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      border: 2px solid transparent;
+      box-sizing: border-box;
+      color: black;
+    }
+    .common-word-box { background-color: lightgreen; }
+    .bonus-word-box { background-color: #81ecec; } /* Default for found words in list */
+    .uncommon-word-box { border-color: black; border-width: 4px; } /* JS sets background */
+    .hard-word-box { background-color: gold; border-color: black; border-width: 4px; }
+    .answer-box { background-color: #81ecec; } /* For the final "correct-words" grid */
+
+    #action-button-area button { /* Overrides button-base from common.css if needed, or specific styling */
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    #hangman-display {
+      text-align: center;
+      font-size: 24px;
+      letter-spacing: 4px;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      color: #333333;
+    }
+    #status-header .stat-block { /* Ensure consistency with other pages */
+      font-size: 18px !important;
+    }
+     /* Ensure word list items are styled correctly if they use .bonus-word-box */
+    #word-list li {
+        /* This will inherit from .bonus-word-box if li elements have that class */
+        /* Add any specific li styling if needed, but .bonus-word-box should cover it */
+    }
+  </style>
   <script src="global_nav.js" defer></script>
   <link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
@@ -36,33 +119,22 @@
         </div>
     </div>
 
-<div id="puzzle-header" style="
-  margin: 10px auto 2px;
-  width: calc(4*40px + 3*5px);
-  text-align:center;
-">
-  <img
-    src="assets/Pairagrams_tighthp.png"
-    alt="Pairagrams Logo"
-    style="width:100%; height:auto;"
-  />
-
+<div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 20px;">
+    <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 10px;">
+        <h2 style="color: rgb(113, 196, 160); font-size: 24px; text-align: center; margin-bottom: 5px;">DAILY PUZZLE</h2>
+        <img src="assets/pairagrams_tighthp.png" alt="Pairagrams Logo" class="page-header-logo">
+    </div>
+    <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; font-weight: bold; font-size: 18px; margin-top: 5px;">
+        <div class="stat-block">Score: <span id="score">0</span></div>
+        <div class="stat-block">
+            <label class="switch">
+                <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
+                <span class="slider"></span>
+            </label>
+            <span style="margin-left: 8px;">Safe Mode</span>
+        </div>
+    </div>
 </div>
-<div id="game-header">
-  
-
-  <div class="stat-block">Score: <span id="score">0</span></div>
-  <div class="stat-block">
-    <label class="switch">
-      <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
-      <span class="slider"></span>
-    </label>
-    <span style="margin-left: 8px;">Safe Mode</span>
-  </div>
-</div>
-<div style="margin-bottom: 2px;"></div>
-
-
   
 <div id="word-tools" style="display: none;">
   <div style="display: flex; align-items: center; gap: 6px;">
