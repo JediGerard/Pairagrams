@@ -62,11 +62,21 @@ document.addEventListener("DOMContentLoaded", () => {
   masterWords = masterData;
   wordList = [];
 
+  // Process CSV and populate classification object first
+  const lines = csvText.trim().split("\n");
+  for (let i = 1; i < lines.length; i++) {
+    const [w, cls] = lines[i].split(",");
+    const word = w.trim().toUpperCase();
+    const label = cls.trim().toUpperCase();      // “COMMON” / “UNCOMMON” / “RARE”
+    classification[word] = label;
+    validWords.add(word);
+  }
+
   for (const [word, entry] of Object.entries(masterWords)) {
     if (!entry || word.length !== 4) continue;
 
-    const isCommon = entry.common === true;
-    if (isCommon) common4.add(word.toUpperCase());
+    // const isCommon = entry.common === true; // Removed
+    // if (isCommon) common4.add(word.toUpperCase()); // common4 can be populated based on classification if needed elsewhere
 
     const cleanSplit = entry.parts.find(p =>
       Array.isArray(p) &&
@@ -75,9 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
       p[1].length === 2
     );
 
-    if (isCommon && cleanSplit) {
+    const wordClassification = classification[word.toUpperCase()];
+
+    if ((wordClassification === "COMMON" || wordClassification === "UNCOMMON") && cleanSplit) {
       const entryData = { word, left: cleanSplit[0], right: cleanSplit[1] };
-      // Populate wordList (if still needed for other purposes)
+      // Populate wordList
       wordList.push(entryData);
 
       // Populate wordsByFirstLetter
@@ -86,6 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
           wordsByFirstLetter[firstLetter] = [];
       }
       wordsByFirstLetter[firstLetter].push(entryData);
+
+      // Populate common4 set if the word is classified as COMMON
+      if (wordClassification === "COMMON") {
+        common4.add(word.toUpperCase());
+      }
     }
   }
 
@@ -93,15 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
   for (const letter in wordsByFirstLetter) {
     shuffle(wordsByFirstLetter[letter]);
   }
-
-  const lines = csvText.trim().split("\n");
-  for (let i = 1; i < lines.length; i++) {
-  const [w, cls] = lines[i].split(",");
-  const word = w.trim().toUpperCase();
-  const label = cls.trim().toUpperCase();      // “COMMON” / “UNCOMMON” / “RARE”
-  classification[word] = label;
-  validWords.add(word);
-}
 
   generateBoard();
 });
