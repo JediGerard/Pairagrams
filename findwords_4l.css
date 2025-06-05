@@ -51,7 +51,7 @@ h1 {
   width: 40px;  /* Changed from 60px */
   height: 32px; /* Changed from 48px */
   font-size: 18px; /* Changed from 24px */
-  font-weight: bold;
+  font-weight: normal;
   background-color: #ffeaa7;
   border-radius: 8px;
   cursor: pointer;
