@@ -41,7 +41,13 @@
   <div id="game-container">
     
     <div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 20px;">
-            <!-- Line 1: Score (Left) and Level (Right) -->
+            <!-- Line 1 (Now): Logo, Centered -->
+            <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
+                <h2 style="color: rgb(113, 196, 160); margin-bottom: 5px; font-size: 24px; text-align: center;">LADDER</h2>
+                <img src="assets/pairagrams_tighthp.png" alt="Pairagrams Logo" class="page-header-logo">
+            </div>
+
+            <!-- Line 2 (Now): Score (Left) and Level (Right) -->
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; font-weight: bold; font-size: 18px;">
                 <div style="text-align: left;">
                     Score: <span id="score-value">0</span>
@@ -51,13 +57,7 @@
                 </div>
             </div>
 
-            <!-- Line 2: Logo, Centered -->
-            <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 5px;">
-                <h2 style="color: rgb(113, 196, 160); margin-bottom: 5px; font-size: 24px; text-align: center;">LADDER</h2>
-                <img src="assets/pairagrams_tighthp.png" alt="Pairagrams Logo" class="page-header-logo">
-            </div>
-
-            <!-- Line 3: Lives (Right Justified) -->
+            <!-- Line 3: Lives (Right Justified) - Stays in place -->
             <div style="text-align: right; width: 100%; font-weight: bold; font-size: 18px; margin-top: 5px;">
                 <span style="display:none;">Time Left: <span id="timer">300s</span><br></span>
                 Lives: <span id="lives-display">👤👤👤👤👤</span>
