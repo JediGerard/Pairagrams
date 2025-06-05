@@ -83,6 +83,26 @@
     #status-header .stat-block { /* Ensure consistency with other pages */
       font-size: 18px !important;
     }
+    #word-list {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 12px; /* From findwords_4l.css */
+      padding: 0; /* Reset user-agent stylesheet */
+      list-style: none; /* Remove bullets */
+      max-width: 360px; /* Consistent with findwords_4l.css for 3-column layout */
+      margin: 10px auto; /* Center the block and add some vertical spacing */
+      justify-items: center; /* Center items within their grid cells if they don't fill */
+    }
+    .correct-grid {
+      display: inline-grid; /* Matches findwords_4l.css */
+      grid-template-columns: repeat(3, auto);
+      gap: 12px; /* Matches findwords_4l.css */
+      max-width: 360px; /* Matches findwords_4l.css */
+      margin: 10px auto 0; /* Specific margin for .correct-grid from findwords_4l.css */
+      /* Adding padding 0 and list-style none in case this class is ever on a <ul> */
+      padding: 0;
+      list-style: none;
+    }
      /* Ensure word list items are styled correctly if they use .bonus-word-box */
     #word-list li {
         /* This will inherit from .bonus-word-box if li elements have that class */

@@ -454,11 +454,34 @@ function generateBoard() {
     }
   }
 
+  // New section to ensure 12 words are selected
   if (wordsSelectedCount < 12) {
-      console.warn(`Board generated with ${wordsSelectedCount} words instead of 12. Check word list and solution complexity.`);
-      // Optionally, fill remaining slots with very common random words to ensure 24 pairs
-      // This is complex, for now, accept a potentially smaller board if errors occurred.
+    let fallbackAttempts = 0;
+    const maxFallbackAttempts = 50; // Safety break for the while loop
+
+    while (wordsSelectedCount < 12 && fallbackAttempts < maxFallbackAttempts) {
+      // Pick a random word object from the wordList (common words with 2+2 splits)
+      if (wordList.length === 0) {
+        console.error("Fallback failed: wordList is empty.");
+        break; // Cannot select more words if wordList is empty
+      }
+      const randomIndex = Math.floor(Math.random() * wordList.length);
+      const wordData = wordList[randomIndex];
+
+      if (wordData && wordData.word && !usedWordsOnBoard.has(wordData.word)) {
+        selectedWords.push(wordData);
+        boardPairs.push(wordData.left, wordData.right);
+        usedWordsOnBoard.add(wordData.word);
+        wordsSelectedCount++;
+      }
+      fallbackAttempts++;
+    }
+
+    if (wordsSelectedCount < 12) {
+      console.warn(`Still unable to fill board to 12 words. Generated with ${wordsSelectedCount}.`);
+    }
   }
+  // End of new section
 
   // 4. Shuffle and Display
   shuffle(boardPairs); // Shuffle the collected pairs
