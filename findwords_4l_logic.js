@@ -142,7 +142,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const xValue = foundWords.length + wrongGuessCount;
     const yValue = calculateUniqueSolutionLetters(currentSolution); // Recalculate yValue here
 
-    congratsMessageDiv.textContent = `Congratulations. You won. You took ${xValue} guesses out of a minimum possible guesses of ${yValue} which puts you in the category of SMARTY PANTS (45%).`;
+    const delta = xValue - yValue;
+    let categoryPhrase = "";
+    if (delta === 0) {
+        categoryPhrase = "GENIUS";
+    } else if (delta === 1) {
+        categoryPhrase = "PUZZLE MASTER";
+    } else if (delta === 2) {
+        categoryPhrase = "UP AND COMER";
+    } else if (delta === 3) {
+        categoryPhrase = "SHOWING POTENTIAL";
+    } else {
+        categoryPhrase = "FINISHER";
+    }
+
+    congratsMessageDiv.innerHTML = `Congratulations! You won!<br>You took ${xValue} guesses (minimum possible: ${yValue}).<br>Category: ${categoryPhrase}`;
 
     if(actionArea) actionArea.appendChild(congratsMessageDiv);
 
