@@ -305,8 +305,41 @@ saved.forEach(word => {
   
   updateLevelDisplay();
   renderLives();
+
+  // Calculate and display potential bonus
+  const allSolutionLeftParts = new Set(correctPairs.map(p => p.left));
+  const allSolutionRightParts = new Set(correctPairs.map(p => p.right));
+  const solutionWords = new Set(correctPairs.map(p => p.full.toLowerCase()));
+  calculateAndDisplayPotentialBonus(allSolutionLeftParts, allSolutionRightParts, solutionWords, dictionary);
 }
 
+function calculateAndDisplayPotentialBonus(allLeftPartsSet, allRightPartsSet, correctSolutionWordsSet, dictionarySet) {
+  const potentialBonusWordsList = [];
+  // Ensure allLeftPartsSet and allRightPartsSet are iterable (Sets are)
+  if (!allLeftPartsSet || !allRightPartsSet || !correctSolutionWordsSet || !dictionarySet) {
+      console.error("Missing one or more sets for bonus calculation.");
+      return;
+  }
+
+  for (const leftPart of allLeftPartsSet) {
+      for (const rightPart of allRightPartsSet) {
+          const potentialWord = (leftPart + rightPart).toLowerCase();
+          if (dictionarySet.has(potentialWord) && !correctSolutionWordsSet.has(potentialWord)) {
+              potentialBonusWordsList.push(potentialWord);
+          }
+      }
+  }
+
+  console.log("Potential Bonus Words:", potentialBonusWordsList);
+  const bonusCount = potentialBonusWordsList.length;
+
+  const bonusCountElement = document.getElementById('potential-bonus-count');
+  if (bonusCountElement) {
+      bonusCountElement.textContent = bonusCount;
+  } else {
+      console.error("Element with id 'potential-bonus-count' not found.");
+  }
+}
 
 // ==================== Timer ====================
 function startTimer() {
