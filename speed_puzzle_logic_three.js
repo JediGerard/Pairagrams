@@ -127,18 +127,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   generateBoard();
 
-  let validSixLetterWordCount = 0;
-  // Ensure validWords is referred to as validWordsSet if it's a Set, or adapt name.
-  // Assuming validWords is the Set.
-  for (const wordData of selectedWords) {
-    const currentWord = wordData.word;
-    if (validWords.has(currentWord.toUpperCase())) { // validWords should be the Set of all valid words, in uppercase
-      validSixLetterWordCount++;
+  // New logic to count all possible valid 6-letter words from board pairs
+  const foundValidCombinations = new Set();
+  if (boardPairs && boardPairs.length > 0 && validWords) {
+    for (let i = 0; i < boardPairs.length; i++) {
+      const pair1 = boardPairs[i];
+      for (let j = 0; j < boardPairs.length; j++) {
+        // Optional: Avoid combining a pair with itself if game rules imply distinct pairs
+        // if (i === j) continue;
+
+        const combinedWord = pair1 + boardPairs[j]; // pair2 is boardPairs[j]
+        const upperCombinedWord = combinedWord.toUpperCase();
+
+        if (validWords.has(upperCombinedWord)) {
+          foundValidCombinations.add(upperCombinedWord);
+        }
+      }
     }
   }
+  const validCombinationCount = foundValidCombinations.size;
 
-  // console.log("Number of 6-letter words on board:", validSixLetterWordCount);
-  displayGameWordStats(validSixLetterWordCount);
+  // console.log("Number of possible 6-letter word combinations on board:", validCombinationCount);
+  displayGameWordStats(validCombinationCount);
 
 });
 
@@ -305,7 +315,7 @@ function displayGameWordStats(count) {
   const gameWordStatsDiv = document.createElement('div');
   gameWordStatsDiv.id = 'game-word-stats-display';
   gameWordStatsDiv.className = 'stat-block'; // Consistent styling
-  gameWordStatsDiv.textContent = `Valid 6-letter words on board: ${count}`;
+  gameWordStatsDiv.textContent = `Formable valid 6-letter words: ${count}`;
 
   const statusHeader = document.getElementById('status-header');
   if (statusHeader && statusHeader.parentNode) {
