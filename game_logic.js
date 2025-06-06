@@ -333,11 +333,11 @@ function calculateAndDisplayPotentialBonus(allLeftPartsSet, allRightPartsSet, co
   console.log("Potential Bonus Words:", potentialBonusWordsList);
   const bonusCount = potentialBonusWordsList.length;
 
-  const bonusCountElement = document.getElementById('potential-bonus-count');
-  if (bonusCountElement) {
-      bonusCountElement.textContent = bonusCount;
+  const bonusMessageElement = document.getElementById('potential-bonus-message-area');
+  if (bonusMessageElement) {
+      bonusMessageElement.textContent = `There are ${bonusCount} Bonus words! Can you find them all!`;
   } else {
-      console.error("Element with id 'potential-bonus-count' not found.");
+      console.error("Element with id 'potential-bonus-message-area' not found.");
   }
 }
 
