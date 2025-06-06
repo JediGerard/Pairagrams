@@ -23,6 +23,7 @@ let selectedPairs = [];
 let foundWords = [];
 let selectedWords = [];
 let boardPairs = [];
+let threeLetterWordCount = 0; // Stores the count of valid 3-letter words
 
 let /*livesDisplay,*/ scoreDisplay, container, wordListDisplay; // livesDisplay removed
 
@@ -125,6 +126,16 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
   generateBoard();
+
+  // Extract unique letters from boardPairs
+  const allLettersOnBoard = boardPairs.join('').split('');
+  const uniqueLettersOnBoard = Array.from(new Set(allLettersOnBoard));
+
+  // Count valid three-letter words
+  threeLetterWordCount = countValidThreeLetterWords(uniqueLettersOnBoard, validWords);
+  // console.log("Number of 3-letter words:", threeLetterWordCount); // Removed as per new requirement
+  displayThreeLetterWordCount(threeLetterWordCount);
+
 });
 
 
@@ -278,6 +289,57 @@ document.addEventListener("DOMContentLoaded", () => {
   startSpeedPuzzleTimer(); // Start the timer when the game loads
 
 });
+
+// ==================== Display Three-Letter Word Count ====================
+function displayThreeLetterWordCount(count) {
+  const timerDisplayElement = document.getElementById('speed-puzzle-timer-display');
+  if (!timerDisplayElement || !timerDisplayElement.parentNode) {
+    console.error("Timer display element or its parent not found for displaying 3-letter word count.");
+    return;
+  }
+
+  const statsContainer = timerDisplayElement.parentNode;
+
+  // Remove existing display if it's there (e.g., on a replay or hot reload)
+  const existingDisplay = document.getElementById('three-letter-word-count-display');
+  if (existingDisplay) {
+    existingDisplay.remove();
+  }
+
+  const countDisplayDiv = document.createElement('div');
+  countDisplayDiv.id = 'three-letter-word-count-display';
+  countDisplayDiv.className = 'stat-block'; // Consistent styling
+  countDisplayDiv.textContent = `There are ${count} words to be found - How many can you find?`;
+
+  // Insert the new div after the timerDisplayElement
+  statsContainer.insertBefore(countDisplayDiv, timerDisplayElement.nextSibling);
+}
+
+// ==================== Three-Letter Word Counter ====================
+function countValidThreeLetterWords(uniqueLetters, validWordsSet) {
+  if (!uniqueLetters || uniqueLetters.length < 3) {
+    return 0;
+  }
+
+  let count = 0;
+  const n = uniqueLetters.length;
+
+  // Generate 3-letter permutations
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue; // Letters in a permutation must be unique
+      for (let k = 0; k < n; k++) {
+        if (k === i || k === j) continue; // Letters in a permutation must be unique
+
+        const word = uniqueLetters[i] + uniqueLetters[j] + uniqueLetters[k];
+        if (validWordsSet.has(word.toUpperCase())) { // Ensure case-insensitivity if needed, though validWords is upper
+          count++;
+        }
+      }
+    }
+  }
+  return count;
+}
 
 window.toggleSafeMode = toggleSafeMode;
 
