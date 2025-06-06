@@ -184,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   // Filter out empty strings that might result from ignored characters
   revealedSolution = revealedSolution.filter(rChar => rChar !== '');
+  /*
   const hangmanDisplay = document.getElementById("hangman-display");
   if (hangmanDisplay) {
     // Ensure display matches the length of the new currentSolution
@@ -195,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hangmanDisplay.style.letterSpacing = "3px"; // Default spacing
     }
   }
+  */
 
   // Timer Logic Implementation
   let speedPuzzleTime = 0;
@@ -296,12 +298,14 @@ function updateHangmanDisplay(foundLetter) {
   }
 
   // Update the display if a new letter was revealed
+  /*
   if (letterRevealed) {
     const displayElement = document.getElementById("hangman-display");
     if (displayElement) {
       displayElement.textContent = revealedSolution.join(" ");
     }
   }
+  */
 }
 
 function toggleSafeMode() {
