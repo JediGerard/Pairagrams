@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pairagrams – Speed Puzzle Three</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="findwords_4l.css">
+  <style>
+    #status-header .stat-block {
+      font-size: 18px !important; /* Override findwords_4l.css for consistency */
+    }
+    /* Added .pair and #word-preview styles based on findwords_4l.css for 3-letter version */
+    .pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px; /* Changed from 40px */
+      height: 32px;
+      font-size: 18px;
+      font-weight: normal;
+      background-color: #ffeaa7;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    #word-preview {
+      font-size: 20px;
+      width: 150px; /* Changed from 100px */
+      height: 34px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+  </style>
+  <script src="global_nav.js" defer></script>
+  <link rel="icon" type="image/png" href="/assets/favicon.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/site.webmanifest" />
+</head>
+<body>
+    <div id="global-nav">
+        <!-- Left Section: Hamburger Menu -->
+        <div id="global-nav-left">
+            <button id="hamburger-btn">&#9776;</button>
+            <div id="nav-dropdown" style="display: none;">
+                <a href="daily_puzzle_start.html">Daily Puzzle</a>
+                <a href="ladder_start.html">Ladder</a>
+                <a href="speed_puzzle_round_start.html">Speed Puzzle</a>
+                <a href="speed_ladder_round_start.html">Speed Ladder</a>
+                <a href="themes_start.html">Themes</a>
+            </div>
+        </div>
+        <!-- Right Section: Icon Links -->
+        <div id="global-nav-right">
+            <a href="stats.html" title="My Stats">📊</a>
+            <a href="halloffame.html" title="Hall of Fame">🏆</a>
+            <a href="howtoplay.html" title="How to Play">❓</a>
+            <button id="dark-mode-toggle" title="Toggle Dark Mode">🌓</button>
+            <a href="mailto:feedback@pairagrams.com" title="Send Feedback">✉️</a>
+            <button id="logout-btn" title="Logout">🚪</button>
+        </div>
+    </div>
+
+<div id="status-header" style="padding: 10px 20px; background: rgba(255,255,255,0.95); border-radius: 12px; margin-bottom: 10px;">
+    <!-- Line 1: SPEED PUZZLE Title and Image Logo -->
+    <div style="text-align: center; width: 100%; margin-top: 5px; margin-bottom: 10px;">
+        <h2 style="color: rgb(113, 196, 160); font-size: 24px; text-align: center; margin-bottom: 5px;">SPEED PUZZLE</h2>
+        <img src="assets/pairagrams_tighthp.png" alt="Pairagrams Logo" class="page-header-logo">
+    </div>
+
+    <!-- Line 2: Game Stats (Timer, Score, Safe Mode) -->
+    <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; font-weight: bold; font-size: 18px; margin-top: 5px;">
+        <div class="stat-block">Score: <span id="score">0</span></div>
+        <div class="stat-block">
+            <label class="switch">
+                <input type="checkbox" id="safe-mode-toggle" onchange="toggleSafeMode()" />
+                <span class="slider"></span>
+            </label>
+            <span style="margin-left: 8px;">Safe Mode</span>
+        </div>
+    </div>
+</div>
+
+<div id="word-tools" style="display: none;">
+  <div style="display: flex; align-items: center; gap: 6px;">
+    <input id="word-preview" type="text" readonly maxlength="6" placeholder="type here" />
+    <button class="button-base button-gray" onclick="submitWord()">Submit</button>
+    <button class="button-base button-gray" onclick="clearPreview()">Clear</button>
+  </div>
+</div>
+
+
+
+  <div id="rows-container"></div>
+  <div id="hangman-display"></div>
+  <div id="action-button-area" style="margin-top: 8px; margin-bottom: 5px;">
+  <button class="button-base button-red" onclick="shuffleBoard()" style="margin-right: 10px;">SHUFFLE</button>
+  <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>
+</div>
+
+  <div id="found-words">
+  <div style="
+    font-size: 18px;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+  ">
+    <div><strong>WORDS:</strong> <span id="total-count">0</span></div>
+    <div><strong>UNCOMMON:</strong> <span id="uncommon-count">0</span></div>
+    <div><strong>RARE:</strong> <span id="rare-count">0</span></div>
+  </div>
+</div>
+
+<ul id="word-list"></ul>
+
+</div>
+
+  <div id="correct-words-section">
+    <h3>Here are the words I found:</h3>
+    <div id="correct-words" class="correct-grid"></div>
+  </div>
+
+  <script type="module" src="speed_puzzle_logic_three.js"></script>
+
+
+  <script>
+    window.onload = () => {
+      if (document.getElementById("safe-mode-toggle")?.checked) {
+        toggleSafeMode();
+      }
+    };
+  </script>
+</body>
+</html>
