@@ -81,6 +81,7 @@ function renderLives() {
 
 // ==================== Load Game Data ====================
 let config = [], masterWords = {}, dictionary = new Set();
+let fullConfig2colData, fullConfig3colData; // Added module-level storage
 
 async function saveProgressToFirebase(playerName, data) {
   const ref = doc(db, "progress", playerName);
@@ -119,8 +120,11 @@ async function loadGameData() {
       console.log(`ℹ️ No saved progress found for ${playerName}, defaulting to level 1`);
     }
 
-    // ✅ Step 2: Load all required data in parallel if not cached
-    if (!configCache || !wordMapCache || !dictCache) {
+    colMode = level >= 26 ? 3 : 2; // Determine colMode after level is set
+
+    // ✅ Step 2: Load all required data in parallel if not cached (or if cache needs revalidation based on colMode)
+    // Simplified: Always fetch and assign directly to globals for now, removing cache variables
+    // if (!configCache || !wordMapCache || !dictCache) { // Condition to use cache removed for simplicity
       console.time("initialLoad");
 
       const [
@@ -142,29 +146,36 @@ async function loadGameData() {
         }
       }
 
-      configCache = (level >= 26 ? config3col : config2col)[level - 1]
-  ?   (level >= 26 ? config3col : config2col)
-  :   null;
+      fullConfig2colData = config2col; // Store the fetched 2-column config
+      fullConfig3colData = config3col; // Store the fetched 3-column config
 
-      if (!configCache) {
-        throw new Error(`❌ No config found for level ${level}`);
-      }
-      wordMapCache = wordMap;
-      dictCache = new Set(dictText.trim().split(/\r?\n/).map(w => w.toLowerCase()));
+      config = (colMode === 3) ? fullConfig3colData : fullConfig2colData; // Use stored full data for initial config
+      masterWords = wordMap; // Directly assign to global masterWords
+      dictionary = new Set(dictText.trim().split(/\r?\n/).map(w => w.toLowerCase())); // Directly assign to global dictionary
+
+      // Removed configCache, wordMapCache, dictCache assignments
       console.timeEnd("initialLoad");
-    }
+    // } else {
+      // If we were using cache and it was valid:
+      // config = configCache;
+      // masterWords = wordMapCache;
+      // dictionary = dictCache;
+    // }
 
-    config = configCache;
-    masterWords = wordMapCache;
-    dictionary = dictCache;
 
-    colMode = level >= 26 ? 3 : 2;
+    // colMode is already set after level determination
     console.log("🚀 loadGameData complete — setting up game");
 
-    if (!config[level - 1]) {
-    alert(`⚠️ No config found for level ${level}. Please check configuration files.`);
-    return;
-}
+    let currentLevelConfig;
+    if (colMode === 3) {
+        currentLevelConfig = config[level - 26];
+    } else {
+        currentLevelConfig = config[level - 1];
+    }
+    if (!currentLevelConfig) {
+        alert(`⚠️ No config found for level ${level} (colMode: ${colMode}). Please check configuration files.`);
+        return;
+    }
     setupGame();
 
   } catch (e) {
@@ -823,6 +834,9 @@ function goToNextLevel() {
   }
 
   level++;
+  colMode = level >= 26 ? 3 : 2; // Update colMode based on new level
+  config = (colMode === 3) ? fullConfig3colData : fullConfig2colData; // Update config based on new colMode
+
   if (level > 65) {
     alert("You’ve reached the final level!");
     return;
