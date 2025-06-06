@@ -14,6 +14,7 @@ let wordsByFirstLetter = {}; // For efficient lookup by starting letter
 let wordList = []; // Still useful for other things? Or phase out? For now, keep.
 let validWords = new Set();
 let classification = {};   
+let wrongGuessCount = 0;
 
 // let lives = 5; // Removed
 let score = 0;
@@ -117,46 +118,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   document.getElementById("done-btn").onclick = () => {
-  const box = document.getElementById("correct-words");
-  box.innerHTML = selectedWords.map((w, i) =>
-  `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
-).join("");
-  
+    const box = document.getElementById("correct-words");
+    box.innerHTML = selectedWords.map((w, i) =>
+      `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
+    ).join("");
 
-  // ✅ Hide the I AM DONE button
-  document.getElementById("done-btn").style.display = "none";
+    // ✅ Hide the I AM DONE button (it's part of actionArea, will be cleared)
+    // document.getElementById("done-btn").style.display = "none"; // No longer needed directly
 
-  // ✅ Remove SHUFFLE button
-  const shuffleBtn = document.querySelector("button.button-red");
-  if (shuffleBtn) shuffleBtn.remove();
+    // ✅ Get action-button-area and clear it
+    const actionArea = document.getElementById("action-button-area");
+    if (actionArea) {
+        actionArea.innerHTML = ""; // Clear "SHUFFLE" and "I AM DONE"
+    } else {
+        console.error("action-button-area not found!");
+        return; // Critical element missing
+    }
 
-  // ✅ Create PLAY AGAIN button
-  const playAgain = document.createElement("button");
-  playAgain.textContent = "PLAY AGAIN";
-  playAgain.className = "button-base button-green";
-  playAgain.style.width = "auto";
-  playAgain.style.display = "inline-block";
-  playAgain.style.marginRight = "8px";
-  playAgain.onclick = () => location.reload();
+    // Create the congratulatory message div
+    const congratsMessageDiv = document.createElement("div");
+    congratsMessageDiv.className = "congrats-box";
 
-  // ✅ Create GO TO MAIN button
-  const goHome = document.createElement("button");
-  goHome.textContent = "GO TO MAIN";
-  goHome.className = "button-base button-green";
-  goHome.style.width = "auto";
-  goHome.style.display = "inline-block";
-  goHome.onclick = () => location.href = "index.html";
+    const xValue = foundWords.length + wrongGuessCount;
+    const yValue = calculateUniqueSolutionLetters(currentSolution); // Recalculate yValue here
 
-  // ✅ Insert both buttons into the same parent container as SHUFFLE was
-  const shuffleContainer = document.querySelector("div[style*='margin-top']");
-  if (shuffleContainer) {
-    shuffleContainer.innerHTML = ""; // clear old buttons
-    shuffleContainer.appendChild(playAgain);
-    shuffleContainer.appendChild(goHome);
-  }
+    congratsMessageDiv.textContent = `Congratulations. You won. You took ${xValue} guesses out of a minimum possible guesses of ${yValue} which puts you in the category of SMARTY PANTS (45%).`;
 
-  // ✅ Reveal answer grid
-  document.getElementById("correct-words-section").style.display = "block";
+    if(actionArea) actionArea.appendChild(congratsMessageDiv);
+
+    // ✅ Create PLAY AGAIN button
+    const playAgain = document.createElement("button");
+    playAgain.textContent = "PLAY AGAIN";
+    playAgain.className = "button-base button-green";
+    playAgain.style.width = "auto";
+    playAgain.style.display = "inline-block";
+    playAgain.style.marginRight = "8px";
+    playAgain.onclick = () => location.reload();
+
+    // ✅ Create GO TO MAIN button
+    const goHome = document.createElement("button");
+    goHome.textContent = "GO TO MAIN";
+    goHome.className = "button-base button-green";
+    goHome.style.width = "auto";
+    goHome.style.display = "inline-block";
+    goHome.onclick = () => location.href = "index.html";
+
+    // Append buttons to actionArea
+    if(actionArea){
+        actionArea.appendChild(playAgain);
+        actionArea.appendChild(goHome);
+    }
+
+    // ✅ Reveal answer grid (if it's not already part of the main game screen)
+    // This seems to be for showing the list of *all* possible words, distinct from user's found words.
+    // Depending on design, this might still be wanted.
+    const correctWordsSection = document.getElementById("correct-words-section");
+    if (correctWordsSection) {
+        correctWordsSection.style.display = "block";
+    }
 };
 
   
@@ -226,7 +245,18 @@ function checkWinCondition() {
   return !revealedSolution.includes('_');
 }
 
+function calculateUniqueSolutionLetters(solutionPhrase) {
+  const uniqueLetters = new Set();
+  for (const char of solutionPhrase.toUpperCase()) {
+    if (char >= 'A' && char <= 'Z' && !['Q', 'Z', 'X'].includes(char)) {
+      uniqueLetters.add(char);
+    }
+  }
+  return uniqueLetters.size;
+}
+
 function handleWin() {
+    const yValue = calculateUniqueSolutionLetters(currentSolution);
     // 1. Trigger the "I AM DONE" button's functionality
     // to set up the screen state (buttons, hide game elements).
     const doneButton = document.getElementById("done-btn");
@@ -274,11 +304,10 @@ function handleWin() {
         feedbackMessageDiv.style.fontSize = "";
     }
 
-    // 4. Display Congratulations Pop-up
-    // Replace <playerName> with actual player name if available, otherwise generic.
-    setTimeout(() => {
-        alert("CONGRATULATIONS USERNAME - YOU WON");
-    }, 0); // Using a 0ms delay to allow DOM updates before alert
+    // 4. Display Congratulations Pop-up - REMOVED
+    // setTimeout(() => {
+    //     alert("CONGRATULATIONS USERNAME - YOU WON");
+    // }, 0);
 }
 
 
@@ -630,6 +659,7 @@ function checkWord() {
   window.clearPreview();
   return;
 } else {
+    wrongGuessCount++;
     showFeedbackMessage("Wrong");
     // lives--; // Removed
     // livesDisplay.textContent = lives; // Removed
