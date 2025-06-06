@@ -312,7 +312,7 @@ function displayThreeLetterWordCount(count) {
   countDisplayDiv.textContent = `There are ${count} words to be found - How many can you find?`;
 
   // Insert the new div after the timerDisplayElement
-  statsContainer.insertBefore(countDisplayDiv, timerDisplayElement.nextSibling);
+  statsContainer.appendChild(countDisplayDiv);
 }
 
 // ==================== Three-Letter Word Counter ====================
