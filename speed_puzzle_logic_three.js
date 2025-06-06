@@ -127,14 +127,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   generateBoard();
 
-  // Extract unique letters from boardPairs
-  const allLettersOnBoard = boardPairs.join('').split('');
-  const uniqueLettersOnBoard = Array.from(new Set(allLettersOnBoard));
+  let validSixLetterWordCount = 0;
+  // Ensure validWords is referred to as validWordsSet if it's a Set, or adapt name.
+  // Assuming validWords is the Set.
+  for (const wordData of selectedWords) {
+    const currentWord = wordData.word;
+    if (validWords.has(currentWord.toUpperCase())) { // validWords should be the Set of all valid words, in uppercase
+      validSixLetterWordCount++;
+    }
+  }
 
-  // Count valid three-letter words
-  threeLetterWordCount = countValidThreeLetterWords(uniqueLettersOnBoard, validWords);
-  // console.log("Number of 3-letter words:", threeLetterWordCount); // Removed as per new requirement
-  displayThreeLetterWordCount(threeLetterWordCount);
+  // console.log("Number of 6-letter words on board:", validSixLetterWordCount);
+  displayGameWordStats(validSixLetterWordCount);
 
 });
 
@@ -290,55 +294,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// ==================== Display Three-Letter Word Count ====================
-function displayThreeLetterWordCount(count) {
-  const timerDisplayElement = document.getElementById('speed-puzzle-timer-display');
-  if (!timerDisplayElement || !timerDisplayElement.parentNode) {
-    console.error("Timer display element or its parent not found for displaying 3-letter word count.");
-    return;
-  }
-
-  const statsContainer = timerDisplayElement.parentNode;
-
+// ==================== Display Game Word Stats ====================
+function displayGameWordStats(count) {
   // Remove existing display if it's there (e.g., on a replay or hot reload)
-  const existingDisplay = document.getElementById('three-letter-word-count-display');
+  const existingDisplay = document.getElementById('game-word-stats-display');
   if (existingDisplay) {
     existingDisplay.remove();
   }
 
-  const countDisplayDiv = document.createElement('div');
-  countDisplayDiv.id = 'three-letter-word-count-display';
-  countDisplayDiv.className = 'stat-block'; // Consistent styling
-  countDisplayDiv.textContent = `There are ${count} words to be found - How many can you find?`;
+  const gameWordStatsDiv = document.createElement('div');
+  gameWordStatsDiv.id = 'game-word-stats-display';
+  gameWordStatsDiv.className = 'stat-block'; // Consistent styling
+  gameWordStatsDiv.textContent = `Valid 6-letter words on board: ${count}`;
 
-  // Insert the new div after the timerDisplayElement
-  statsContainer.appendChild(countDisplayDiv);
-}
-
-// ==================== Three-Letter Word Counter ====================
-function countValidThreeLetterWords(uniqueLetters, validWordsSet) {
-  if (!uniqueLetters || uniqueLetters.length < 3) {
-    return 0;
+  const statusHeader = document.getElementById('status-header');
+  if (statusHeader && statusHeader.parentNode) {
+    statusHeader.parentNode.insertBefore(gameWordStatsDiv, statusHeader.nextSibling);
+  } else {
+    console.error("status-header not found or has no parent, cannot insert game stats display.");
+    // Fallback: append to body or a known container if statusHeader is critical and missing
+    // For now, just log an error. Depending on UI requirements, a fallback might be needed.
+    // document.body.appendChild(gameWordStatsDiv); // Example fallback
   }
-
-  let count = 0;
-  const n = uniqueLetters.length;
-
-  // Generate 3-letter permutations
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      if (i === j) continue; // Letters in a permutation must be unique
-      for (let k = 0; k < n; k++) {
-        if (k === i || k === j) continue; // Letters in a permutation must be unique
-
-        const word = uniqueLetters[i] + uniqueLetters[j] + uniqueLetters[k];
-        if (validWordsSet.has(word.toUpperCase())) { // Ensure case-insensitivity if needed, though validWords is upper
-          count++;
-        }
-      }
-    }
-  }
-  return count;
 }
 
 window.toggleSafeMode = toggleSafeMode;
