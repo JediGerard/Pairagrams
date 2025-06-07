@@ -47,7 +47,7 @@ let timerInterval = null;
 let gameEnded = false;
 
 let playerName = localStorage.getItem("playerName") || "Player";
-let level = parseInt(localStorage.getItem(`level-${playerName}`)) || 1;
+let level = 5;
 
 let totalScore = parseInt(localStorage.getItem("totalScore") || "0");
 let lives = parseInt(localStorage.getItem("lives") || "5");
@@ -86,11 +86,11 @@ let fullConfig2colData, fullConfig3colData; // Added module-level storage
 async function saveProgressToFirebase(playerName, data) {
   const ref = doc(db, "progress", playerName);
   try {
-    await setDoc(ref, {
-      ...data,
-      name: playerName,
-      lastPlayed: new Date()
-    });
+    // await setDoc(ref, {
+    //   ...data,
+    //   name: playerName,
+    //   lastPlayed: new Date()
+    // });
     console.log(`✅ Firebase progress saved for ${playerName} (Level ${data.level}, Score ${data.totalScore})`);
   } catch (e) {
     console.error("❌ Failed to save progress:", e);
@@ -102,23 +102,23 @@ async function loadGameData() {
   window.loadGameData = loadGameData;
   try {
     // ✅ Step 1: Load player level from Firebase if possible
-    const ref = doc(db, "progress", playerName);
-    const snapshot = await getDoc(ref);
-    if (snapshot.exists()) {
-      const d = snapshot.data();
-      level = d.level || 1;
-      const savedBonusWords = d.bonusWords || [];
-      localStorage.setItem("bonusWords", JSON.stringify(savedBonusWords));
-      savedBonusWords.forEach(word => usedBonusWords.add(word));
-      console.log("💾 Restored bonusWords from Firebase:", savedBonusWords);
+    // const ref = doc(db, "progress", playerName);
+    // const snapshot = await getDoc(ref);
+    // if (snapshot.exists()) {
+    //   const d = snapshot.data();
+    //   level = d.level || 1;
+    //   const savedBonusWords = d.bonusWords || [];
+    //   localStorage.setItem("bonusWords", JSON.stringify(savedBonusWords));
+    //   savedBonusWords.forEach(word => usedBonusWords.add(word));
+    //   console.log("💾 Restored bonusWords from Firebase:", savedBonusWords);
 
-      localStorage.setItem("bonusWords", JSON.stringify(savedBonusWords));
+    //   localStorage.setItem("bonusWords", JSON.stringify(savedBonusWords));
     
-      localStorage.setItem(`level-${playerName}`, level);
-      console.log(`✅ Loaded level ${level} from Firebase for ${playerName}`);
-    } else {
-      console.log(`ℹ️ No saved progress found for ${playerName}, defaulting to level 1`);
-    }
+    //   localStorage.setItem(`level-${playerName}`, level);
+    //   console.log(`✅ Loaded level ${level} from Firebase for ${playerName}`);
+    // } else {
+    //   console.log(`ℹ️ No saved progress found for ${playerName}, defaulting to level 1`);
+    // }
 
     colMode = level >= 26 ? 3 : 2; // Determine colMode after level is set
 
