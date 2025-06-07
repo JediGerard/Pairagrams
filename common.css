@@ -10,7 +10,7 @@ html {
 body {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 100vh;
   flex-direction: column;
   background-color: #ffffff; /* Changed from #fdfdfd */
