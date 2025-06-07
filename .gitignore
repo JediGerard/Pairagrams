@@ -3,7 +3,7 @@ Python/pairagrams-firebase-adminsdk-fbsvc-ae05e518fd.json
 node_modules/
 
 # Firebase Admin SDK credentials or any API key files
-*.json
+
 !public/manifest.json  # ← allow this if you use a public manifest
 
 # Secrets and config
