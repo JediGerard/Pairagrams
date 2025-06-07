@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Pairagrams</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      padding: 30px;
+    }
+    .login-box {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #google-btn {
+      background-color: #de5246;
+    }
+  </style>
+</head>
+<body>
+  <h1>Login to Pairagrams</h1>
+  <div class="login-box">
+    <input type="email" id="email" placeholder="Enter your email" required />
+    <input type="password" id="password" placeholder="Create a strong password" required />
+    <input type="text" id="username" placeholder="Choose a username" required />
+    <button id="register-btn">Register</button>
+    <button id="login-btn">Login</button>
+    <button id="google-btn">Sign in with Google</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendEmailVerification,
+      signInWithPopup,
+      GoogleAuthProvider
+    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyADcjbU1jM9Pqq4ZDrInVGSN7SdUb6O5nA",
+      authDomain: "pairagrams.firebaseapp.com",
+      projectId: "pairagrams",
+      storageBucket: "pairagrams.firebasestorage.app",
+      messagingSenderId: "958505224302",
+      appId: "1:958505224302:web:81bae163e8a526467afe7f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const usernameInput = document.getElementById("username");
+
+    document.getElementById("register-btn").onclick = async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      const username = usernameInput.value;
+
+      if (!/^\S+@\S+\.\S+$/.test(email)) return alert("Invalid email.");
+      if (!/^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(password))
+        return alert("Password must be at least 8 characters with one number and one special character.");
+
+      const usernameRef = doc(db, "usernames", username);
+      const usernameSnap = await getDoc(usernameRef);
+      if (usernameSnap.exists()) return alert("Username already taken.");
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCredential.user);
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          email,
+          username
+        });
+        await setDoc(usernameRef, { uid: userCredential.user.uid });
+        localStorage.setItem("playerName", username);
+        alert("Registered! Check your email for verification.");
+        window.location.href = "howtoplay.html";
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    };
+
+    document.getElementById("login-btn").onclick = async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+        const username = userDoc.exists() ? userDoc.data().username : "Player";
+        localStorage.setItem("playerName", username);
+        window.location.href = "howtoplay.html";
+      } catch (e) {
+        alert("Login failed: " + e.message);
+      }
+    };
+
+    document.getElementById("google-btn").onclick = async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        const userDocRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userDocRef);
+
+        let username;
+        if (!docSnap.exists()) {
+          username = generateUsername();
+          await setDoc(userDocRef, {
+            email: user.email,
+            username
+          });
+          await setDoc(doc(db, "usernames", username), { uid: user.uid });
+        } else {
+          username = docSnap.data().username;
+        }
+
+        localStorage.setItem("playerName", username);
+        window.location.href = "howtoplay.html";
+      } catch (e) {
+        alert("Google sign-in error: " + e.message);
+      }
+    };
+
+    function generateUsername() {
+      const adj = ["Happy", "Bright", "Fast", "Silent", "Lucky"];
+      const noun = ["Tiger", "Castle", "Cloud", "Star", "Wizard"];
+      const num = Math.floor(Math.random() * 100);
+      return `${adj[Math.floor(Math.random() * adj.length)]}${noun[Math.floor(Math.random() * noun.length)]}${num}`;
+    }
+  </script>
+</body>
+</html>
