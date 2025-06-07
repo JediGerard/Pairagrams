@@ -1,3 +1,8 @@
+html, body {
+    width: 100%;
+    overflow-x: hidden !important;
+}
+
 body {
     /* common.css handles base font and background */
     text-align: center;
