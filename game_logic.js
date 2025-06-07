@@ -40,6 +40,9 @@ let wordMapCache = null;
 let dictCache = null;
 let rowCount;
 
+let wordMapRaw = null; // To store the raw word data
+let previousColMode = null; // To store the colMode from the previous load
+
 
 let score = 0;
 let timer = 300;
@@ -120,48 +123,73 @@ async function loadGameData() {
     //   console.log(`ℹ️ No saved progress found for ${playerName}, defaulting to level 1`);
     // }
 
-    colMode = level >= 26 ? 3 : 2; // Determine colMode after level is set
+    colMode = level >= 26 ? 3 : 2; // Determine colMode after level is set. This might need adjustment if colMode can be 4 based on level.
+                                  // For now, proceeding with the assumption that colMode can be 2, 3, or 4.
 
-    // ✅ Step 2: Load all required data in parallel if not cached (or if cache needs revalidation based on colMode)
-    // Simplified: Always fetch and assign directly to globals for now, removing cache variables
-    // if (!configCache || !wordMapCache || !dictCache) { // Condition to use cache removed for simplicity
+    // Check if colMode has changed and if wordMapRaw exists
+    if (previousColMode === colMode && wordMapRaw) {
+      console.log("✅ Using cached wordMapRaw, colMode unchanged.");
+    } else {
+      console.log(`🔄 Loading new word data. Previous colMode: ${previousColMode}, Current colMode: ${colMode}`);
+      let wordFile = "";
+      if (colMode === 2) {
+        wordFile = "words_parts_2col.json";
+      } else if (colMode === 3) {
+        wordFile = "words_parts_3col.json";
+      } else if (colMode === 4) {
+        wordFile = "words_parts_4col.json";
+      } else {
+        // Fallback for unsupported colMode, or if colMode is not yet determined for 4 columns
+        console.warn(`Unsupported colMode: ${colMode} for word file selection. Defaulting to 2-column words.`);
+        wordFile = "words_parts_2col.json"; // Defaulting, consider if error handling is better
+      }
+
       console.time("initialLoad");
 
+      // Fetch configuration files and dictionary
       const [
         config2col,
         config3col,
-        wordMapRaw,
         dictText
       ] = await Promise.all([
         fetch("level_config_2col.json").then(r => r.json()),
         fetch("level_config_3col.json").then(r => r.json()),
-        fetch("master_words_file_with_parts_labeled.json").then(r => r.json()),
         fetch("words_scrabble.csv").then(r => r.text())
       ]);
 
+      // Fetch the determined word file
+      wordMapRaw = await fetch(wordFile).then(r => r.json()).catch(err => {
+        console.error(`🔥 Failed to fetch word file: ${wordFile}`, err);
+        alert(`Could not load critical word data from ${wordFile}. Please check the file and network.`);
+        throw err; // Re-throw to stop execution if word file fails
+      });
+
+      previousColMode = colMode; // Update previousColMode after successful load
+
       const wordMap = {};
-      for (const [word, data] of Object.entries(wordMapRaw)) {
-        if (data.common === true) {
-          wordMap[word] = data.parts;
+      // Ensure wordMapRaw is not null and is an object before processing
+      if (wordMapRaw && typeof wordMapRaw === 'object') {
+        for (const [word, data] of Object.entries(wordMapRaw)) {
+          // Including all words, common or uncommon
+          // Assuming structure { parts: [...] } and data itself is an object.
+          if (data && data.parts) { // Ensure data and data.parts exist
+            wordMap[word] = data.parts;
+          }
         }
+      } else {
+        console.error("🚨 wordMapRaw is null or not an object after fetch. Cannot process words.", wordMapRaw);
+        // Potentially handle this error more gracefully, e.g., by setting masterWords to an empty object
       }
 
       fullConfig2colData = config2col; // Store the fetched 2-column config
       fullConfig3colData = config3col; // Store the fetched 3-column config
 
       config = (colMode === 3) ? fullConfig3colData : fullConfig2colData; // Use stored full data for initial config
-      masterWords = wordMap; // Directly assign to global masterWords
+      masterWords = wordMap; // Assign processed words to global masterWords
       dictionary = new Set(dictText.trim().split(/\r?\n/).map(w => w.toLowerCase())); // Directly assign to global dictionary
 
-      // Removed configCache, wordMapCache, dictCache assignments
       console.timeEnd("initialLoad");
-    // } else {
-      // If we were using cache and it was valid:
-      // config = configCache;
-      // masterWords = wordMapCache;
-      // dictionary = dictCache;
-    // }
-
+    }
 
     // colMode is already set after level determination
     console.log("🚀 loadGameData complete — setting up game");
