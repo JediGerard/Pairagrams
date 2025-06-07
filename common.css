@@ -1,3 +1,10 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 /* @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap'); */
 
 body {
@@ -11,6 +18,7 @@ body {
   text-align: center; /* Added */
   margin: 0; /* Added */
   padding: 0; /* Added */
+  overflow-x: hidden; /* Added */
 }
 
 .logo {
