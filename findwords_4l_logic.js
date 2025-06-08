@@ -35,7 +35,7 @@ let hardFoundCount = 0;
 const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675", "#74b9ff", "#fd79a8"];
 let colorIndex = 0;
 
-
+window.startTime = Date.now();
 
 // ==================== DOM Ready Wrapper ====================
 document.addEventListener("DOMContentLoaded", () => {
@@ -128,79 +128,85 @@ Promise.all([
 
 
   document.getElementById("done-btn").onclick = () => {
-    const box = document.getElementById("correct-words");
-    box.innerHTML = selectedWords.map((w, i) =>
-      `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
-    ).join("");
+  const box = document.getElementById("correct-words");
+  box.innerHTML = selectedWords.map((w, i) =>
+    `<div class="answer-box" style="background-color: ${colors[i % colors.length]}">${w.word}</div>`
+  ).join("");
 
-    // ✅ Hide the I AM DONE button (it's part of actionArea, will be cleared)
-    // document.getElementById("done-btn").style.display = "none"; // No longer needed directly
+  const actionArea = document.getElementById("action-button-area");
+  if (!actionArea) {
+    console.error("action-button-area not found!");
+    return;
+  }
 
-    // ✅ Get action-button-area and clear it
-    const actionArea = document.getElementById("action-button-area");
-    if (actionArea) {
-        actionArea.innerHTML = ""; // Clear "SHUFFLE" and "I AM DONE"
-    } else {
-        console.error("action-button-area not found!");
-        return; // Critical element missing
-    }
+  actionArea.innerHTML = ""; // Clear previous buttons if any
 
-    // Create the congratulatory message div
-    const congratsMessageDiv = document.createElement("div");
-    congratsMessageDiv.className = "congrats-box";
+  // ✅ Green buttons first
+  const playAgain = document.createElement("button");
+  playAgain.textContent = "PLAY AGAIN";
+  playAgain.className = "button-base button-green";
+  playAgain.style.width = "auto";
+  playAgain.style.display = "inline-block";
+  playAgain.style.marginRight = "8px";
+  playAgain.onclick = () => location.reload();
 
-    const xValue = foundWords.length + wrongGuessCount;
-    const yValue = calculateUniqueSolutionLetters(currentSolution); // Recalculate yValue here
+  const goHome = document.createElement("button");
+  goHome.textContent = "GO TO MAIN";
+  goHome.className = "button-base button-green";
+  goHome.style.width = "auto";
+  goHome.style.display = "inline-block";
+  goHome.onclick = () => location.href = "index.html";
 
-    const delta = xValue - yValue;
-    let categoryPhrase = "";
-    if (delta === 0) {
-        categoryPhrase = "GENIUS";
-    } else if (delta === 1) {
-        categoryPhrase = "PUZZLE MASTER";
-    } else if (delta === 2) {
-        categoryPhrase = "UP AND COMER";
-    } else if (delta === 3) {
-        categoryPhrase = "SHOWING POTENTIAL";
-    } else {
-        categoryPhrase = "FINISHER";
-    }
+  actionArea.appendChild(playAgain);
+  actionArea.appendChild(goHome);
 
-    congratsMessageDiv.innerHTML = `Congratulations! You won!<br>You took ${xValue} guesses (minimum possible: ${yValue}).<br>Category: ${categoryPhrase}`;
+  // ✅ Gray congratulatory box (now moved below green buttons)
+  const congratsMessageDiv = document.createElement("div");
+  congratsMessageDiv.className = "congrats-box";
+  congratsMessageDiv.innerHTML = `Congratulations! You won!<br>You used <strong>${cluesUsed}</strong> clues and <strong>${wrongGuessCount}</strong> wrong guesses.`;
+  actionArea.appendChild(congratsMessageDiv);
 
-    if(actionArea) actionArea.appendChild(congratsMessageDiv);
+  // ✅ Time and speed summary
+  const totalTimeSpent = Math.round((Date.now() - (window.startTime || Date.now())) / 1000);
+  const speedRank = document.createElement("div");
+  speedRank.style.marginTop = "10px";
+  speedRank.style.fontSize = "16px";
+  speedRank.innerHTML = `You took <strong>${totalTimeSpent}</strong> seconds, which is faster than <strong>83%</strong> of users.`;
+  actionArea.appendChild(speedRank);
 
-    // ✅ Create PLAY AGAIN button
-    const playAgain = document.createElement("button");
-    playAgain.textContent = "PLAY AGAIN";
-    playAgain.className = "button-base button-green";
-    playAgain.style.width = "auto";
-    playAgain.style.display = "inline-block";
-    playAgain.style.marginRight = "8px";
-    playAgain.onclick = () => location.reload();
+  // ✅ Unique bonus word detection
+  const puzzleWords = new Set(selectedWords.map(w => w.word.toUpperCase()));
+  const bonusWords = foundWords.filter(w => !puzzleWords.has(w.toUpperCase()));
+  const bonusCount = bonusWords.length;
 
-    // ✅ Create GO TO MAIN button
-    const goHome = document.createElement("button");
-    goHome.textContent = "GO TO MAIN";
-    goHome.className = "button-base button-green";
-    goHome.style.width = "auto";
-    goHome.style.display = "inline-block";
-    goHome.onclick = () => location.href = "index.html";
+  const bonusDiv = document.createElement("div");
+  bonusDiv.style.marginTop = "6px";
+  bonusDiv.style.fontSize = "16px";
+  bonusDiv.innerHTML = `You used <strong>${bonusCount}</strong> unique words that I did not use!` +
+    (bonusCount > 3 ? "<br><strong>You are a true WordSmith.</strong>" : "");
+  actionArea.appendChild(bonusDiv);
 
-    // Append buttons to actionArea
-    if(actionArea){
-        actionArea.appendChild(playAgain);
-        actionArea.appendChild(goHome);
-    }
+  // ✅ Visual arrow and bar
+  const arrowBox = document.createElement("div");
+  arrowBox.style.textAlign = "center";
+  arrowBox.style.margin = "12px 0 -10px 0";
+  arrowBox.textContent = "⬇️";
+  const barImage = document.createElement("img");
+  barImage.src = "assets/error-bar.png";
+  barImage.alt = "Error scale";
+  barImage.style.maxWidth = "260px";
+  barImage.style.margin = "8px auto";
+  barImage.style.display = "block";
+  actionArea.appendChild(arrowBox);
+  actionArea.appendChild(barImage);
 
-    // ✅ Reveal answer grid (if it's not already part of the main game screen)
-    // This seems to be for showing the list of *all* possible words, distinct from user's found words.
-    // Depending on design, this might still be wanted.
-    const correctWordsSection = document.getElementById("correct-words-section");
-    if (correctWordsSection) {
-        correctWordsSection.style.display = "block";
-    }
+  // ✅ Reveal correct word grid
+  const correctWordsSection = document.getElementById("correct-words-section");
+  if (correctWordsSection) {
+    correctWordsSection.style.display = "block";
+  }
 };
+
 
   
   // Initialize Hangman Display
