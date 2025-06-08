@@ -56,12 +56,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   selectRandomSolution(); // Select solution before it's needed
 
-  Promise.all([
-  fetch("master_words_file_with_parts_labeled.json").then(res => res.json()),
-  fetch("words_scrabble_labeled.csv").then(res => res.text())
-]).then(([masterData, csvText]) => {
-  masterWords = masterData;
-  wordList = [];
+ // decide at runtime whether to pull 2-col or 3-col parts
+const numColumns = window.numColumns || 2;
+const partsFile = numColumns === 2
+  ? "words_parts_2col.json"
+  : "words_parts_3col.json";
+
+Promise.all([
+  fetch(partsFile).then(r => r.json()),           // ← dynamic partsFile here
+  fetch("words_scrabble_labeled.csv").then(r => r.text())
+]).then(([partsData, csvText]) => {
+  masterWords = partsData;                         // ← same variable name
+  wordList = [];                                   // ← keep this line
+  // … and then drop straight into your existing setup code …
+
 
   // Process CSV and populate classification object first
   const lines = csvText.trim().split("\n");
@@ -624,9 +632,13 @@ function updateStats() {
     w => classification[w.toUpperCase()] === "RARE"
   ).length;
 
-  document.getElementById("total-count").textContent    = total;
-  document.getElementById("uncommon-count").textContent = uncommon;
-  document.getElementById("rare-count").textContent     = rare;
+  
+  const totalEl    = document.getElementById("total-count");
+    if (totalEl)    totalEl.textContent    = total;
+  const uncommonEl = document.getElementById("uncommon-count");
+    if (uncommonEl) uncommonEl.textContent = uncommon;
+  const rareEl     = document.getElementById("rare-count");
+    if (rareEl)     rareEl.textContent     = rare;
 }
 
 

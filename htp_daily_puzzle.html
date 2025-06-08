@@ -3,21 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <title>How to Play: Daily Puzzle</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="common.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+<style>
+  @media (max-width: 600px) {
+  .page-wrapper {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+}
+  .page-wrapper {
+  display: flex;
+  flex-direction: column;    /* stack things vertically */
+  align-items: center;       /* center each child horizontally */
+  text-align: center;        /* center any inline text inside */
+  margin: 0 auto;            /* shrink-wrap wrapper on large screens */
+  max-width: 600px;          /* optional: prevents it from growing too wide */
+  padding: 1rem;             /* optional breathing room */
+}
+.page-wrapper img,
+.page-wrapper .rows-container,
+.page-wrapper .auth-links {
+  margin: 0 auto;            /* ensure block elements sit dead-center */
+}
+  #login-message {
+  text-align: center;               /* centers the text */
+  color: #e53935;                   /* pick any hex/RGB color you like */
+  font-family: "Helvetica Neue", sans-serif;
+  margin-bottom: 1rem;              /* optional spacing */
+}
+#register-message {
+  text-align: center;               /* centers the text */
+  color: #b126bb;                   /* pick any hex/RGB color you like */
+  font-family: "Helvetica Neue", sans-serif;
+  margin-bottom: 1rem;              /* optional spacing */
+}
+#guest-message {
+  text-align: center;               /* centers the text */
+  color: #26af48;                   /* pick any hex/RGB color you like */
+  font-family: "Helvetica Neue", sans-serif;
+  margin-bottom: 1rem;              /* optional spacing */
+}
+#login-message a,
+#register-message a,
+#guest-message a {
+  color: inherit;
+  text-decoration: none;
+}
+</style>
 <body>
   <!-- your site header/nav -->
   <main>
-    <h1>How to Play: Daily Puzzle</h1>
-    <div class="htp-graphic">
+    <div class="page-wrapper">
       <!-- TODO: replace with actual graphic -->
-      <img src="images/htp_daily_puzzle.png" alt="How to Play Daily Puzzle">
+      <img src="assets/htp_daily_puzzle.png" alt="How to Play Daily Puzzle" style="max-width:500px; width:100%; height:auto;">
     </div>
-    <div class="htp-actions">
-      <a href="loginpage.html?redirect=daily_puzzle_start.html" class="btn">Login</a>
-      <a href="register.html?redirect=daily_puzzle_start.html" class="btn">Register</a>
-      <a href="daily_puzzle_start.html" class="btn">Continue as Guest</a>
-    </div>
+    <p id="login-message">
+  <a href="loginpage.html">LOGIN</a>
+</p>
+<p id="register-message">
+  <a href="register.html">Register</a>
+</p>
+<p id="guest-message">
+  <a href="daily_puzzle_start.html">Continue as Guest</a>
+</p>
+
   </main>
   <script src="utility.js"></script>
 </body>

@@ -1,5 +1,6 @@
 html {
   box-sizing: border-box;
+  overflow-x: hidden;    /* added to prevent sideways scrolling */
 }
 *, *:before, *:after {
   box-sizing: inherit;
@@ -150,86 +151,85 @@ input:checked + .slider:before {
 
 /* Global Navigation Header Styles */
 #global-nav {
-    display: flex;
-    justify-content: space-between; /* Changed back */
-    align-items: center;
-    padding: 0; /* Stays 0 for now */
-    background-color: #f8f9fa; /* Lighter background */
-    border-bottom: 1px solid #dee2e6; /* Lighter border */
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    width: 100%; /* Ensure it spans full width */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  display: flex;
+  justify-content: space-between; /* Changed back */
+  align-items: center;
+  padding: 0; /* Stays 0 for now */
+  background-color: #f8f9fa; /* Lighter background */
+  border-bottom: 1px solid #dee2e6; /* Lighter border */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%; /* Ensure it spans full width */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 #global-nav-left {
-    position: relative; /* For dropdown positioning context */
+  position: relative; /* For dropdown positioning context */
 }
 
 #hamburger-btn {
-    font-size: 18px; /* Changed */
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0; /* Changed */
-    color: #343a40; /* Darker color for icon */
-    margin-left: 10px; /* Added */
+  font-size: 18px; /* Changed */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* Changed */
+  color: #343a40; /* Darker color for icon */
+  margin-left: 10px; /* Added */
 }
 
 #nav-dropdown {
-    display: none; /* Initially hidden, JS will toggle */
-    position: absolute;
-    top: 40px;  /* Position below the button */
-    left: 0;
-    background-color: white;
-    border: 1px solid #ced4da;
-    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-    padding: 10px;
-    z-index: 1001; /* Above global-nav */
-    min-width: 150px; /* Minimum width for dropdown */
+  display: none; /* Initially hidden, JS will toggle */
+  position: absolute;
+  top: 40px;  /* Position below the button */
+  left: 0;
+  background-color: white;
+  border: 1px solid #ced4da;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  padding: 10px;
+  z-index: 1001; /* Above global-nav */
+  min-width: 150px; /* Minimum width for dropdown */
 }
 
 #nav-dropdown a {
-    display: block;
-    margin-bottom: 8px;
-    padding: 5px;
-    text-decoration: none;
-    color: #007bff; /* Standard link blue */
+  display: block;
+  margin-bottom: 8px;
+  padding: 5px;
+  text-decoration: none;
+  color: #007bff; /* Standard link blue */
 }
 
 #nav-dropdown a:hover {
-    background-color: #e9ecef; /* Hover effect */
-    border-radius: 4px;
+  background-color: #e9ecef; /* Hover effect */
+  border-radius: 4px;
 }
 
 #global-nav-right {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;  /* ADDED */
-    overflow-x: auto;   /* ADDED */
-    gap: 12px;          /* ADDED */
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;  /* ADDED */
+  overflow-x: auto;   /* ADDED */
+  gap: 12px;          /* ADDED */
 }
 
 #global-nav-right a,
 #global-nav-right button {
-    text-decoration: none;
-    color: #343a40; /* Darker color for icons */
-    margin-left: 0; /* Ensures individual margin is off, gap handles spacing */
-    font-size: 18px; /* Slightly larger icons */
-    background: none; /* Ensure buttons are transparent */
-    border: none;     /* Ensure buttons have no border */
-    cursor: pointer;  /* Ensure buttons show pointer */
-    padding: 0;       /* Reset padding for buttons */
+  text-decoration: none;
+  color: #343a40; /* Darker color for icons */
+  margin-left: 0; /* Ensures individual margin is off, gap handles spacing */
+  font-size: 18px; /* Slightly larger icons */
+  background: none; /* Ensure buttons are transparent */
+  border: none;     /* Ensure buttons have no border */
+  cursor: pointer;  /* Ensure buttons show pointer */
+  padding: 0;       /* Reset padding for buttons */
 }
 
 #global-nav-right a:hover,
 #global-nav-right button:hover {
-    color: #0056b3; /* Link hover color */
+  color: #0056b3; /* Link hover color */
 }
 
 /* Specific styling for text-based icons if needed, for now, font-size covers it */
-
 .page-header-logo {
   max-width: 350px; /* Consistent with .logo-main on index.html */
   height: auto;     /* Maintain aspect ratio */
@@ -237,4 +237,23 @@ input:checked + .slider:before {
   margin-left: auto;  /* Center the logo */
   margin-right: auto; /* Center the logo */
   margin-bottom: 10px; /* From original inline style, seems reasonable */
+}
+
+/* prevent any sideways scroll on mobile */
+html, body {
+  overflow-x: hidden;
+}
+
+/* fluid, capped containers for all your start-pages */
+#global-nav,
+#game-container,
+.center-container,
+#rows-container,
+.box,
+.title-box {
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  padding: 0 1rem;    /* optional gutter */
+  margin: 0 auto;
 }
