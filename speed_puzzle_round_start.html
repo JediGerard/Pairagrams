@@ -13,8 +13,17 @@
     
     /* match Speed Ladder’s light-gray boxes */
     .pair {
-      background-color: #f0f0f0 !important;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;       /* 50% increase */
+  height: 48px;      /* 50% increase */
+  font-size: 27px;   /* 50% increase */
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
     /* match its selected-state outline */
     .pair.selected {
       outline: 3px solid #ffeaa7 !important;

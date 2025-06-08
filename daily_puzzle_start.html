@@ -9,18 +9,17 @@
   <style>
     /* Specific styles from findwords_4l.css needed for daily_puzzle_start.html */
     .pair {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 32px;
-      font-size: 18px;
-      font-weight: normal;
-      background-color: #f0f0f0;    /* ← match Speed Ladder’s default word-box color */ 
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;       /* 50% increase */
+  height: 48px;      /* 50% increase */
+  font-size: 27px;   /* 50% increase */
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
     .pair.selected { /* Assuming .selected is added to .pair elements */
       background-color: #f0f0f0 !important; /* keep same base color */
       outline: 3px solid #ffeaa7;            /* same outline color used by Speed Ladder */
@@ -175,9 +174,11 @@
  
   <div id="rows-container"></div>
   <div id="hangman-display"></div>
+  <div id="clue-display" class="congrats-box" style="display: none;"></div>
   <div id="action-button-area" style="margin-top: 8px; margin-bottom: 5px;">
   <button class="button-base button-red" onclick="shuffleBoard()" style="margin-right: 10px;">SHUFFLE</button>
   <button id="done-btn" class="button-base button-green" onclick="showCorrectWords()">I AM DONE</button>
+   <button id="clue-btn" class="button-base button-red" onclick="giveClue()" style="margin-right: 10px;">CLUE</button>
 </div>
 
   <div id="found-words">

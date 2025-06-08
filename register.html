@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family: "Helvetica Neue", Arial, sans-serif; background:#fff; display:flex; justify-content:center; align-items:start; padding:2rem; min-height:100vh; }
+    .container { width:100%; max-width:400px; }
+    h1 { text-align:center; font-size:2rem; margin-bottom:1.5rem; }
+    .form-group { margin-bottom:1rem; }
+    label { display:block; margin-bottom:0.5rem; font-weight:500; }
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] { width:100%; padding:.75rem 1rem; border:1px solid #ddd; border-radius:8px; font-size:1rem; }
+    .google-login { display:inline-flex; align-items:center; text-decoration:underline; color:#000; font-size:1.1rem; margin-bottom:2rem; cursor:pointer; }
+    .google-login img { width:24px; height:24px; margin-right:.5rem; }
+    /* Username field with buttons to the right */
+    .username-wrapper {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .username-wrapper #username {
+      flex: 1;
+    }
+    #accept-username,
+    #edit-username {
+      padding: .5rem .75rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: .9rem;
+    }
+    #accept-username { background: #4caf50; color: #fff; }
+    #edit-username   { background: #f1c40f; color: #fff; }
+    .checkbox-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem 1rem; margin-bottom:1rem; }
+    .checkbox-group label { display: flex; align-items: center; }
+    .checkbox-group input { margin-right: .5rem; }
+    .btn { display:block; width:100%; padding:.75rem 0; border:none; border-radius:9999px; font-size:1.25rem; font-weight:500; cursor:pointer; }
+    .btn-register { background-color:#4caf50; color:#fff; margin-top:1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Your Account</h1>
+
+    <form id="register-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <div class="form-group">
+        <label>Login with Google</label>
+        <a href="#" id="google-btn" class="google-login">
+          <img src="/assets/google_G_logo.png" alt="Google logo">Sign in with Google
+        </a>
+      </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="username-wrapper">
+          <input type="text" id="username" placeholder="Enter a username" required>
+          <button type="button" id="accept-username">Accept</button>
+          <button type="button" id="edit-username">Edit</button>
+        </div>
+      </div>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="games" value="Wordle">Wordle</label>
+        <label><input type="checkbox" name="games" value="Scrabble">Scrabble</label>
+        <label><input type="checkbox" name="games" value="Mahjong">Mahjong</label>
+        <label><input type="checkbox" name="games" value="Wordscapes">Wordscapes</label>
+        <label><input type="checkbox" name="games" value="Crosswords">Crosswords</label>
+        <label><input type="checkbox" name="games" value="Sudoku">Sudoku</label>
+        <label><input type="checkbox" name="games" value="Words with Friends">Words with Friends</label>
+      </div>
+      <button type="submit" class="btn btn-register">Complete Registration</button>
+    </form>
+  </div>
+
+  <script type="module">
+    // Firebase imports & initialization
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js";
+    const firebaseConfig = {
+      // your config here
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Optional: sign out existing user to force fresh Google prompt
+    if (auth.currentUser) {
+      signOut(auth);
+    }
+
+    // Username generator
+    function generateUsername() {
+      const adj = ["Happy","Bright","Fast","Silent","Lucky"];
+      const noun = ["Tiger","Castle","Cloud","Star","Wizard"];
+      const num = Math.floor(Math.random()*100);
+      return `${adj[Math.floor(Math.random()*adj.length)]}${noun[Math.floor(Math.random()*noun.length)]}${num}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize suggested username
+      const userInput = document.getElementById('username');
+      userInput.value = generateUsername();
+
+      // Accept/Edit handlers
+      document.getElementById('accept-username').addEventListener('click', () => {
+        userInput.disabled = true;
+      });
+      document.getElementById('edit-username').addEventListener('click', () => {
+        userInput.disabled = false;
+        userInput.focus();
+      });
+
+      // Google sign-in handler
+      document.getElementById('google-btn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const isNew = result._tokenResponse?.isNewUser || false;
+          if (isNew) {
+            window.location.href = `register.html?uid=${result.user.uid}&email=${result.user.email}`;
+          } else {
+            window.location.href = 'daily_puzzle_start.html';
+          }
+        } catch (err) {
+          console.error('Google sign-in error:', err);
+          alert(err.message);
+        }
+      });
+
+      // Form submission handler
+      document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // handle email/password registration & saving username in Firestore
+      });
+    });
+  </script>
+</body>
+</html>

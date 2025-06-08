@@ -2,51 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Pairagrams</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Register</title>
   <style>
+    /* === Base reset & font === */
+    * { box-sizing: border-box; margin:0; padding:0; }
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f9f9f9;
-      padding: 30px;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+      padding: 2rem;
+      color: #000;
     }
-    .login-box {
-      background: white;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    input, button {
+
+    /* === Container === */
+    .login-container {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      max-width: 400px;
+      text-align: center;
     }
-    button {
-      background-color: #3498db;
-      color: white;
+
+    /* === Heading === */
+    .login-container h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* === Google sign-in link === */
+    .google-login {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: underline;
+      color: #000;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .google-login img {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.5rem;
+    }
+
+    /* === Form fields === */
+    .login-form input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    /* === Buttons === */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 0;
+      margin-bottom: 1rem;
       border: none;
+      border-radius: 9999px;
+      font-size: 1.25rem;
+      font-weight: 500;
       cursor: pointer;
     }
-    #google-btn {
-      background-color: #de5246;
+    .btn-login {
+      background-color: #e91e63; /* pink */
+      color: #fff;
+    }
+    .btn-register {
+      background-color: #4caf50; /* green */
+      color: #fff;
+    }
+
+    /* === Guest link === */
+    .guest-link {
+      display: inline-block;
+      color: #000;
+      text-decoration: underline;
+      font-size: 1rem;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
 <body>
-  <h1>Login to Pairagrams</h1>
-  <div class="login-box">
-    <input type="email" id="email" placeholder="Enter your email" required />
-    <input type="password" id="password" placeholder="Create a strong password" required />
-    <input type="text" id="username" placeholder="Choose a username" required />
-    <button id="register-btn">Register</button>
-    <button id="login-btn">Login</button>
-    <button id="google-btn">Sign in with Google</button>
+  <div class="login-container">
+    <h1>Login / Register</h1>
+
+    <a href="#" id="google-btn" class="google-login">
+  <img src="assets/google_G_logo.png" alt="Google logo">
+  Sign in with Google
+</a>
+
+    <!-- Email / password / username fields -->
+    <form class="login-form">
+      <input type="email"   id="email"    placeholder="Enter your email"           required>
+      <input type="password" id="password" placeholder="Create a strong password"    required>
+      <input type="text"     id="username" placeholder="Choose a username"          required>
+
+      <!-- Action buttons -->
+      <button type="button" id="login-btn"    class="btn btn-login">Login</button>
+      <button type="button" id="register-btn" class="btn btn-register">Register</button>
+
+      <!-- Continue as guest -->
+      <a href="daily_puzzle_start.html" class="guest-link">Continue as guest</a>
+    </form>
   </div>
 
   <script type="module">

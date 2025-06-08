@@ -15,6 +15,8 @@ let wordList = []; // Still useful for other things? Or phase out? For now, keep
 let validWords = new Set();
 let classification = {};   
 let wrongGuessCount = 0;
+let lastClueWord = null;
+let cluesUsed = 0;
 
 // let lives = 5; // Removed
 let score = 0;
@@ -622,6 +624,34 @@ function updateWordList(word) {
   updateStats();
 }
 
+function giveClue() {
+  const unrevealedLetters = new Set();
+  for (let i = 0; i < currentSolution.length; i++) {
+    const char = currentSolution[i].toUpperCase();
+    if (char >= 'A' && char <= 'Z' && revealedSolution[i] === '_') {
+      unrevealedLetters.add(char);
+    }
+  }
+
+  for (const letter of unrevealedLetters) {
+    const word = selectedWords.find(w => w.word[0].toUpperCase() === letter);
+    if (word) {
+      lastClueWord = word.word;
+      cluesUsed++;
+      const clueBox = document.getElementById("clue-display");
+      clueBox.innerHTML = `THE CLUE IS ${word.word.toUpperCase()}`;
+      clueBox.style.display = "block";
+      return;
+    }
+  }
+
+  // Fallback message if no clue can be given
+  lastClueWord = null;
+  const clueBox = document.getElementById("clue-display");
+  clueBox.innerHTML = "No clues left — you've found all letters!";
+  clueBox.style.display = "block";
+}
+
 
 function updateStats() {
   const total = foundWords.length;
@@ -842,3 +872,8 @@ document.getElementById("bonus-count").textContent = foundWords.length;
 
   window.clearPreview();
 };
+window.giveClue = giveClue;
+document.addEventListener("mousedown", () => {
+  const clueBox = document.getElementById("clue-display");
+  if (clueBox) clueBox.style.display = "none";
+});
