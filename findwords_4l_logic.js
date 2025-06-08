@@ -534,6 +534,7 @@ function generateBoard() {
   }
   // End of new section
 
+  console.log("Daily Puzzle words:", selectedWords.map(wordData => wordData.word));
   // 4. Shuffle and Display
   shuffle(boardPairs); // Shuffle the collected pairs
 
@@ -595,7 +596,7 @@ function updateWordList(word) {
   const cls = classification[word.toUpperCase()] || "RARE";
 
   // ← DEBUG LOGGING:
-  console.log(`Adding word “${word}”: classified as ${cls}`);
+  // console.log(`Adding word “${word}”: classified as ${cls}`);
 
   if (cls === "COMMON") {
     li.className = "bonus-word-box";
