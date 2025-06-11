@@ -1,12 +1,6 @@
 import { shuffle } from './utility.js';
 // ==================== Game State ====================
-const SOLUTION_PHRASES = [
-    "MORNING COFFEE", "COCONUT CREAM", "BUTTERSCOTCH", "PAPERCLIP ART",
-    "WALKING ALONE", "FOREST TRAILS", "APEROL SPRITZ", "GOLDEN TICKET",
-    "CANDLELIT DIN", "FRENCH TOAST", "SALMON PINK", "HUNTERS LODGE",
-    "PUMPKIN PATCH", "HIDDEN TALENT", "SUNDAY DRIVES",
-    "AFTERNOON TEA", "POCKET CHANGE"
-];
+
 let currentSolution = "";
 let revealedSolution = [];
 let masterWords = {};
@@ -35,10 +29,31 @@ let hardFoundCount = 0;
 const colors = ["#81ecec", "#fab1a0", "#ffeaa7", "#a29bfe", "#55efc4", "#ff7675", "#74b9ff", "#fd79a8"];
 let colorIndex = 0;
 
+let SOLUTION_PHRASES = [
+  "MORNING COFFEE"
+];  // fallback list
+
+async function loadSolutionPhrases() {
+  try {
+    const response = await fetch("solution_phrases.csv");
+    if (!response.ok) throw new Error("Fetch failed");
+    const text = await response.text();
+    const lines = text.trim().split("\n");
+    const headerSkipped = lines.slice(1); // skip header row
+    const cleaned = headerSkipped.map(line => line.trim().toUpperCase()).filter(Boolean);
+    if (cleaned.length > 0) {
+      SOLUTION_PHRASES = cleaned;
+      console.log("✅ Loaded solution phrases from CSV");
+    }
+  } catch (e) {
+    console.warn("⚠️ Could not load solution_phrases.csv, using default fallback list.");
+  }
+}
+
 window.startTime = Date.now();
 
 // ==================== DOM Ready Wrapper ====================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const manualRadio = document.getElementById("manual-mode");
   const previewBox = document.getElementById("word-preview");
   if (previewBox) {
@@ -47,6 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   // livesDisplay = document.getElementById("lives"); // Removed
   scoreDisplay = document.getElementById("score");
+
+  await loadSolutionPhrases();
+  selectRandomSolution(); // Select after loading
   
   container = document.getElementById("rows-container");
   wordListDisplay = document.getElementById("word-list");
@@ -425,15 +443,34 @@ function generateBoard() {
   const usedWordsOnBoard = new Set(); // Track words used in *this specific* board generation
 
   // 1. Determine Target Starting Letters from currentSolution
-  let targetLetters = [];
+    let targetLetters = [];
+  const seen = new Set();
+  const skipLetters = new Set(['Q', 'Z', 'X']);
+
   if (currentSolution && typeof currentSolution === 'string') {
-    for (const char of currentSolution) {
-      const upperChar = char.toUpperCase();
-      if (upperChar >= 'A' && upperChar <= 'Z' && !['Q', 'Z', 'X'].includes(upperChar)) {
-        targetLetters.push(upperChar);
+    for (const char of currentSolution.toUpperCase()) {
+      if (char >= 'A' && char <= 'Z' && !skipLetters.has(char) && !seen.has(char)) {
+        seen.add(char);
+        targetLetters.push(char);
       }
     }
-  } else {
+  }
+
+  // If fewer than 12 unique letters, fill with other common ones
+  const fillerLetters = "EARIOTNSLCUDPMHGBFYWKV".split(""); // Common letters ranked
+  for (const letter of fillerLetters) {
+    if (targetLetters.length >= 12) break;
+    if (!seen.has(letter)) {
+      targetLetters.push(letter);
+      seen.add(letter);
+    }
+  }
+
+  if (targetLetters.length < 12) {
+    console.error(`CRITICAL: Could not find 12 unique letters for "${currentSolution}"`);
+    return; // fail early — puzzle should be regenerated upstream
+  }
+  else {
     console.error("currentSolution is not valid for generating board.");
     // Fallback: fill with random common letters or handle error appropriately
     // For now, let's use a default set if currentSolution is problematic
